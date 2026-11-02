@@ -1,0 +1,38 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Account {
+  id              String    @id @default(cuid())
+  name            String
+  type            String
+  balance         Int       @default(0)
+  dueDate         DateTime? // <-- NOVO CAMPO AQUI
+  pluggyItemId    String?
+  pluggyAccountId String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  transactions Transaction[]
+}
+
+model Transaction {
+  id          String   @id @default(cuid())
+  description String
+  amount      Int // Valor em centavos
+  type        String // "income", "expense", "transfer"
+  date        DateTime
+  accountId   String?
+  account     Account? @relation(fields: [accountId], references: [id])
+
+  status   String  @default("pending") // "pending", "cleared", "reconciled"
+  category String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
