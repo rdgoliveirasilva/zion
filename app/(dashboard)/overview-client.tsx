@@ -28,7 +28,8 @@ interface Transaction {
   date: Date;
   type: string;
   status: string;
-  category?: string;
+  category: string | null; // 👈 MUDOU AQUI (aceita null)
+  accountId?: string | null;
 }
 
 interface Account {
