@@ -1,0 +1,104 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* TEMA LIGHT (Padrão) - Cores suaves para não ofuscar */
+    --background: 0 0% 98%;       /* Fundo cinza bem claro */
+    --foreground: 240 10% 3.9%;   /* Texto escuro */
+    
+    --card: 0 0% 100%;            /* Cards brancos */
+    --card-foreground: 240 10% 3.9%;
+    
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
+    
+    --primary: 270 71% 39%;       /* Roxo do Zion (#6b21a8) */
+    --primary-foreground: 0 0% 98%;
+    
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
+    
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
+    
+    --accent: 270 71% 95%;        /* Roxo bem clarinho para hovers */
+    --accent-foreground: 270 71% 39%;
+    
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 270 71% 39%;          /* Anel de foco (roxo) */
+    
+    --radius: 0.75rem;
+  }
+
+  .dark {
+    /* TEMA DARK - Cores do seu layout original */
+    --background: 260 100% 4%;    /* #0b0014 */
+    --foreground: 0 0% 98%;       /* Texto branco */
+    
+    --card: 260 50% 8%;           /* #130722 aprox. */
+    --card-foreground: 0 0% 98%;
+    
+    --popover: 260 50% 8%;
+    --popover-foreground: 0 0% 98%;
+    
+    --primary: 270 71% 39%;       /* Roxo do Zion */
+    --primary-foreground: 0 0% 98%;
+    
+    --secondary: 260 30% 15%;
+    --secondary-foreground: 0 0% 98%;
+    
+    --muted: 260 30% 15%;
+    --muted-foreground: 240 5% 64.9%;
+    
+    --accent: 270 71% 20%;
+    --accent-foreground: 0 0% 98%;
+    
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 260 30% 18%;
+    --input: 260 30% 18%;
+    --ring: 270 71% 39%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+
+/* Suas animações customizadas que já existiam */
+@keyframes slideUpFade {
+  0% { opacity: 0; transform: translateY(20px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+.animate-slide-up { animation: slideUpFade 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; opacity: 0; }
+.delay-100 { animation-delay: 100ms; }
+.delay-200 { animation-delay: 200ms; }
+.delay-300 { animation-delay: 300ms; }
+.delay-400 { animation-delay: 400ms; }
+.delay-500 { animation-delay: 500ms; }
+.delay-600 { animation-delay: 600ms; }
+
+@keyframes gradientMove {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+.animate-gradient-text {
+  background-size: 200% auto;
+  animation: gradientMove 4s linear infinite;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}

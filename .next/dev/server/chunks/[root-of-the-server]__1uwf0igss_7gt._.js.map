@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 76, "column": 0}, "map": {"version":3,"sources":["file:///C:/Users/Rodrigo/Desktop/zion/app/api/logout/route.ts"],"sourcesContent":["import { NextResponse } from \"next/server\";\r\n\r\nexport async function POST() {\r\n  const response = NextResponse.json({ success: true });\r\n\r\n  // Apaga o cookie da sessão\r\n  response.cookies.set({\r\n    name: \"zion_session\",\r\n    value: \"\",\r\n    httpOnly: false,\r\n    expires: new Date(0), // Define a data de expiração no passado para apagar\r\n    path: \"/\",\r\n  });\r\n\r\n  return response;\r\n}"],"names":["POST","response","json","success","cookies","set","name","value","httpOnly","expires","Date","path"],"mappings":";;;;AAAA;;AAEO,eAAeA;IACpB,MAAMC,WAAW,gJAAY,CAACC,IAAI,CAAC;QAAEC,SAAS;IAAK;IAEnD,2BAA2B;IAC3BF,SAASG,OAAO,CAACC,GAAG,CAAC;QACnBC,MAAM;QACNC,OAAO;QACPC,UAAU;QACVC,SAAS,IAAIC,KAAK;QAClBC,MAAM;IACR;IAEA,OAAOV;AACT"}}]
+}
