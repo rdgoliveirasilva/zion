@@ -64,10 +64,8 @@ export async function POST(request: Request) {
         const oneYearAgo = new Date();
         oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
         
-        const transactions = await client.fetchAllTransactions({
-            accountId: acc.id,
-            dateFrom: oneYearAgo.toISOString().split("T")[0],
-        });
+        const transactions = await client.fetchAllTransactions(acc.id, { dateFrom: oneYearAgo.toISOString().split("T")[0],
+         });
 
         console.log(`Buscando transações para ${acc.name}: ${transactions.length} encontradas.`);
 
