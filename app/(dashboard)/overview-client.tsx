@@ -1,15 +1,17 @@
 "use client";
 
 import { financialDay, formatFinancialDate, statementIncludes } from "@/lib/statement";
+import { TransactionAccountTags } from "@/components/ui/transaction-account-tags";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { 
   Eye, EyeOff, CheckCircle2, ChevronDown, ChevronUp, 
   ArrowDownLeft, ArrowUpRight, Wallet, Landmark, Calendar, Clock,
   Utensils, Car, Home, HeartPulse, GraduationCap, Gamepad2, ShoppingBag, MoreHorizontal,
-  CreditCard, LogOut
+  CreditCard, LogOut, Loader2 // 👈 Importei o Loader2
 } from "lucide-react";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
+import { toast } from "sonner"; // 👈 Importei o toast
 
 const CATEGORY_MAP: Record<string, { label: string, icon: any, color: string }> = {
   alimentacao: { label: "Alimentação", icon: Utensils, color: "text-orange-500 bg-orange-500/10" },
@@ -29,8 +31,9 @@ interface Transaction {
   date: Date;
   type: string;
   status: string;
-  category: string | null; // 👈 MUDOU AQUI (aceita null)
+  category: string | null; 
   accountId?: string | null;
+  account?: { name: string; type: string } | null;
 }
 
 interface Account {
@@ -55,10 +58,32 @@ export function OverviewClient({
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
 
+  // 👇 Novos estados para o botão de atualizar
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
   const handleLogout = async () => {
     await fetch("/api/logout", { method: "POST" });
     router.push("/login");
     router.refresh();
+  };
+
+  // 👇 Nova função para sincronizar
+  const handleRefresh = async () => {
+    setIsRefreshing(true);
+    try {
+      const res = await fetch("/api/pluggy/sync", { method: "POST" });
+      
+      if (res.ok) {
+        toast.success("Dados atualizados com sucesso!");
+        router.refresh(); 
+      } else {
+        throw new Error("Falha na sincronização");
+      }
+    } catch (error) {
+      toast.error("Erro ao atualizar. Tente novamente.");
+    } finally {
+      setIsRefreshing(false);
+    }
   };
 
   const formatMoney = (value: number) => {
@@ -112,11 +137,20 @@ export function OverviewClient({
             {showValues ? "Ocultar" : "Mostrar"}
           </button>
           
-          <div className="flex items-center gap-2 rounded-xl bg-green-500/10 px-3 py-2 text-sm font-medium text-green-600 dark:text-green-400 border border-green-500/20">
-            <CheckCircle2 className="h-4 w-4" />
-            <span className="hidden sm:inline">Atualizado agora</span>
-            <span className="sm:hidden">Atualizado</span>
-          </div>
+          {/* 👇 BOTÃO ATUALIZAR SUBSTITUINDO A DIV VERDE */}
+          <button 
+            onClick={handleRefresh} 
+            disabled={isRefreshing}
+            className="flex items-center gap-2 rounded-xl bg-green-500/10 px-3 py-2 text-sm font-medium text-green-600 dark:text-green-400 border border-green-500/20 transition-colors hover:bg-green-500/20 disabled:opacity-70"
+          >
+            {isRefreshing ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <CheckCircle2 className="h-4 w-4" />
+            )}
+            <span className="hidden sm:inline">{isRefreshing ? "Atualizando..." : "Atualizar"}</span>
+            <span className="sm:hidden">{isRefreshing ? "..." : "Atualizar"}</span>
+          </button>
         </div>
       </header>
 
@@ -208,6 +242,7 @@ export function OverviewClient({
                         <p className="text-xs text-muted-foreground">
                           {categoryData.label} • {formatDate(tx.date)}
                         </p>
+                        <TransactionAccountTags account={tx.account} />
                       </div>
                     </div>
                     <span className={`font-semibold ${isIncome ? 'text-green-500' : 'text-foreground'}`}>
