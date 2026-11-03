@@ -7,7 +7,7 @@ export default async function OverviewPage() {
   // Busca as transações mais recentes
   const dbTransactions = await prisma.transaction.findMany({
     orderBy: { date: 'desc' },
-    take: 50,
+    where: { OR: [{ date: { lte: new Date() } }, { type: "bill", status: "pending" }] },
   });
 
   // Busca as contas

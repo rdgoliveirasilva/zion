@@ -2,6 +2,10 @@ import { NextResponse } from "next/server";
 import { PluggyClient } from "pluggy-sdk";
 import { prisma } from "@/lib/prisma";
 
+import { financialDay, pluggyTransactionType } from "@/lib/statement";
+
+export const maxDuration = 120;
+
 export async function POST(request: Request) {
   try {
     const { itemId } = await request.json();
@@ -39,6 +43,7 @@ export async function POST(request: Request) {
         await prisma.account.update({
           where: { id: existingAccount.id },
           data: {
+            type: acc.type === "CREDIT" ? "credit" : "checking",
             name: acc.name || "Conta Pluggy",
             balance: Math.round((acc.balance || 0) * 100),
             dueDate: dueDate,
@@ -65,37 +70,47 @@ export async function POST(request: Request) {
         oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
         
         const transactions = await client.fetchAllTransactions(acc.id, { dateFrom: oneYearAgo.toISOString().split("T")[0],
+          dateTo: financialDay(),
          });
 
         console.log(`Buscando transações para ${acc.name}: ${transactions.length} encontradas.`);
 
+        // One lookup per account, instead of one database round trip per transaction.
+        const existing = await prisma.transaction.findMany({ where: { accountId: dbAccountId } });
+        const key = (t: { description: string; amount: number; date: Date }) =>
+          JSON.stringify([t.description, t.amount, t.date.toISOString()]);
+        const byKey = new Map(existing.map(t => [key(t), t]));
+        const today = financialDay();
+        const seen = new Set<string>();
+        const writes = [];
         for (const tx of transactions) {
-          const exists = await prisma.transaction.findFirst({
-            where: {
-              description: tx.description,
-              amount: Math.round(Math.abs(tx.amount) * 100),
-              date: new Date(tx.date),
-              accountId: dbAccountId,
-            },
-          });
-
-          if (!exists) {
-            await prisma.transaction.create({
-              data: {
-                description: tx.description,
-                amount: Math.round(Math.abs(tx.amount) * 100),
-                date: new Date(tx.date),
-                type: tx.amount < 0 ? "expense" : "income",
-                status: "paid",
-                category: "outros",
-                accountId: dbAccountId,
-              },
-            });
+          if (financialDay(tx.date) > today) continue;
+          const data = {
+            description: tx.description,
+            amount: Math.round(Math.abs(tx.amount) * 100),
+            date: new Date(tx.date),
+            type: pluggyTransactionType(tx.type, tx.amount, acc.type),
+            status: tx.status === "PENDING" ? "pending" : "paid",
+          };
+          const identity = key(data);
+          if (seen.has(identity)) continue;
+          seen.add(identity);
+          const old = byKey.get(identity);
+          if (old) {
+            if (old.type !== data.type || old.status !== data.status) {
+              writes.push(prisma.transaction.update({ where: { id: old.id }, data: { type: data.type, status: data.status } }));
+            }
+          } else {
+            writes.push(prisma.transaction.create({ data: { ...data, category: "outros", accountId: dbAccountId } }));
             totalSaved++;
           }
         }
+        for (let offset = 0; offset < writes.length; offset += 50) {
+          await prisma.$transaction(writes.slice(offset, offset + 50));
+        }
       } catch (txError) {
         console.error(`Erro ao buscar transações da conta ${acc.id}:`, txError);
+        throw txError;
       }
     }
 

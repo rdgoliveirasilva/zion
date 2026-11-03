@@ -28,8 +28,9 @@ export default function AccountsPage() {
   const fetchAccounts = async () => {
     setIsLoading(true);
     try {
-      const res = await fetch("/api/accounts");
+      const res = await fetch("/api/accounts", { signal: AbortSignal.timeout(15000), cache: "no-store" });
       const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
       setAccounts(data);
     } catch (error) {
       console.error("Erro ao buscar contas", error);
@@ -111,7 +112,7 @@ export default function AccountsPage() {
         </div>
         
         <div className="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
-          <PluggyConnectButton />
+          <PluggyConnectButton onSynced={fetchAccounts} />
           
           <button 
             onClick={() => setIsModalOpen(true)}

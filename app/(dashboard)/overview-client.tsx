@@ -1,5 +1,6 @@
 "use client";
 
+import { financialDay, formatFinancialDate, statementIncludes } from "@/lib/statement";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { 
@@ -65,16 +66,8 @@ export function OverviewClient({
     return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(value / 100);
   };
 
-  // 👇 CORREÇÃO 1: Formatação de data robusta
-  const formatDate = (dateString: Date | string) => {
-    const d = new Date(dateString);
-    return new Intl.DateTimeFormat('pt-BR', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      timeZone: 'UTC' // Força a leitura UTC para não pular o dia
-    }).format(d);
-  };
+  const formatDate = formatFinancialDate;
+  const today = financialDay();
 
   const baseBalance = accounts
     .filter(acc => acc.type !== "credit")
@@ -84,50 +77,17 @@ export function OverviewClient({
   const totalCredit = creditCards.reduce((acc, account) => acc + account.balance, 0);
 
   const totalExpenses = transactions
-    .filter(t => (t.type === "expense" || t.type === "bill") && t.status !== "pending")
+    .filter(t => (t.type === "expense" || t.type === "bill") && t.status !== "pending" && statementIncludes(t.date, "all"))
     .reduce((acc, t) => acc + t.amount, 0);
 
   const pendingBills = transactions.filter(
     t => t.type === "bill" && t.status === "pending"
   );
 
-  // 👇 CORREÇÃO 2: Filtro de data à prova de fuso horário
-  const filteredTransactions = transactions.filter((tx) => {
-    // 1. Ignora contas a pagar pendentes (faturas futuras)
-    if (tx.type === "bill" && tx.status === "pending") return false;
-
-    // 2. Normaliza a data da transação para meia-noite UTC
-    const txDate = new Date(tx.date);
-    const txDateZero = new Date(Date.UTC(txDate.getUTCFullYear(), txDate.getUTCMonth(), txDate.getUTCDate()));
-
-    // 3. Normaliza a data de hoje para meia-noite UTC
-    const today = new Date();
-    const todayZero = new Date(Date.UTC(today.getFullYear(), today.getMonth(), today.getDate()));
-
-    if (filterType === "today") {
-      return txDateZero.getTime() === todayZero.getTime();
-    }
-    
-    if (filterType === "7d") {
-      const sevenDaysAgo = new Date(todayZero);
-      sevenDaysAgo.setUTCDate(todayZero.getUTCDate() - 7);
-      return txDateZero >= sevenDaysAgo;
-    }
-
-    if (filterType === "custom" && startDate && endDate) {
-      const start = new Date(startDate);
-      const startZero = new Date(Date.UTC(start.getFullYear(), start.getMonth(), start.getDate()));
-      
-      const end = new Date(endDate);
-      const endZero = new Date(Date.UTC(end.getFullYear(), end.getMonth(), end.getDate()));
-      // Adiciona 1 dia ao fim para pegar o dia inteiro
-      endZero.setUTCDate(endZero.getUTCDate() + 1);
-
-      return txDateZero >= startZero && txDateZero < endZero;
-    }
-
-    return true; 
-  });
+  const filteredTransactions = transactions.filter(tx =>
+    !(tx.type === "bill" && tx.status === "pending") &&
+    statementIncludes(tx.date, filterType, startDate, endDate)
+  );
 
   return (
     <div className="mx-auto w-full max-w-6xl p-4 md:p-8 animate-slide-up pb-24 md:pb-8">
@@ -219,9 +179,9 @@ export function OverviewClient({
 
             {filterType === "custom" && (
               <div className="mb-4 flex items-center gap-2 animate-slide-up">
-                <input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} className="flex-1 rounded-xl bg-background border border-border p-2 text-sm text-foreground focus:outline-none focus:border-primary" />
+                <input type="date" max={today} value={startDate} onChange={(e) => setStartDate(e.target.value)} className="flex-1 rounded-xl bg-background border border-border p-2 text-sm text-foreground focus:outline-none focus:border-primary" />
                 <span className="text-muted-foreground text-sm">até</span>
-                <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} className="flex-1 rounded-xl bg-background border border-border p-2 text-sm text-foreground focus:outline-none focus:border-primary" />
+                <input type="date" max={today} value={endDate} onChange={(e) => setEndDate(e.target.value)} className="flex-1 rounded-xl bg-background border border-border p-2 text-sm text-foreground focus:outline-none focus:border-primary" />
               </div>
             )}
             

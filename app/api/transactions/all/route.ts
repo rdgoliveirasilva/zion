@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 export async function GET() {
   try {
     const transactions = await prisma.transaction.findMany({
+      where: { date: { lte: new Date() } },
       orderBy: { date: 'desc' }, // Ordena do mais recente para o mais antigo
       include: { account: true } // Puxa os dados da conta (para pegar o nome do banco)
     });

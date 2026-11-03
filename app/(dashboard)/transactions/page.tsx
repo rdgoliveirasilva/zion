@@ -1,5 +1,6 @@
 "use client";
 
+import { formatFinancialDate, statementIncludes } from "@/lib/statement";
 import { useState, useEffect } from "react";
 import { 
   Search, Trash2, Filter, ArrowDownLeft, ArrowUpRight,
@@ -45,6 +46,7 @@ export default function TransactionsPage() {
     try {
       const res = await fetch("/api/transactions/all");
       const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
       setTransactions(data);
     } catch (error) {
       console.error("Erro ao buscar transações", error);
@@ -79,10 +81,7 @@ export default function TransactionsPage() {
     const matchesType = filterType === "all" || tx.type === filterType;
     
     // 👇 Filtro: Só mostra o que já aconteceu (data de hoje ou passada)
-    const txDate = new Date(tx.date);
-    const today = new Date();
-    today.setHours(23, 59, 59, 999); // Permite transações de hoje
-    const isPastOrToday = txDate <= today;
+    const isPastOrToday = statementIncludes(tx.date, "all");
 
     // 👇 Filtro: Ignora contas a pagar pendentes (faturas futuras)
     const isNotPendingBill = !(tx.type === "bill" && tx.status === "pending");
@@ -94,10 +93,7 @@ export default function TransactionsPage() {
     return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(value / 100);
   };
 
-  const formatDate = (dateString: Date | string) => {
-    const d = new Date(dateString);
-    return new Date(d.getTime() + d.getTimezoneOffset() * 60000).toLocaleDateString('pt-BR');
-  };
+  const formatDate = formatFinancialDate;
 
   return (
     <div className="mx-auto w-full max-w-5xl p-4 md:p-8 animate-slide-up pb-24 md:pb-8">
