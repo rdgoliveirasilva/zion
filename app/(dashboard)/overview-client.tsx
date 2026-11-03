@@ -53,7 +53,7 @@ export function OverviewClient({
   const router = useRouter();
   const [showValues, setShowValues] = useState(true);
   const [expandExplain, setExpandExplain] = useState(false);
-  const [filterType, setFilterType] = useState<"today" | "7d" | "custom">("7d");
+  const [filterType, setFilterType] = useState<"today" | "7d" | "custom">("today");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
 
