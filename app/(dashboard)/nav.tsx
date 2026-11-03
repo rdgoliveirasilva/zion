@@ -31,8 +31,8 @@ export function DashboardNav({ onOpenModal }: { onOpenModal: () => void }) {
     <>
       {/* SIDEBAR DESKTOP */}
       <aside className="hidden w-64 flex-col border-r border-border bg-card md:flex">
-        <div className="flex h-16 items-center justify-between px-6 mt-4">
-          <div className="relative h-10 w-36">
+        <div className="flex h-16 items-center justify-between px-4 mt-4">
+          <div className="relative h-16 w-44 shrink-0">
             <Image 
               src="/images/zion-logo.png" 
               alt="Zion" 

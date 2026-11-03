@@ -4,6 +4,10 @@ import { Toaster } from "sonner";
 import "./globals.css"; // 👈 O IMPORT ESTÁ AQUI E É O ÚNICO QUE DEVE ESTAR
 
 export const metadata: Metadata = {
+  icons: {
+    icon: [{ url: "/icons/zion-site.png", type: "image/png", sizes: "500x500" }],
+    apple: [{ url: "/icons/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
+  },
   title: "Zion | Assistente Financeiro",
   description: "Controle suas finanças de forma simples e inteligente.",
 };

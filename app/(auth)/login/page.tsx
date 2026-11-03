@@ -60,6 +60,7 @@ const LoginForm = ({
         </label>
         <Link
           href="/forgot-password"
+          tabIndex={-1}
           className="text-xs font-medium text-primary hover:text-primary/80"
         >
           Esqueceu a senha?
@@ -78,6 +79,8 @@ const LoginForm = ({
         />
         <button
           type="button"
+          tabIndex={-1}
+          aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
           onClick={() => setShowPassword(!showPassword)}
           className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground focus:outline-none"
         >
@@ -89,6 +92,7 @@ const LoginForm = ({
     <div className="flex items-center space-x-2">
       <input
         type="checkbox"
+        tabIndex={-1}
         id={isDesktop ? "remember-desktop" : "remember"}
         checked={rememberMe}
         onChange={(e) => setRememberMe(e.target.checked)}
@@ -98,7 +102,7 @@ const LoginForm = ({
         htmlFor={isDesktop ? "remember-desktop" : "remember"}
         className="text-sm font-medium text-foreground cursor-pointer select-none"
       >
-        Lembrar de mim por 30 dias
+        Lembrar de mim
       </label>
     </div>
 
