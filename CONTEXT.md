@@ -95,6 +95,8 @@ zion/
 │   └── schema.prisma          # Modelos Account e Transaction
 ├── public/images/             # Assets (zion-hero, zion-logo)
 └── .env                       # Credenciais (Zion, Pluggy, Neon)
+```
+
 4. Modelo de Dados (Prisma)
 Account: Representa contas bancárias e cartões de crédito. Possui type ("checking", "credit"), balance (em centavos), pluggyAccountId e dueDate (para cartões).
 
@@ -104,7 +106,7 @@ Convenções:
 
 Valores monetários sempre em centavos (integer).
 
-Datas de transação ancoradas ao meio-dia (12:00) para evitar problemas de fuso horário (UTC) na exibição.
+Datas importadas preservam o instante informado pela Pluggy. O extrato usa America/Sao_Paulo para exibição e filtros, por meio de lib/statement.ts. Lançamentos manuais usam a data escolhida ancorada ao meio-dia.
 
 5. Sistema de Autenticação (Single-User)
 Credenciais: Variáveis de ambiente (ZION_EMAIL, ZION_PASSWORD, AUTH_SECRET).
@@ -118,11 +120,11 @@ Logout: Rota em /api/logout que apaga o cookie.
 6. Integração Open Finance (Pluggy)
 MeuPluggy: Como o Zion é pessoal, usamos o conector MeuPluggy para evitar custos com o plano Trial. O usuário conecta os bancos no site do MeuPluggy e autoriza a leitura no widget do Zion.
 
-Sincronização: O onSuccess do widget chama a rota /api/pluggy/sync, que busca as contas (último ano de transações), salva no banco vinculando ao accountId e busca as faturas de cartão (/bills).
+Sincronização: O onSuccess do widget chama /api/pluggy/sync. A rotina compartilhada lib/pluggy-sync.ts busca contas e transações do último ano até hoje e também é chamada pelo webhook. Saldo e vencimento do cartão vêm dos dados da conta; não há chamada ao endpoint /bills. As gravações são atômicas e serializadas por conexão no PostgreSQL.
 
-Tela de Loading: Uma overlay em tela cheia (isSyncing) é exibida durante o processo de sync, seguida por um Toast de sucesso/erro.
+Tela de Loading: Modal com limite de tempo e fechamento; a lista de contas é atualizada ao terminar. Widget Pluggy renderizado por portal fora do contêiner animado. Não adicionar botão manual de sincronização: preferência do usuário por atualização via webhooks.
 
-Limitações Conhecidas: O Itaú não retorna faturas abertas via Open Finance. Para contornar, usamos o balanceDueDate (data de vencimento) da conta do cartão para exibir uma estimativa no card de faturas.
+Itaú: havia movimentações na Pluggy, mas nenhuma importada no Zion. A conexão foi reprocessada e 363 movimentações foram salvas; repetir a importação adicionou zero duplicatas. Não atribuir essa falha à indisponibilidade de dados do banco sem consultar a Pluggy.
 
 7. UI/UX e Design System
 Temas: Suporta Modo Claro e Escuro. O padrão é o Light. As cores usam variáveis CSS (--background, --primary, etc.) mapeadas no tailwind.config.js.
@@ -142,10 +144,23 @@ Fase 1 — Concluída
 ☑ Tela de Contas e Sincronização Pluggy
 ☑ Tela de Transações (Extrato, Filtros e Exclusão)
 ☑ Modo Light/Dark e Categorias
-Fase 2 — Em andamento (Webhooks)
-□ Configurar Webhook da Pluggy para atualização automática.
-□ Criar a rota app/api/pluggy/webhook/route.ts.
+Fase 2 — Webhooks implementados e configurados
+☑ Configurar os quatro eventos e headers na Pluggy.
+☑ Implementar app/api/pluggy/webhook/route.ts com autenticação e importação compartilhada.
+□ Confirmar uma entrega automática real no painel Events da Pluggy.
 Fase 3 — Futuro
 □ Tela de Orçamentos (/budgets)
 □ Relatórios e Gráficos (/reports)
 □ PWA Completo (Service Worker com Serwist)
+
+
+## Atualização operacional — 02/11/2026
+
+- Produção: https://meuzion.vercel.app
+- Endpoint: https://meuzion.vercel.app/api/pluggy/webhook
+- Eventos ativos existentes: `item/created`, `item/updated`, `transactions/created`, `transactions/updated`. Os quatro cadastros foram atualizados via API com o header `x-pluggy-secret`, sem criar novos cadastros.
+- O valor do header corresponde a `PLUGGY_WEBHOOK_SECRET`, salvo no `.env` local e configurado em produção. Não registrar o valor em documentação, logs ou Git. `.env` permanece ignorado pelo Git.
+- Validação em produção: POST autenticado com evento de diagnóstico não suportado retornou HTTP 200 e `{ "received": true, "ignored": true }`. Isso confirma o endpoint e a autenticação; não equivale a uma entrega automática originada pela Pluggy.
+- Headers personalizados da Pluggy são configurados somente pela API. Para visualizar os cadastros: Dashboard > Applications > lápis da aplicação > Webhooks. Para acompanhar entregas: Events.
+- Código da integração: commit `fe97958`; build e seis testes passaram. Guia complementar: `PLUGGY-WEBHOOKS.md`.
+- Limitações: eventos de exclusão não são processados; conciliação usa conta, descrição, valor e data. O webhook não agenda atualizações bancárias: depende dos eventos e da atualização da conexão na Pluggy.
