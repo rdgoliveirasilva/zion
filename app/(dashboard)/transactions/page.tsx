@@ -1,6 +1,7 @@
 "use client";
 
 import { formatFinancialDate, statementIncludes } from "@/lib/statement";
+import { TransactionAccountTags } from "@/components/ui/transaction-account-tags";
 import { useState, useEffect } from "react";
 import { 
   Search, Trash2, Filter, ArrowDownLeft, ArrowUpRight,
@@ -172,16 +173,7 @@ export default function TransactionsPage() {
                         <span className="text-xs text-muted-foreground">•</span>
                         <span className="text-xs text-muted-foreground">{formatDate(tx.date)}</span>
                         
-                        {/* 👇 TAG DO BANCO */}
-                        {tx.account && (
-                          <>
-                            <span className="text-xs text-muted-foreground">•</span>
-                            <span className="inline-flex items-center gap-1 rounded-md bg-secondary px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground border border-border">
-                              {tx.account.type === "credit" ? <CreditCard className="h-3 w-3" /> : <Landmark className="h-3 w-3" />}
-                              {tx.account.name}
-                            </span>
-                          </>
-                        )}
+                        <TransactionAccountTags account={tx.account} />
                       </div>
                     </div>
                   </div>

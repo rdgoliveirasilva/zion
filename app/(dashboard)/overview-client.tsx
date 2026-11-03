@@ -1,6 +1,7 @@
 "use client";
 
 import { financialDay, formatFinancialDate, statementIncludes } from "@/lib/statement";
+import { TransactionAccountTags } from "@/components/ui/transaction-account-tags";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { 
@@ -243,6 +244,7 @@ export function OverviewClient({
                         <p className="text-xs text-muted-foreground">
                           {categoryData.label} • {formatDate(tx.date)}
                         </p>
+                        <TransactionAccountTags account={tx.account} />
                       </div>
                     </div>
                     <span className={`font-semibold ${isIncome ? 'text-green-500' : 'text-foreground'}`}>

@@ -7,6 +7,7 @@ export default async function OverviewPage() {
   // Busca as transações mais recentes
   const dbTransactions = await prisma.transaction.findMany({
     orderBy: { date: 'desc' },
+    include: { account: { select: { name: true, type: true } } },
     where: { OR: [{ date: { lte: new Date() } }, { type: "bill", status: "pending" }] },
   });
 
@@ -22,6 +23,7 @@ export default async function OverviewPage() {
     type: t.type,
     status: t.status,
     category: t.category ?? null,
+    account: t.account,
   }));
 
 
