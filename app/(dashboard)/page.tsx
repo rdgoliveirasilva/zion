@@ -15,15 +15,16 @@ export default async function OverviewPage() {
 
   // 👇 Convertemos os dados do Prisma para o formato que o Client Component espera
   // Isso resolve o erro de `null` vs `undefined` na categoria.
-  const transactions = dbTransactions.map(t => ({
+const transactions = dbTransactions.map(t => ({
     id: t.id,
     description: t.description,
     amount: t.amount,
     date: t.date,
     type: t.type,
     status: t.status,
-    category: t.category ?? undefined, // Converte null para undefined
+    category: t.category, // 👈 Passa direto (pode ser null)
   }));
+
 
   // O mesmo para as contas (garantindo que o dueDate seja passado corretamente)
   const accounts = dbAccounts.map(a => ({

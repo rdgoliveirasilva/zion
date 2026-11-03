@@ -1,9 +1,0 @@
-{
-  "/(dashboard)/accounts/page": "app/(dashboard)/accounts/page.js",
-  "/(dashboard)/page": "app/(dashboard)/page.js",
-  "/(dashboard)/transactions/page": "app/(dashboard)/transactions/page.js",
-  "/api/accounts/route": "app/api/accounts/route.js",
-  "/api/pluggy/connect-token/route": "app/api/pluggy/connect-token/route.js",
-  "/api/pluggy/sync/route": "app/api/pluggy/sync/route.js",
-  "/api/transactions/all/route": "app/api/transactions/all/route.js"
-}
