@@ -66,20 +66,22 @@ export function OverviewClient({
     router.refresh();
   };
 
-  // 👇 Nova função para sincronizar
   const handleRefresh = async () => {
     setIsRefreshing(true);
     try {
+      // Envia um POST vazio
       const res = await fetch("/api/pluggy/sync", { method: "POST" });
       
+      const data = await res.json();
+
       if (res.ok) {
-        toast.success("Dados atualizados com sucesso!");
+        toast.success(data.message || "Dados atualizados com sucesso!");
         router.refresh(); 
       } else {
-        throw new Error("Falha na sincronização");
+        throw new Error(data.error || "Falha na sincronização");
       }
-    } catch (error) {
-      toast.error("Erro ao atualizar. Tente novamente.");
+    } catch (error: any) {
+      toast.error(error.message || "Erro ao atualizar. Tente novamente.");
     } finally {
       setIsRefreshing(false);
     }
