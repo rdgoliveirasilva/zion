@@ -7,71 +7,108 @@ import { PAID_STATUSES, normalizeMerchant, monthOffset, monthsBetween, dueDateFo
 
 export async function reconcileCommitments(db: Prisma.TransactionClient, now = new Date()) {
   await db.$queryRaw`SELECT pg_advisory_xact_lock(hashtext('zion-commitments'))::text`;
+  
   const invoices = await db.commitment.findMany({ where: { source: "card", status: "pending" } });
-  const payments = invoices.length ? await db.transaction.findMany({ where: { accountId: { in: invoices.map(b => b.key.split(":")[1]) }, type: "income", status: { in: [...PAID_STATUSES] } }, include: { commitment: { select: { id: true } } } }) : [];
+  const payments = invoices.length 
+    ? await db.transaction.findMany({ 
+        where: { accountId: { in: invoices.map(b => b.key.split(":")[1]) }, type: "income", status: { in: [...PAID_STATUSES] } }, 
+        include: { commitment: { select: { id: true } } } 
+      }) 
+    : [];
+    
   for (const match of invoicePaymentMatches(invoices, payments, financialDay(now))) {
     await db.commitment.update({ where: { id: match.commitmentId }, data: { status: "paid", transactionId: match.transactionId } });
     await db.transaction.update({ where: { id: match.transactionId }, data: { isBillPayment: true } });
   }
-  const rules=await db.recurringRule.findMany({where:{active:true}});
-  const currentMonth=financialDay(now).slice(0,7);
-  for(const rule of rules) {
-    const account=rule.accountId?await db.account.findUnique({where:{id:rule.accountId},select:{type:true}}):null;
-    const matches=(await db.transaction.findMany({where:{accountId:rule.accountId,amount:rule.amount,type:"expense",isBillPayment:false},include:{account:true,commitment:true},orderBy:{date:"asc"}}))
-      .filter(tx=>normalizeMerchant(tx.description)===rule.description);
-    // Never overwrite a manual choice, including an explicit choice of Outros.
-    const inherited=matches.filter(tx=>tx.categorySource!=="manual").map(tx=>tx.id);
-    if(inherited.length) await db.transaction.updateMany({where:{id:{in:inherited}},data:{category:rule.category,categorySource:"rule"}});
-    for(let offset=0;offset<=monthsBetween(rule.startMonth,monthOffset(currentMonth,12));offset+=rule.intervalMonths) {
-      const month=monthOffset(rule.startMonth,offset);
-      const candidates=matches.filter(tx=>financialDay(tx.date).slice(0,7)===month);
-      const key=rule.id+":"+month;
-      let existing=await db.commitment.findUnique({where:{key}});
+
+  const rules = await db.recurringRule.findMany({ where: { active: true } });
+  const currentMonth = financialDay(now).slice(0, 7);
+
+  // OTIMIZAÇÃO: Busca todas as transações relevantes de uma vez para as regras
+  const ruleAccountIds = rules.map(r => r.accountId).filter(Boolean) as string[];
+  const allTransactions = ruleAccountIds.length 
+    ? await db.transaction.findMany({
+        where: { accountId: { in: ruleAccountIds }, type: "expense", isBillPayment: false },
+        include: { account: true, commitment: true },
+      })
+    : [];
+
+  for (const rule of rules) {
+    const account = rule.accountId ? await db.account.findUnique({ where: { id: rule.accountId }, select: { type: true } }) : null;
+    
+    // OTIMIZAÇÃO: Filtra localmente em vez de buscar no banco dentro do loop
+    const matches = allTransactions
+      .filter(tx => tx.accountId === rule.accountId && tx.amount === rule.amount)
+      .filter(tx => normalizeMerchant(tx.description) === rule.description)
+      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+
+    const inherited = matches.filter(tx => tx.categorySource !== "manual").map(tx => tx.id);
+    if (inherited.length) await db.transaction.updateMany({ where: { id: { in: inherited } }, data: { category: rule.category, categorySource: "rule" } });
+
+    for (let offset = 0; offset <= monthsBetween(rule.startMonth, monthOffset(currentMonth, 12)); offset += rule.intervalMonths) {
+      const month = monthOffset(rule.startMonth, offset);
+      const candidates = matches.filter(tx => financialDay(tx.date).slice(0, 7) === month);
+      const key = rule.id + ":" + month;
+      
+      let existing = await db.commitment.findUnique({ where: { key } });
+      
       if (!existing) {
         const manual = (await db.commitment.findMany({ where: { source: "manual", ruleId: null, amount: rule.amount } }))
-          .filter(c => financialDay(c.dueDate).slice(0,7) === month && normalizeMerchant(c.description) === rule.description);
+          .filter(c => financialDay(c.dueDate).slice(0, 7) === month && normalizeMerchant(c.description) === rule.description);
         if (manual.length === 1) existing = await db.commitment.update({ where: { id: manual[0].id }, data: { key, ruleId: rule.id } });
-        // Do not add another obligation when existing manual entries are ambiguous.
         else if (manual.length > 1) continue;
       }
-      const available=candidates.filter(tx=>!tx.commitment || tx.commitment.key===key);
+
+      const available = candidates.filter(tx => !tx.commitment || tx.commitment.key === key);
       if (!existing && candidates.length && !available.length) continue;
-      // Ambiguous same-period matches remain pending for explicit review.
-      const candidate=available.length===1?available[0]:undefined;
-      const paid=!!candidate && PAID_STATUSES.has(candidate.status) && financialDay(candidate.date)<=financialDay(now);
-      const data={description:rule.description,amount:rule.amount,dueDate:dueDateFor(month,rule.dueDay),category:rule.category,coveredByCard:account?.type==="credit",ruleId:rule.id};
-      if(!existing) await db.commitment.create({data:{...data,key,status:paid?"paid":"pending",transactionId:candidate?.id}});
-      else if(existing.status!=="paid") await db.commitment.update({where:{id:existing.id},data:{...data,status:paid?"paid":"pending",transactionId:candidate?.id ?? existing.transactionId}});
+      
+      const candidate = available.length === 1 ? available[0] : undefined;
+      const paid = !!candidate && PAID_STATUSES.has(candidate.status) && financialDay(candidate.date) <= financialDay(now);
+      const data = { description: rule.description, amount: rule.amount, dueDate: dueDateFor(month, rule.dueDay), category: rule.category, coveredByCard: account?.type === "credit", ruleId: rule.id };
+      
+      if (!existing) await db.commitment.create({ data: { ...data, key, status: paid ? "paid" : "pending", transactionId: candidate?.id } });
+      else if (existing.status !== "paid") await db.commitment.update({ where: { id: existing.id }, data: { ...data, status: paid ? "paid" : "pending", transactionId: candidate?.id ?? existing.transactionId } });
     }
   }
 }
+
 export async function loadCommitments() {
   const allAccounts = await prisma.account.findMany();
   const accounts = allAccounts.filter(account => account.type === "credit");
+  
+  // OTIMIZAÇÃO: Se não houver contas de crédito, evita o processamento pesado
+  if (accounts.length === 0) {
+    return prisma.commitment.findMany({ orderBy: { dueDate: "asc" } });
+  }
+
   const months = lastTwelveMonths();
   const bills = (await Promise.all(accounts.map(async account => {
     const [current, archive] = await Promise.all([currentCardBill(account), cardBillArchive(account)]);
-    // Preserve the existing current-bill calculation; only official older bills
-    // populate the archive. Missing historical bills are not invented.
-    const byMonth = new Map(archive.filter(b => months.includes(b.dueDate.slice(0,7))).map(b => [b.dueDate.slice(0,7), b]));
-    if (current) byMonth.set(current.dueDate.slice(0,7), current);
+    const byMonth = new Map(archive.filter(b => months.includes(b.dueDate.slice(0, 7))).map(b => [b.dueDate.slice(0, 7), b]));
+    if (current) byMonth.set(current.dueDate.slice(0, 7), current);
     return [...byMonth.values()].map(bill => ({ account, bill }));
   }))).flat();
-  await prisma.$transaction(async db => {
-    await db.$queryRaw`SELECT pg_advisory_xact_lock(hashtext('zion-commitments'))::text`;
-    for (const { account, bill } of bills) {
-      if (!bill) continue;
-      const key = `card:${account.id}:${bill.dueDate.slice(0,7)}`;
-      const existing = await db.commitment.findUnique({ where: { key } });
-      const bank = institutionLabel([account.name, ...allAccounts.filter(a => account.pluggyItemId && a.pluggyItemId === account.pluggyItemId).map(a => a.name)]);
-      const name = bank && !institutionLabel([account.name]) ? `${bank} · ${account.name}` : account.name;
-      const data = { description: `Fatura ${name}`, amount: bill.amount, dueDate: dueDateFor(bill.dueDate.slice(0,7), Number(bill.dueDate.slice(8,10))), source: "card", estimated: bill.estimated ?? false };
-      if (!existing) await db.commitment.create({ data: { ...data, key } });
-      else if (existing.status !== "paid") await db.commitment.update({ where: { key }, data });
-      else if (existing.description !== data.description) await db.commitment.update({ where: { key }, data: { description: data.description } });
-    }
-  }, { timeout: 60000 });
-  await prisma.$transaction(db=>reconcileCommitments(db),{timeout:60000});
-  const [commitments, categories] = await Promise.all([prisma.commitment.findMany({orderBy:{dueDate:"asc"}}), prisma.category.findMany()]);
+
+  // OTIMIZAÇÃO: Removeu a transação pesada, agora faz update/insert direto
+  for (const { account, bill } of bills) {
+    if (!bill) continue;
+    const key = `card:${account.id}:${bill.dueDate.slice(0, 7)}`;
+    const existing = await prisma.commitment.findUnique({ where: { key } });
+    const bank = institutionLabel([account.name, ...allAccounts.filter(a => account.pluggyItemId && a.pluggyItemId === account.pluggyItemId).map(a => a.name)]);
+    const name = bank && !institutionLabel([account.name]) ? `${bank} · ${account.name}` : account.name;
+    const data = { description: `Fatura ${name}`, amount: bill.amount, dueDate: dueDateFor(bill.dueDate.slice(0, 7), Number(bill.dueDate.slice(8, 10))), source: "card", estimated: bill.estimated ?? false };
+    
+    if (!existing) await prisma.commitment.create({ data: { ...data, key } });
+    else if (existing.status !== "paid") await prisma.commitment.update({ where: { key }, data });
+    else if (existing.description !== data.description) await prisma.commitment.update({ where: { key }, data: { description: data.description } });
+  }
+
+  await prisma.$transaction(db => reconcileCommitments(db), { timeout: 60000 });
+
+  const [commitments, categories] = await Promise.all([
+    prisma.commitment.findMany({ orderBy: { dueDate: "asc" } }),
+    prisma.category.findMany()
+  ]);
+  
   return commitments.map(c => ({ ...c, color: categories.find(category => category.value === c.category)?.color }));
 }
