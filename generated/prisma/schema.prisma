@@ -30,9 +30,48 @@ model Transaction {
   accountId   String?
   account     Account? @relation(fields: [accountId], references: [id])
 
-  status   String  @default("pending") // "pending", "cleared", "reconciled"
-  category String?
+  status              String      @default("pending") // "pending", "cleared", "reconciled"
+  category            String?
+  categorySource      String      @default("imported")
+  pluggyTransactionId String?     @unique
+  isBillPayment       Boolean     @default(false)
+  commitment          Commitment?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model RecurringRule {
+  id             String       @id @default(cuid())
+  matchKey       String       @unique
+  description    String
+  accountId      String?
+  amount         Int
+  category       String
+  dueDay         Int
+  intervalMonths Int          @default(1)
+  startMonth     String
+  active         Boolean      @default(true)
+  createdAt      DateTime     @default(now())
+  commitments    Commitment[]
+}
+
+model Commitment {
+  id            String         @id @default(cuid())
+  key           String         @unique
+  description   String
+  amount        Int
+  dueDate       DateTime
+  status        String         @default("pending")
+  category      String         @default("outros")
+  source        String         @default("recurring")
+  coveredByCard Boolean        @default(false)
+  transactionId String?        @unique
+  transaction   Transaction?   @relation(fields: [transactionId], references: [id], onDelete: SetNull)
+  ruleId        String?
+  rule          RecurringRule? @relation(fields: [ruleId], references: [id], onDelete: Restrict)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  @@index([dueDate, status])
 }

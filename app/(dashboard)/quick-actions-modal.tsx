@@ -1,5 +1,6 @@
 "use client";
 
+import { CATEGORIES } from "@/lib/categories";
 import { useState, useEffect } from "react";
 import { 
   X, ArrowDownLeft, CreditCard, Landmark, ArrowRightLeft, 
@@ -14,16 +15,6 @@ interface QuickActionsModalProps {
 
 type ActionType = "menu" | "pagamento" | "cartao" | "conta" | "recebimento" | "reserva" | "transferencia";
 
-const CATEGORIES = [
-  { value: "alimentacao", label: "Alimentação", icon: Utensils },
-  { value: "transporte", label: "Transporte", icon: Car },
-  { value: "moradia", label: "Moradia", icon: Home },
-  { value: "saude", label: "Saúde", icon: HeartPulse },
-  { value: "educacao", label: "Educação", icon: GraduationCap },
-  { value: "lazer", label: "Lazer", icon: Gamepad2 },
-  { value: "compras", label: "Compras", icon: ShoppingBag },
-  { value: "outros", label: "Outros", icon: MoreHorizontal },
-];
 
 export function QuickActionsModal({ isOpen, onClose }: QuickActionsModalProps) {
   const [currentAction, setCurrentAction] = useState<ActionType>("menu");

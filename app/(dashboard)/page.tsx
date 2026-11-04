@@ -1,10 +1,12 @@
 import { currentCardBill } from "@/lib/pluggy-bills";
 import { prisma } from "@/lib/prisma";
+import { loadCommitments } from "@/lib/commitments";
 import { OverviewClient } from "./overview-client";
 
 export const dynamic = 'force-dynamic';
 
 export default async function OverviewPage() {
+  const commitments = await loadCommitments();
   // Busca as transações mais recentes
   const dbTransactions = await prisma.transaction.findMany({
     orderBy: { date: 'desc' },
@@ -24,6 +26,7 @@ export default async function OverviewPage() {
     type: t.type,
     status: t.status,
     category: t.category ?? null,
+    isBillPayment: t.isBillPayment,
     account: t.account,
   }));
 
@@ -38,5 +41,5 @@ export default async function OverviewPage() {
     currentBill: await currentCardBill(a),
   })));
 
-  return <OverviewClient transactions={transactions} accounts={accounts} />;
+  return <OverviewClient transactions={transactions} accounts={accounts} commitments={commitments} />;
 }

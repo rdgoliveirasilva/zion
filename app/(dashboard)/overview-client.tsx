@@ -3,6 +3,10 @@
 import { financialDay, formatFinancialDate, statementIncludes } from "@/lib/statement";
 import { TransactionAccountTags } from "@/components/ui/transaction-account-tags";
 import type { CurrentCardBill } from "@/lib/card-bill";
+import Link from "next/link";
+import { TransactionDetails } from "@/components/ui/transaction-details";
+import { CommitmentSummary, CommitmentList, type CommitmentView } from "@/components/ui/commitment-summary";
+import { spendingSummary } from "@/lib/commitment-rules";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { 
@@ -32,6 +36,7 @@ interface Transaction {
   date: Date;
   type: string;
   status: string;
+  isBillPayment?: boolean;
   category: string | null; 
   accountId?: string | null;
   account?: { name: string; type: string } | null;
@@ -48,12 +53,14 @@ interface Account {
 
 export function OverviewClient({ 
   transactions, 
-  accounts 
+  accounts, commitments
 }: { 
   transactions: Transaction[];
   accounts: Account[];
+  commitments: CommitmentView[];
 }) {
   const router = useRouter();
+  const [selected, setSelected] = useState<Transaction | null>(null);
   const [showValues, setShowValues] = useState(true);
   const [expandExplain, setExpandExplain] = useState(false);
   const [filterType, setFilterType] = useState<"all" | "custom">("all");
@@ -99,6 +106,8 @@ export function OverviewClient({
 
   const formatDate = formatFinancialDate;
   const today = financialDay();
+  const spending = spendingSummary(transactions, today);
+  const upcoming = commitments.filter(c => financialDay(c.dueDate).slice(0,7) === today.slice(0,7) || c.status !== "paid").slice(0,5);
 
   const baseBalance = accounts
     .filter(acc => acc.type !== "credit")
@@ -111,10 +120,6 @@ export function OverviewClient({
   const totalExpenses = transactions
     .filter(t => (t.type === "expense" || t.type === "bill") && t.status !== "pending" && statementIncludes(t.date, "all"))
     .reduce((acc, t) => acc + t.amount, 0);
-
-  const pendingBills = transactions.filter(
-    t => t.type === "bill" && t.status === "pending"
-  );
 
   const filteredTransactions = transactions.filter(tx =>
     !(tx.type === "bill" && tx.status === "pending") &&
@@ -168,10 +173,10 @@ export function OverviewClient({
       </header>
 
       <div className="grid gap-6 md:grid-cols-3">
-        <div className="md:col-span-2 space-y-6">
+        <div className="contents">
           
           {/* CARD PRINCIPAL */}
-          <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-primary to-primary/80 p-6 text-primary-foreground shadow-xl">
+          <div className="md:col-span-2 relative overflow-hidden rounded-3xl bg-gradient-to-br from-primary to-primary/80 p-6 text-primary-foreground shadow-xl">
             <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-white/10 blur-2xl" />
             
             <div className="flex items-center justify-between">
@@ -212,8 +217,15 @@ export function OverviewClient({
             </div>
           </div>
 
+          <CommitmentSummary commitments={commitments} today={today} formatMoney={formatMoney} />
+          <section className="md:col-span-2 rounded-2xl border border-border bg-card p-6 shadow-sm">
+            <h3 className="text-lg font-bold">Seus Gastos</h3><p className="mt-3 text-3xl font-bold">{formatMoney(spending.current)}</p>
+            <p className="mt-2 text-sm text-muted-foreground">{spending.variation === null ? "Sem base de comparação no mês anterior" : `${spending.variation > 0 ? "+" : ""}${spending.variation.toFixed(1).replace(".", ",")}% em relação ao mês anterior`}</p>
+            <Link href="/reports" className="mt-4 inline-block rounded-xl bg-primary/10 px-4 py-3 text-sm font-medium text-primary">Analisar gastos</Link>
+          </section>
+          <section className="rounded-2xl border border-border bg-card p-6 shadow-sm"><h3 className="mb-4 text-lg font-bold">Próximos Vencimentos</h3><CommitmentList commitments={upcoming} today={today} formatMoney={formatMoney} /><Link href="/commitments" className="mt-4 block text-center text-sm font-medium text-primary">Ver todos</Link></section>
           {/* EXTRATO */}
-          <div className="rounded-2xl bg-card p-6 shadow-sm border border-border">
+          <div className="md:col-span-2 min-w-0 rounded-2xl bg-card p-6 shadow-sm border border-border">
             <div className="mb-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
               <h3 className="text-lg font-bold text-foreground">Extrato</h3>
               
@@ -229,10 +241,10 @@ export function OverviewClient({
             </div>
 
             {filterType === "custom" && (
-              <div className="mb-4 flex items-center gap-2 animate-slide-up">
-                <input type="date" max={today} value={startDate} onChange={(e) => { setStartDate(e.target.value); setPage(1); }} className="flex-1 rounded-xl bg-background border border-border p-2 text-sm text-foreground focus:outline-none focus:border-primary" />
+              <div className="mb-4 flex flex-wrap items-center gap-2 animate-slide-up">
+                <input type="date" max={today} value={startDate} onChange={(e) => { setStartDate(e.target.value); setPage(1); }} className="min-w-0 flex-1 rounded-xl bg-background border border-border p-2 text-sm text-foreground focus:outline-none focus:border-primary" />
                 <span className="text-muted-foreground text-sm">até</span>
-                <input type="date" max={today} value={endDate} onChange={(e) => { setEndDate(e.target.value); setPage(1); }} className="flex-1 rounded-xl bg-background border border-border p-2 text-sm text-foreground focus:outline-none focus:border-primary" />
+                <input type="date" max={today} value={endDate} onChange={(e) => { setEndDate(e.target.value); setPage(1); }} className="min-w-0 flex-1 rounded-xl bg-background border border-border p-2 text-sm text-foreground focus:outline-none focus:border-primary" />
               </div>
             )}
             
@@ -249,23 +261,23 @@ export function OverviewClient({
                   const isIncome = tx.type === "income";
 
                   return (
-                  <div key={tx.id} className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className={`flex h-10 w-10 items-center justify-center rounded-full ${categoryData.color}`}>
+                  <button type="button" key={tx.id} onClick={() => setSelected(tx)} className="flex w-full items-center justify-between gap-3 rounded-xl text-left hover:bg-accent focus-visible:ring-2 focus-visible:ring-primary">
+                    <div className="flex min-w-0 items-center gap-3">
+                      <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${categoryData.color}`}>
                         <Icon className="h-5 w-5" />
                       </div>
-                      <div>
-                        <p className="font-medium text-foreground">{tx.description}</p>
+                      <div className="min-w-0">
+                        <p className="break-words font-medium text-foreground">{tx.description}</p>
                         <p className="text-xs text-muted-foreground">
                           {categoryData.label} • {formatDate(tx.date)}
                         </p>
                         <TransactionAccountTags account={tx.account} />
                       </div>
                     </div>
-                    <span className={`font-semibold ${isIncome ? 'text-green-500' : 'text-foreground'}`}>
+                    <span className={`shrink-0 text-sm font-semibold ${isIncome ? 'text-green-500' : 'text-foreground'}`}>
                       {isIncome ? "+" : "-"} {formatMoney(tx.amount)}
                     </span>
-                  </div>
+                  </button>
                 )})
               )}
             </div>
@@ -285,35 +297,6 @@ export function OverviewClient({
 
         {/* COLUNA LATERAL */}
         <div className="space-y-6">
-          <div className="rounded-2xl bg-card p-6 shadow-sm border border-border">
-            <h3 className="mb-4 text-lg font-bold text-foreground flex items-center gap-2">
-              <Clock className="h-5 w-5 text-amber-500" /> Contas a Pagar
-            </h3>
-            <div className="space-y-3">
-              {pendingBills.length > 0 ? (
-                pendingBills.map(bill => {
-                  const categoryData = CATEGORY_MAP[bill.category || "outros"] || CATEGORY_MAP.outros;
-                  return (
-                    <div key={bill.id} className="flex flex-col rounded-xl bg-amber-500/10 p-3 border border-amber-500/20">
-                      <div className="flex justify-between items-center">
-                        <span className="font-medium text-amber-700 dark:text-amber-400">{bill.description}</span>
-                        <span className="font-bold text-amber-700 dark:text-amber-400">{formatMoney(bill.amount)}</span>
-                      </div>
-                      <span className="text-xs text-amber-600/80 dark:text-amber-500 mt-1">
-                        {categoryData.label} • Vence em: {formatDate(bill.date)}
-                      </span>
-                    </div>
-                  )
-                })
-              ) : (
-                <div className="rounded-xl bg-secondary p-3 border border-border">
-                  <p className="text-sm font-medium text-foreground">Tudo em dia!</p>
-                  <p className="text-xs text-muted-foreground mt-1">Nenhuma conta pendente.</p>
-                </div>
-              )}
-            </div>
-          </div>
-
           {/* CARD DE FATURA DE CARTÃO */}
           {creditCards.length > 0 && (
             <div className="rounded-2xl bg-card p-6 shadow-sm border border-border">
@@ -347,6 +330,7 @@ export function OverviewClient({
             <h3 className="mb-4 text-lg font-bold text-foreground flex items-center gap-2">
               <Wallet className="h-5 w-5 text-primary" /> Contas Conectadas
             </h3>
+            <Link href="/accounts" className="mb-4 inline-block text-sm font-medium text-primary">Gerenciar contas</Link>
             <div className="space-y-3">
               {accounts.length > 0 ? (
                  accounts.map(acc => (
@@ -365,6 +349,7 @@ export function OverviewClient({
           </div>
         </div>
       </div>
+      {selected && <TransactionDetails key={selected.id} transaction={selected} onClose={() => setSelected(null)} onSaved={() => router.refresh()} />}
     </div>
   );
 }

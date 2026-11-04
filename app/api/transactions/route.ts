@@ -1,12 +1,19 @@
+import { hasSession } from "@/lib/session";
+import { CATEGORIES } from "@/lib/categories";
+import { normalizeMerchant, isCardBillPayment, PAID_STATUSES } from "@/lib/commitment-rules";
+import { financialDay } from "@/lib/statement";
+import { reconcileCommitments } from "@/lib/commitments";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
 export async function GET(request: Request) {
+  if (!await hasSession()) return NextResponse.json({error:"Não autorizado."},{status:401});
   const { searchParams } = new URL(request.url);
   const type = searchParams.get("type");
   const status = searchParams.get("status");
 
   try {
+    if (type === "bill") return NextResponse.json((await prisma.commitment.findMany({ where: status ? { status } : {}, orderBy: { dueDate: "asc" } })).map(c => ({ ...c, type: "bill", date: c.dueDate })));
     const whereClause: any = {};
     if (type) whereClause.type = type;
     if (status) whereClause.status = status;
@@ -22,6 +29,7 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
+  if (!await hasSession()) return NextResponse.json({ error: "Não autorizado." }, { status: 401 });
   try {
     const body = await request.json();
     const { description, amount, date, type, status, linkedBillId, category } = body;
@@ -42,16 +50,27 @@ export async function POST(request: Request) {
 
     // Se estiver pagando uma conta a pagar existente
     if (linkedBillId) {
-      const updatedBill = await prisma.transaction.update({
-        where: { id: linkedBillId },
-        data: { 
-          status: "paid", // Atualiza o status
-          date: safeDate, // Muda a data para a data do pagamento
-          category: category // Atualiza a categoria se for alterada
-        }
+      const paid = await prisma.$transaction(async db => {
+        await db.$queryRaw`SELECT pg_advisory_xact_lock(hashtext('zion-commitments'))::text`;
+        const commitment = await db.commitment.findFirstOrThrow({ where: { OR: [{ id: linkedBillId }, { transactionId: linkedBillId }] } });
+        if (commitment.status === "paid") return commitment;
+        if (amountInCents !== commitment.amount) throw new Error("O valor deve corresponder ao compromisso.");
+        if (financialDay(safeDate) > financialDay()) throw new Error("Um pagamento não pode ter data futura.");
+        const linked = commitment.transactionId ? await db.transaction.findUnique({ where: { id: commitment.transactionId } }) : null;
+        const matches = (await db.transaction.findMany({ where: { amount: amountInCents, type: "expense", status: { in: ["paid", "cleared", "reconciled"] }, commitment: null } })).filter(t =>
+          financialDay(t.date) === financialDay(safeDate) &&
+          (commitment.source === "card" ? t.isBillPayment || isCardBillPayment(t.description) : normalizeMerchant(t.description) === normalizeMerchant(commitment.description))
+        );
+        if (matches.length > 1) throw new Error("Há mais de uma movimentação correspondente. Categorize a movimentação exata pelo extrato.");
+        const payment = linked?.type === "expense" ? await db.transaction.update({ where: { id: linked.id }, data: { status: "paid" } })
+          : matches[0] ?? await db.transaction.create({ data: { description: commitment.description, amount: amountInCents, date: safeDate, type: "expense", status: "paid", category: category || commitment.category, categorySource: "manual", isBillPayment: commitment.source === "card" } });
+        return db.commitment.update({ where: { id: commitment.id }, data: { status: "paid", transactionId: payment.id } });
       });
-      // Retorna a conta atualizada SEM criar uma nova transação para evitar duplicidade
-      return NextResponse.json(updatedBill, { status: 200 });
+      return NextResponse.json(paid);
+    }
+    if (type === "bill") {
+      const commitment = await prisma.commitment.create({ data: { key: "manual:" + crypto.randomUUID(), description: description || "Conta a pagar", amount: amountInCents, dueDate: safeDate, category: category || "outros", source: "manual" } });
+      return NextResponse.json(commitment, { status: 201 });
     }
 
     // Se for um pagamento avulso ou criação de conta a pagar
@@ -63,6 +82,7 @@ export async function POST(request: Request) {
         type: type || "expense",
         status: status || "pending", 
         category: category || "outros",
+        categorySource: "manual",
       },
     });
 
@@ -74,4 +94,38 @@ export async function POST(request: Request) {
       { status: 500 }
     );
   }
+}
+export async function PATCH(request: Request) {
+  if(!await hasSession()) return NextResponse.json({error:"Não autorizado."},{status:401});
+  try {
+    const body=await request.json();
+    if(typeof body.id!=="string" || !CATEGORIES.some(c=>c.value===body.category)) return NextResponse.json({error:"Categoria inválida."},{status:400});
+    if(body.recurring && (!Number.isInteger(body.dueDay)||body.dueDay<1||body.dueDay>31||![1,3,12].includes(body.intervalMonths))) return NextResponse.json({error:"Vencimento ou frequência inválidos."},{status:400});
+    const result=await prisma.$transaction(async db=>{
+      await db.$queryRaw`SELECT pg_advisory_xact_lock(hashtext('zion-commitments'))::text`;
+      const original=await db.transaction.findUniqueOrThrow({where:{id:body.id}});
+      if(body.recurring && (original.type!=="expense" || original.isBillPayment || isCardBillPayment(original.description))) throw new Error("Selecione uma despesa, não um pagamento de fatura.");
+      const updated=await db.transaction.update({where:{id:original.id},data:{category:body.category,categorySource:"manual"}});
+      if(body.recurring) {
+        const description=normalizeMerchant(original.description);
+        const matchKey=JSON.stringify([original.accountId,description]);
+        const candidates=(await db.transaction.findMany({where:{accountId:original.accountId,amount:original.amount,type:"expense"},orderBy:{date:"asc"}})).filter(t=>normalizeMerchant(t.description)===description);
+        const data={description,accountId:original.accountId,amount:original.amount,category:body.category,dueDay:body.dueDay,intervalMonths:body.intervalMonths,startMonth:financialDay(candidates[0]?.date ?? original.date).slice(0,7)};
+        const rule = await db.recurringRule.upsert({where:{matchKey},create:{...data,matchKey},update:{category:body.category}});
+        const linked = await db.commitment.findUnique({where:{transactionId:original.id}});
+        if (linked && !linked.ruleId && linked.source !== "card") {
+          await db.commitment.update({where:{id:linked.id},data:{ruleId:rule.id,key:rule.id+":"+financialDay(original.date).slice(0,7)}});
+        }
+        await reconcileCommitments(db);
+        // The user's selected movement is an explicit identity, even if other
+        // same-value movements made automatic matching ambiguous this month.
+        const occurrence = await db.commitment.findUnique({ where: { key: rule.id + ":" + financialDay(original.date).slice(0,7) } });
+        if (occurrence && occurrence.amount === original.amount && !occurrence.transactionId && !linked) {
+          await db.commitment.update({ where: { id: occurrence.id }, data: { transactionId: original.id, status: PAID_STATUSES.has(original.status) && financialDay(original.date) <= financialDay() ? "paid" : "pending" } });
+        }
+      }
+      return updated;
+    },{timeout:60000});
+    return NextResponse.json(result);
+  } catch { return NextResponse.json({error:"Não foi possível salvar. Verifique a movimentação e tente novamente."},{status:400}); }
 }

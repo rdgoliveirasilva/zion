@@ -2,6 +2,7 @@
 
 import { formatFinancialDate, statementIncludes } from "@/lib/statement";
 import { TransactionAccountTags } from "@/components/ui/transaction-account-tags";
+import { TransactionDetails } from "@/components/ui/transaction-details";
 import { useState, useEffect } from "react";
 import { 
   Search, Trash2, Filter, ArrowDownLeft, ArrowUpRight,
@@ -35,6 +36,7 @@ interface Transaction {
 }
 
 export default function TransactionsPage() {
+  const [selected, setSelected] = useState<Transaction | null>(null);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   
@@ -167,7 +169,7 @@ export default function TransactionsPage() {
                       <Icon className="h-6 w-6" />
                     </div>
                     <div>
-                      <p className="font-medium text-foreground text-base">{tx.description}</p>
+                      <button onClick={() => setSelected(tx)} className="text-left font-medium text-foreground text-base hover:underline">{tx.description}</button>
                       <div className="flex items-center gap-2 mt-1 flex-wrap">
                         <span className="text-xs text-muted-foreground">{categoryData.label}</span>
                         <span className="text-xs text-muted-foreground">•</span>
@@ -199,6 +201,7 @@ export default function TransactionsPage() {
           </div>
         )}
       </div>
+      {selected && <TransactionDetails key={selected.id} transaction={selected} onClose={() => setSelected(null)} onSaved={fetchTransactions} />}
     </div>
   );
 }

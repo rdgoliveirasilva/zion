@@ -141,6 +141,39 @@ exports.Prisma.TransactionScalarFieldEnum = {
   accountId: 'accountId',
   status: 'status',
   category: 'category',
+  categorySource: 'categorySource',
+  pluggyTransactionId: 'pluggyTransactionId',
+  isBillPayment: 'isBillPayment',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.RecurringRuleScalarFieldEnum = {
+  id: 'id',
+  matchKey: 'matchKey',
+  description: 'description',
+  accountId: 'accountId',
+  amount: 'amount',
+  category: 'category',
+  dueDay: 'dueDay',
+  intervalMonths: 'intervalMonths',
+  startMonth: 'startMonth',
+  active: 'active',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.CommitmentScalarFieldEnum = {
+  id: 'id',
+  key: 'key',
+  description: 'description',
+  amount: 'amount',
+  dueDate: 'dueDate',
+  status: 'status',
+  category: 'category',
+  source: 'source',
+  coveredByCard: 'coveredByCard',
+  transactionId: 'transactionId',
+  ruleId: 'ruleId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -163,7 +196,9 @@ exports.Prisma.NullsOrder = {
 
 exports.Prisma.ModelName = {
   Account: 'Account',
-  Transaction: 'Transaction'
+  Transaction: 'Transaction',
+  RecurringRule: 'RecurringRule',
+  Commitment: 'Commitment'
 };
 
 /**

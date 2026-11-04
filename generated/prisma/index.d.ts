@@ -23,6 +23,16 @@ export type Account = $Result.DefaultSelection<Prisma.$AccountPayload>
  * 
  */
 export type Transaction = $Result.DefaultSelection<Prisma.$TransactionPayload>
+/**
+ * Model RecurringRule
+ * 
+ */
+export type RecurringRule = $Result.DefaultSelection<Prisma.$RecurringRulePayload>
+/**
+ * Model Commitment
+ * 
+ */
+export type Commitment = $Result.DefaultSelection<Prisma.$CommitmentPayload>
 
 /**
  * ##  Prisma Client ʲˢ
@@ -164,6 +174,26 @@ export class PrismaClient<
     * ```
     */
   get transaction(): Prisma.TransactionDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.recurringRule`: Exposes CRUD operations for the **RecurringRule** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more RecurringRules
+    * const recurringRules = await prisma.recurringRule.findMany()
+    * ```
+    */
+  get recurringRule(): Prisma.RecurringRuleDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.commitment`: Exposes CRUD operations for the **Commitment** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Commitments
+    * const commitments = await prisma.commitment.findMany()
+    * ```
+    */
+  get commitment(): Prisma.CommitmentDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -612,7 +642,9 @@ export namespace Prisma {
 
   export const ModelName: {
     Account: 'Account',
-    Transaction: 'Transaction'
+    Transaction: 'Transaction',
+    RecurringRule: 'RecurringRule',
+    Commitment: 'Commitment'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -628,7 +660,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "account" | "transaction"
+      modelProps: "account" | "transaction" | "recurringRule" | "commitment"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -780,6 +812,154 @@ export namespace Prisma {
           }
         }
       }
+      RecurringRule: {
+        payload: Prisma.$RecurringRulePayload<ExtArgs>
+        fields: Prisma.RecurringRuleFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.RecurringRuleFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RecurringRulePayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.RecurringRuleFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RecurringRulePayload>
+          }
+          findFirst: {
+            args: Prisma.RecurringRuleFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RecurringRulePayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.RecurringRuleFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RecurringRulePayload>
+          }
+          findMany: {
+            args: Prisma.RecurringRuleFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RecurringRulePayload>[]
+          }
+          create: {
+            args: Prisma.RecurringRuleCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RecurringRulePayload>
+          }
+          createMany: {
+            args: Prisma.RecurringRuleCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.RecurringRuleCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RecurringRulePayload>[]
+          }
+          delete: {
+            args: Prisma.RecurringRuleDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RecurringRulePayload>
+          }
+          update: {
+            args: Prisma.RecurringRuleUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RecurringRulePayload>
+          }
+          deleteMany: {
+            args: Prisma.RecurringRuleDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.RecurringRuleUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.RecurringRuleUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RecurringRulePayload>[]
+          }
+          upsert: {
+            args: Prisma.RecurringRuleUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RecurringRulePayload>
+          }
+          aggregate: {
+            args: Prisma.RecurringRuleAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateRecurringRule>
+          }
+          groupBy: {
+            args: Prisma.RecurringRuleGroupByArgs<ExtArgs>
+            result: $Utils.Optional<RecurringRuleGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.RecurringRuleCountArgs<ExtArgs>
+            result: $Utils.Optional<RecurringRuleCountAggregateOutputType> | number
+          }
+        }
+      }
+      Commitment: {
+        payload: Prisma.$CommitmentPayload<ExtArgs>
+        fields: Prisma.CommitmentFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.CommitmentFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CommitmentPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.CommitmentFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CommitmentPayload>
+          }
+          findFirst: {
+            args: Prisma.CommitmentFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CommitmentPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.CommitmentFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CommitmentPayload>
+          }
+          findMany: {
+            args: Prisma.CommitmentFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CommitmentPayload>[]
+          }
+          create: {
+            args: Prisma.CommitmentCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CommitmentPayload>
+          }
+          createMany: {
+            args: Prisma.CommitmentCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.CommitmentCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CommitmentPayload>[]
+          }
+          delete: {
+            args: Prisma.CommitmentDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CommitmentPayload>
+          }
+          update: {
+            args: Prisma.CommitmentUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CommitmentPayload>
+          }
+          deleteMany: {
+            args: Prisma.CommitmentDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.CommitmentUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.CommitmentUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CommitmentPayload>[]
+          }
+          upsert: {
+            args: Prisma.CommitmentUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CommitmentPayload>
+          }
+          aggregate: {
+            args: Prisma.CommitmentAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateCommitment>
+          }
+          groupBy: {
+            args: Prisma.CommitmentGroupByArgs<ExtArgs>
+            result: $Utils.Optional<CommitmentGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.CommitmentCountArgs<ExtArgs>
+            result: $Utils.Optional<CommitmentCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -905,6 +1085,8 @@ export namespace Prisma {
   export type GlobalOmitConfig = {
     account?: AccountOmit
     transaction?: TransactionOmit
+    recurringRule?: RecurringRuleOmit
+    commitment?: CommitmentOmit
   }
 
   /* Types for Logging */
@@ -1008,6 +1190,37 @@ export namespace Prisma {
    */
   export type AccountCountOutputTypeCountTransactionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: TransactionWhereInput
+  }
+
+
+  /**
+   * Count Type RecurringRuleCountOutputType
+   */
+
+  export type RecurringRuleCountOutputType = {
+    commitments: number
+  }
+
+  export type RecurringRuleCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    commitments?: boolean | RecurringRuleCountOutputTypeCountCommitmentsArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * RecurringRuleCountOutputType without action
+   */
+  export type RecurringRuleCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RecurringRuleCountOutputType
+     */
+    select?: RecurringRuleCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * RecurringRuleCountOutputType without action
+   */
+  export type RecurringRuleCountOutputTypeCountCommitmentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: CommitmentWhereInput
   }
 
 
@@ -2205,6 +2418,9 @@ export namespace Prisma {
     accountId: string | null
     status: string | null
     category: string | null
+    categorySource: string | null
+    pluggyTransactionId: string | null
+    isBillPayment: boolean | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -2218,6 +2434,9 @@ export namespace Prisma {
     accountId: string | null
     status: string | null
     category: string | null
+    categorySource: string | null
+    pluggyTransactionId: string | null
+    isBillPayment: boolean | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -2231,6 +2450,9 @@ export namespace Prisma {
     accountId: number
     status: number
     category: number
+    categorySource: number
+    pluggyTransactionId: number
+    isBillPayment: number
     createdAt: number
     updatedAt: number
     _all: number
@@ -2254,6 +2476,9 @@ export namespace Prisma {
     accountId?: true
     status?: true
     category?: true
+    categorySource?: true
+    pluggyTransactionId?: true
+    isBillPayment?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -2267,6 +2492,9 @@ export namespace Prisma {
     accountId?: true
     status?: true
     category?: true
+    categorySource?: true
+    pluggyTransactionId?: true
+    isBillPayment?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -2280,6 +2508,9 @@ export namespace Prisma {
     accountId?: true
     status?: true
     category?: true
+    categorySource?: true
+    pluggyTransactionId?: true
+    isBillPayment?: true
     createdAt?: true
     updatedAt?: true
     _all?: true
@@ -2380,6 +2611,9 @@ export namespace Prisma {
     accountId: string | null
     status: string
     category: string | null
+    categorySource: string
+    pluggyTransactionId: string | null
+    isBillPayment: boolean
     createdAt: Date
     updatedAt: Date
     _count: TransactionCountAggregateOutputType | null
@@ -2412,9 +2646,13 @@ export namespace Prisma {
     accountId?: boolean
     status?: boolean
     category?: boolean
+    categorySource?: boolean
+    pluggyTransactionId?: boolean
+    isBillPayment?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     account?: boolean | Transaction$accountArgs<ExtArgs>
+    commitment?: boolean | Transaction$commitmentArgs<ExtArgs>
   }, ExtArgs["result"]["transaction"]>
 
   export type TransactionSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -2426,6 +2664,9 @@ export namespace Prisma {
     accountId?: boolean
     status?: boolean
     category?: boolean
+    categorySource?: boolean
+    pluggyTransactionId?: boolean
+    isBillPayment?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     account?: boolean | Transaction$accountArgs<ExtArgs>
@@ -2440,6 +2681,9 @@ export namespace Prisma {
     accountId?: boolean
     status?: boolean
     category?: boolean
+    categorySource?: boolean
+    pluggyTransactionId?: boolean
+    isBillPayment?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     account?: boolean | Transaction$accountArgs<ExtArgs>
@@ -2454,13 +2698,17 @@ export namespace Prisma {
     accountId?: boolean
     status?: boolean
     category?: boolean
+    categorySource?: boolean
+    pluggyTransactionId?: boolean
+    isBillPayment?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type TransactionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "description" | "amount" | "type" | "date" | "accountId" | "status" | "category" | "createdAt" | "updatedAt", ExtArgs["result"]["transaction"]>
+  export type TransactionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "description" | "amount" | "type" | "date" | "accountId" | "status" | "category" | "categorySource" | "pluggyTransactionId" | "isBillPayment" | "createdAt" | "updatedAt", ExtArgs["result"]["transaction"]>
   export type TransactionInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     account?: boolean | Transaction$accountArgs<ExtArgs>
+    commitment?: boolean | Transaction$commitmentArgs<ExtArgs>
   }
   export type TransactionIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     account?: boolean | Transaction$accountArgs<ExtArgs>
@@ -2473,6 +2721,7 @@ export namespace Prisma {
     name: "Transaction"
     objects: {
       account: Prisma.$AccountPayload<ExtArgs> | null
+      commitment: Prisma.$CommitmentPayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -2483,6 +2732,9 @@ export namespace Prisma {
       accountId: string | null
       status: string
       category: string | null
+      categorySource: string
+      pluggyTransactionId: string | null
+      isBillPayment: boolean
       createdAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["transaction"]>
@@ -2880,6 +3132,7 @@ export namespace Prisma {
   export interface Prisma__TransactionClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     account<T extends Transaction$accountArgs<ExtArgs> = {}>(args?: Subset<T, Transaction$accountArgs<ExtArgs>>): Prisma__AccountClient<$Result.GetResult<Prisma.$AccountPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    commitment<T extends Transaction$commitmentArgs<ExtArgs> = {}>(args?: Subset<T, Transaction$commitmentArgs<ExtArgs>>): Prisma__CommitmentClient<$Result.GetResult<Prisma.$CommitmentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2917,6 +3170,9 @@ export namespace Prisma {
     readonly accountId: FieldRef<"Transaction", 'String'>
     readonly status: FieldRef<"Transaction", 'String'>
     readonly category: FieldRef<"Transaction", 'String'>
+    readonly categorySource: FieldRef<"Transaction", 'String'>
+    readonly pluggyTransactionId: FieldRef<"Transaction", 'String'>
+    readonly isBillPayment: FieldRef<"Transaction", 'Boolean'>
     readonly createdAt: FieldRef<"Transaction", 'DateTime'>
     readonly updatedAt: FieldRef<"Transaction", 'DateTime'>
   }
@@ -3339,6 +3595,25 @@ export namespace Prisma {
   }
 
   /**
+   * Transaction.commitment
+   */
+  export type Transaction$commitmentArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Commitment
+     */
+    select?: CommitmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Commitment
+     */
+    omit?: CommitmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CommitmentInclude<ExtArgs> | null
+    where?: CommitmentWhereInput
+  }
+
+  /**
    * Transaction without action
    */
   export type TransactionDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -3354,6 +3629,2448 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: TransactionInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model RecurringRule
+   */
+
+  export type AggregateRecurringRule = {
+    _count: RecurringRuleCountAggregateOutputType | null
+    _avg: RecurringRuleAvgAggregateOutputType | null
+    _sum: RecurringRuleSumAggregateOutputType | null
+    _min: RecurringRuleMinAggregateOutputType | null
+    _max: RecurringRuleMaxAggregateOutputType | null
+  }
+
+  export type RecurringRuleAvgAggregateOutputType = {
+    amount: number | null
+    dueDay: number | null
+    intervalMonths: number | null
+  }
+
+  export type RecurringRuleSumAggregateOutputType = {
+    amount: number | null
+    dueDay: number | null
+    intervalMonths: number | null
+  }
+
+  export type RecurringRuleMinAggregateOutputType = {
+    id: string | null
+    matchKey: string | null
+    description: string | null
+    accountId: string | null
+    amount: number | null
+    category: string | null
+    dueDay: number | null
+    intervalMonths: number | null
+    startMonth: string | null
+    active: boolean | null
+    createdAt: Date | null
+  }
+
+  export type RecurringRuleMaxAggregateOutputType = {
+    id: string | null
+    matchKey: string | null
+    description: string | null
+    accountId: string | null
+    amount: number | null
+    category: string | null
+    dueDay: number | null
+    intervalMonths: number | null
+    startMonth: string | null
+    active: boolean | null
+    createdAt: Date | null
+  }
+
+  export type RecurringRuleCountAggregateOutputType = {
+    id: number
+    matchKey: number
+    description: number
+    accountId: number
+    amount: number
+    category: number
+    dueDay: number
+    intervalMonths: number
+    startMonth: number
+    active: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type RecurringRuleAvgAggregateInputType = {
+    amount?: true
+    dueDay?: true
+    intervalMonths?: true
+  }
+
+  export type RecurringRuleSumAggregateInputType = {
+    amount?: true
+    dueDay?: true
+    intervalMonths?: true
+  }
+
+  export type RecurringRuleMinAggregateInputType = {
+    id?: true
+    matchKey?: true
+    description?: true
+    accountId?: true
+    amount?: true
+    category?: true
+    dueDay?: true
+    intervalMonths?: true
+    startMonth?: true
+    active?: true
+    createdAt?: true
+  }
+
+  export type RecurringRuleMaxAggregateInputType = {
+    id?: true
+    matchKey?: true
+    description?: true
+    accountId?: true
+    amount?: true
+    category?: true
+    dueDay?: true
+    intervalMonths?: true
+    startMonth?: true
+    active?: true
+    createdAt?: true
+  }
+
+  export type RecurringRuleCountAggregateInputType = {
+    id?: true
+    matchKey?: true
+    description?: true
+    accountId?: true
+    amount?: true
+    category?: true
+    dueDay?: true
+    intervalMonths?: true
+    startMonth?: true
+    active?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type RecurringRuleAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which RecurringRule to aggregate.
+     */
+    where?: RecurringRuleWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of RecurringRules to fetch.
+     */
+    orderBy?: RecurringRuleOrderByWithRelationInput | RecurringRuleOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: RecurringRuleWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` RecurringRules from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` RecurringRules.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned RecurringRules
+    **/
+    _count?: true | RecurringRuleCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: RecurringRuleAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: RecurringRuleSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: RecurringRuleMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: RecurringRuleMaxAggregateInputType
+  }
+
+  export type GetRecurringRuleAggregateType<T extends RecurringRuleAggregateArgs> = {
+        [P in keyof T & keyof AggregateRecurringRule]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateRecurringRule[P]>
+      : GetScalarType<T[P], AggregateRecurringRule[P]>
+  }
+
+
+
+
+  export type RecurringRuleGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: RecurringRuleWhereInput
+    orderBy?: RecurringRuleOrderByWithAggregationInput | RecurringRuleOrderByWithAggregationInput[]
+    by: RecurringRuleScalarFieldEnum[] | RecurringRuleScalarFieldEnum
+    having?: RecurringRuleScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: RecurringRuleCountAggregateInputType | true
+    _avg?: RecurringRuleAvgAggregateInputType
+    _sum?: RecurringRuleSumAggregateInputType
+    _min?: RecurringRuleMinAggregateInputType
+    _max?: RecurringRuleMaxAggregateInputType
+  }
+
+  export type RecurringRuleGroupByOutputType = {
+    id: string
+    matchKey: string
+    description: string
+    accountId: string | null
+    amount: number
+    category: string
+    dueDay: number
+    intervalMonths: number
+    startMonth: string
+    active: boolean
+    createdAt: Date
+    _count: RecurringRuleCountAggregateOutputType | null
+    _avg: RecurringRuleAvgAggregateOutputType | null
+    _sum: RecurringRuleSumAggregateOutputType | null
+    _min: RecurringRuleMinAggregateOutputType | null
+    _max: RecurringRuleMaxAggregateOutputType | null
+  }
+
+  type GetRecurringRuleGroupByPayload<T extends RecurringRuleGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<RecurringRuleGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof RecurringRuleGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], RecurringRuleGroupByOutputType[P]>
+            : GetScalarType<T[P], RecurringRuleGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type RecurringRuleSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    matchKey?: boolean
+    description?: boolean
+    accountId?: boolean
+    amount?: boolean
+    category?: boolean
+    dueDay?: boolean
+    intervalMonths?: boolean
+    startMonth?: boolean
+    active?: boolean
+    createdAt?: boolean
+    commitments?: boolean | RecurringRule$commitmentsArgs<ExtArgs>
+    _count?: boolean | RecurringRuleCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["recurringRule"]>
+
+  export type RecurringRuleSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    matchKey?: boolean
+    description?: boolean
+    accountId?: boolean
+    amount?: boolean
+    category?: boolean
+    dueDay?: boolean
+    intervalMonths?: boolean
+    startMonth?: boolean
+    active?: boolean
+    createdAt?: boolean
+  }, ExtArgs["result"]["recurringRule"]>
+
+  export type RecurringRuleSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    matchKey?: boolean
+    description?: boolean
+    accountId?: boolean
+    amount?: boolean
+    category?: boolean
+    dueDay?: boolean
+    intervalMonths?: boolean
+    startMonth?: boolean
+    active?: boolean
+    createdAt?: boolean
+  }, ExtArgs["result"]["recurringRule"]>
+
+  export type RecurringRuleSelectScalar = {
+    id?: boolean
+    matchKey?: boolean
+    description?: boolean
+    accountId?: boolean
+    amount?: boolean
+    category?: boolean
+    dueDay?: boolean
+    intervalMonths?: boolean
+    startMonth?: boolean
+    active?: boolean
+    createdAt?: boolean
+  }
+
+  export type RecurringRuleOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "matchKey" | "description" | "accountId" | "amount" | "category" | "dueDay" | "intervalMonths" | "startMonth" | "active" | "createdAt", ExtArgs["result"]["recurringRule"]>
+  export type RecurringRuleInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    commitments?: boolean | RecurringRule$commitmentsArgs<ExtArgs>
+    _count?: boolean | RecurringRuleCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type RecurringRuleIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+  export type RecurringRuleIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+
+  export type $RecurringRulePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "RecurringRule"
+    objects: {
+      commitments: Prisma.$CommitmentPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      matchKey: string
+      description: string
+      accountId: string | null
+      amount: number
+      category: string
+      dueDay: number
+      intervalMonths: number
+      startMonth: string
+      active: boolean
+      createdAt: Date
+    }, ExtArgs["result"]["recurringRule"]>
+    composites: {}
+  }
+
+  type RecurringRuleGetPayload<S extends boolean | null | undefined | RecurringRuleDefaultArgs> = $Result.GetResult<Prisma.$RecurringRulePayload, S>
+
+  type RecurringRuleCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<RecurringRuleFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: RecurringRuleCountAggregateInputType | true
+    }
+
+  export interface RecurringRuleDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['RecurringRule'], meta: { name: 'RecurringRule' } }
+    /**
+     * Find zero or one RecurringRule that matches the filter.
+     * @param {RecurringRuleFindUniqueArgs} args - Arguments to find a RecurringRule
+     * @example
+     * // Get one RecurringRule
+     * const recurringRule = await prisma.recurringRule.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends RecurringRuleFindUniqueArgs>(args: SelectSubset<T, RecurringRuleFindUniqueArgs<ExtArgs>>): Prisma__RecurringRuleClient<$Result.GetResult<Prisma.$RecurringRulePayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one RecurringRule that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {RecurringRuleFindUniqueOrThrowArgs} args - Arguments to find a RecurringRule
+     * @example
+     * // Get one RecurringRule
+     * const recurringRule = await prisma.recurringRule.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends RecurringRuleFindUniqueOrThrowArgs>(args: SelectSubset<T, RecurringRuleFindUniqueOrThrowArgs<ExtArgs>>): Prisma__RecurringRuleClient<$Result.GetResult<Prisma.$RecurringRulePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first RecurringRule that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RecurringRuleFindFirstArgs} args - Arguments to find a RecurringRule
+     * @example
+     * // Get one RecurringRule
+     * const recurringRule = await prisma.recurringRule.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends RecurringRuleFindFirstArgs>(args?: SelectSubset<T, RecurringRuleFindFirstArgs<ExtArgs>>): Prisma__RecurringRuleClient<$Result.GetResult<Prisma.$RecurringRulePayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first RecurringRule that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RecurringRuleFindFirstOrThrowArgs} args - Arguments to find a RecurringRule
+     * @example
+     * // Get one RecurringRule
+     * const recurringRule = await prisma.recurringRule.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends RecurringRuleFindFirstOrThrowArgs>(args?: SelectSubset<T, RecurringRuleFindFirstOrThrowArgs<ExtArgs>>): Prisma__RecurringRuleClient<$Result.GetResult<Prisma.$RecurringRulePayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more RecurringRules that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RecurringRuleFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all RecurringRules
+     * const recurringRules = await prisma.recurringRule.findMany()
+     * 
+     * // Get first 10 RecurringRules
+     * const recurringRules = await prisma.recurringRule.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const recurringRuleWithIdOnly = await prisma.recurringRule.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends RecurringRuleFindManyArgs>(args?: SelectSubset<T, RecurringRuleFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RecurringRulePayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a RecurringRule.
+     * @param {RecurringRuleCreateArgs} args - Arguments to create a RecurringRule.
+     * @example
+     * // Create one RecurringRule
+     * const RecurringRule = await prisma.recurringRule.create({
+     *   data: {
+     *     // ... data to create a RecurringRule
+     *   }
+     * })
+     * 
+     */
+    create<T extends RecurringRuleCreateArgs>(args: SelectSubset<T, RecurringRuleCreateArgs<ExtArgs>>): Prisma__RecurringRuleClient<$Result.GetResult<Prisma.$RecurringRulePayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many RecurringRules.
+     * @param {RecurringRuleCreateManyArgs} args - Arguments to create many RecurringRules.
+     * @example
+     * // Create many RecurringRules
+     * const recurringRule = await prisma.recurringRule.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends RecurringRuleCreateManyArgs>(args?: SelectSubset<T, RecurringRuleCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many RecurringRules and returns the data saved in the database.
+     * @param {RecurringRuleCreateManyAndReturnArgs} args - Arguments to create many RecurringRules.
+     * @example
+     * // Create many RecurringRules
+     * const recurringRule = await prisma.recurringRule.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many RecurringRules and only return the `id`
+     * const recurringRuleWithIdOnly = await prisma.recurringRule.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends RecurringRuleCreateManyAndReturnArgs>(args?: SelectSubset<T, RecurringRuleCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RecurringRulePayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a RecurringRule.
+     * @param {RecurringRuleDeleteArgs} args - Arguments to delete one RecurringRule.
+     * @example
+     * // Delete one RecurringRule
+     * const RecurringRule = await prisma.recurringRule.delete({
+     *   where: {
+     *     // ... filter to delete one RecurringRule
+     *   }
+     * })
+     * 
+     */
+    delete<T extends RecurringRuleDeleteArgs>(args: SelectSubset<T, RecurringRuleDeleteArgs<ExtArgs>>): Prisma__RecurringRuleClient<$Result.GetResult<Prisma.$RecurringRulePayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one RecurringRule.
+     * @param {RecurringRuleUpdateArgs} args - Arguments to update one RecurringRule.
+     * @example
+     * // Update one RecurringRule
+     * const recurringRule = await prisma.recurringRule.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends RecurringRuleUpdateArgs>(args: SelectSubset<T, RecurringRuleUpdateArgs<ExtArgs>>): Prisma__RecurringRuleClient<$Result.GetResult<Prisma.$RecurringRulePayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more RecurringRules.
+     * @param {RecurringRuleDeleteManyArgs} args - Arguments to filter RecurringRules to delete.
+     * @example
+     * // Delete a few RecurringRules
+     * const { count } = await prisma.recurringRule.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends RecurringRuleDeleteManyArgs>(args?: SelectSubset<T, RecurringRuleDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more RecurringRules.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RecurringRuleUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many RecurringRules
+     * const recurringRule = await prisma.recurringRule.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends RecurringRuleUpdateManyArgs>(args: SelectSubset<T, RecurringRuleUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more RecurringRules and returns the data updated in the database.
+     * @param {RecurringRuleUpdateManyAndReturnArgs} args - Arguments to update many RecurringRules.
+     * @example
+     * // Update many RecurringRules
+     * const recurringRule = await prisma.recurringRule.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more RecurringRules and only return the `id`
+     * const recurringRuleWithIdOnly = await prisma.recurringRule.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends RecurringRuleUpdateManyAndReturnArgs>(args: SelectSubset<T, RecurringRuleUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RecurringRulePayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one RecurringRule.
+     * @param {RecurringRuleUpsertArgs} args - Arguments to update or create a RecurringRule.
+     * @example
+     * // Update or create a RecurringRule
+     * const recurringRule = await prisma.recurringRule.upsert({
+     *   create: {
+     *     // ... data to create a RecurringRule
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the RecurringRule we want to update
+     *   }
+     * })
+     */
+    upsert<T extends RecurringRuleUpsertArgs>(args: SelectSubset<T, RecurringRuleUpsertArgs<ExtArgs>>): Prisma__RecurringRuleClient<$Result.GetResult<Prisma.$RecurringRulePayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of RecurringRules.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RecurringRuleCountArgs} args - Arguments to filter RecurringRules to count.
+     * @example
+     * // Count the number of RecurringRules
+     * const count = await prisma.recurringRule.count({
+     *   where: {
+     *     // ... the filter for the RecurringRules we want to count
+     *   }
+     * })
+    **/
+    count<T extends RecurringRuleCountArgs>(
+      args?: Subset<T, RecurringRuleCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], RecurringRuleCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a RecurringRule.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RecurringRuleAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends RecurringRuleAggregateArgs>(args: Subset<T, RecurringRuleAggregateArgs>): Prisma.PrismaPromise<GetRecurringRuleAggregateType<T>>
+
+    /**
+     * Group by RecurringRule.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RecurringRuleGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends RecurringRuleGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: RecurringRuleGroupByArgs['orderBy'] }
+        : { orderBy?: RecurringRuleGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, RecurringRuleGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetRecurringRuleGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the RecurringRule model
+   */
+  readonly fields: RecurringRuleFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for RecurringRule.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__RecurringRuleClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    commitments<T extends RecurringRule$commitmentsArgs<ExtArgs> = {}>(args?: Subset<T, RecurringRule$commitmentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CommitmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the RecurringRule model
+   */
+  interface RecurringRuleFieldRefs {
+    readonly id: FieldRef<"RecurringRule", 'String'>
+    readonly matchKey: FieldRef<"RecurringRule", 'String'>
+    readonly description: FieldRef<"RecurringRule", 'String'>
+    readonly accountId: FieldRef<"RecurringRule", 'String'>
+    readonly amount: FieldRef<"RecurringRule", 'Int'>
+    readonly category: FieldRef<"RecurringRule", 'String'>
+    readonly dueDay: FieldRef<"RecurringRule", 'Int'>
+    readonly intervalMonths: FieldRef<"RecurringRule", 'Int'>
+    readonly startMonth: FieldRef<"RecurringRule", 'String'>
+    readonly active: FieldRef<"RecurringRule", 'Boolean'>
+    readonly createdAt: FieldRef<"RecurringRule", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * RecurringRule findUnique
+   */
+  export type RecurringRuleFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RecurringRule
+     */
+    select?: RecurringRuleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RecurringRule
+     */
+    omit?: RecurringRuleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RecurringRuleInclude<ExtArgs> | null
+    /**
+     * Filter, which RecurringRule to fetch.
+     */
+    where: RecurringRuleWhereUniqueInput
+  }
+
+  /**
+   * RecurringRule findUniqueOrThrow
+   */
+  export type RecurringRuleFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RecurringRule
+     */
+    select?: RecurringRuleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RecurringRule
+     */
+    omit?: RecurringRuleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RecurringRuleInclude<ExtArgs> | null
+    /**
+     * Filter, which RecurringRule to fetch.
+     */
+    where: RecurringRuleWhereUniqueInput
+  }
+
+  /**
+   * RecurringRule findFirst
+   */
+  export type RecurringRuleFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RecurringRule
+     */
+    select?: RecurringRuleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RecurringRule
+     */
+    omit?: RecurringRuleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RecurringRuleInclude<ExtArgs> | null
+    /**
+     * Filter, which RecurringRule to fetch.
+     */
+    where?: RecurringRuleWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of RecurringRules to fetch.
+     */
+    orderBy?: RecurringRuleOrderByWithRelationInput | RecurringRuleOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for RecurringRules.
+     */
+    cursor?: RecurringRuleWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` RecurringRules from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` RecurringRules.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of RecurringRules.
+     */
+    distinct?: RecurringRuleScalarFieldEnum | RecurringRuleScalarFieldEnum[]
+  }
+
+  /**
+   * RecurringRule findFirstOrThrow
+   */
+  export type RecurringRuleFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RecurringRule
+     */
+    select?: RecurringRuleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RecurringRule
+     */
+    omit?: RecurringRuleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RecurringRuleInclude<ExtArgs> | null
+    /**
+     * Filter, which RecurringRule to fetch.
+     */
+    where?: RecurringRuleWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of RecurringRules to fetch.
+     */
+    orderBy?: RecurringRuleOrderByWithRelationInput | RecurringRuleOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for RecurringRules.
+     */
+    cursor?: RecurringRuleWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` RecurringRules from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` RecurringRules.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of RecurringRules.
+     */
+    distinct?: RecurringRuleScalarFieldEnum | RecurringRuleScalarFieldEnum[]
+  }
+
+  /**
+   * RecurringRule findMany
+   */
+  export type RecurringRuleFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RecurringRule
+     */
+    select?: RecurringRuleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RecurringRule
+     */
+    omit?: RecurringRuleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RecurringRuleInclude<ExtArgs> | null
+    /**
+     * Filter, which RecurringRules to fetch.
+     */
+    where?: RecurringRuleWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of RecurringRules to fetch.
+     */
+    orderBy?: RecurringRuleOrderByWithRelationInput | RecurringRuleOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing RecurringRules.
+     */
+    cursor?: RecurringRuleWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` RecurringRules from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` RecurringRules.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of RecurringRules.
+     */
+    distinct?: RecurringRuleScalarFieldEnum | RecurringRuleScalarFieldEnum[]
+  }
+
+  /**
+   * RecurringRule create
+   */
+  export type RecurringRuleCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RecurringRule
+     */
+    select?: RecurringRuleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RecurringRule
+     */
+    omit?: RecurringRuleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RecurringRuleInclude<ExtArgs> | null
+    /**
+     * The data needed to create a RecurringRule.
+     */
+    data: XOR<RecurringRuleCreateInput, RecurringRuleUncheckedCreateInput>
+  }
+
+  /**
+   * RecurringRule createMany
+   */
+  export type RecurringRuleCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many RecurringRules.
+     */
+    data: RecurringRuleCreateManyInput | RecurringRuleCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * RecurringRule createManyAndReturn
+   */
+  export type RecurringRuleCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RecurringRule
+     */
+    select?: RecurringRuleSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the RecurringRule
+     */
+    omit?: RecurringRuleOmit<ExtArgs> | null
+    /**
+     * The data used to create many RecurringRules.
+     */
+    data: RecurringRuleCreateManyInput | RecurringRuleCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * RecurringRule update
+   */
+  export type RecurringRuleUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RecurringRule
+     */
+    select?: RecurringRuleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RecurringRule
+     */
+    omit?: RecurringRuleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RecurringRuleInclude<ExtArgs> | null
+    /**
+     * The data needed to update a RecurringRule.
+     */
+    data: XOR<RecurringRuleUpdateInput, RecurringRuleUncheckedUpdateInput>
+    /**
+     * Choose, which RecurringRule to update.
+     */
+    where: RecurringRuleWhereUniqueInput
+  }
+
+  /**
+   * RecurringRule updateMany
+   */
+  export type RecurringRuleUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update RecurringRules.
+     */
+    data: XOR<RecurringRuleUpdateManyMutationInput, RecurringRuleUncheckedUpdateManyInput>
+    /**
+     * Filter which RecurringRules to update
+     */
+    where?: RecurringRuleWhereInput
+    /**
+     * Limit how many RecurringRules to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * RecurringRule updateManyAndReturn
+   */
+  export type RecurringRuleUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RecurringRule
+     */
+    select?: RecurringRuleSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the RecurringRule
+     */
+    omit?: RecurringRuleOmit<ExtArgs> | null
+    /**
+     * The data used to update RecurringRules.
+     */
+    data: XOR<RecurringRuleUpdateManyMutationInput, RecurringRuleUncheckedUpdateManyInput>
+    /**
+     * Filter which RecurringRules to update
+     */
+    where?: RecurringRuleWhereInput
+    /**
+     * Limit how many RecurringRules to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * RecurringRule upsert
+   */
+  export type RecurringRuleUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RecurringRule
+     */
+    select?: RecurringRuleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RecurringRule
+     */
+    omit?: RecurringRuleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RecurringRuleInclude<ExtArgs> | null
+    /**
+     * The filter to search for the RecurringRule to update in case it exists.
+     */
+    where: RecurringRuleWhereUniqueInput
+    /**
+     * In case the RecurringRule found by the `where` argument doesn't exist, create a new RecurringRule with this data.
+     */
+    create: XOR<RecurringRuleCreateInput, RecurringRuleUncheckedCreateInput>
+    /**
+     * In case the RecurringRule was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<RecurringRuleUpdateInput, RecurringRuleUncheckedUpdateInput>
+  }
+
+  /**
+   * RecurringRule delete
+   */
+  export type RecurringRuleDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RecurringRule
+     */
+    select?: RecurringRuleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RecurringRule
+     */
+    omit?: RecurringRuleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RecurringRuleInclude<ExtArgs> | null
+    /**
+     * Filter which RecurringRule to delete.
+     */
+    where: RecurringRuleWhereUniqueInput
+  }
+
+  /**
+   * RecurringRule deleteMany
+   */
+  export type RecurringRuleDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which RecurringRules to delete
+     */
+    where?: RecurringRuleWhereInput
+    /**
+     * Limit how many RecurringRules to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * RecurringRule.commitments
+   */
+  export type RecurringRule$commitmentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Commitment
+     */
+    select?: CommitmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Commitment
+     */
+    omit?: CommitmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CommitmentInclude<ExtArgs> | null
+    where?: CommitmentWhereInput
+    orderBy?: CommitmentOrderByWithRelationInput | CommitmentOrderByWithRelationInput[]
+    cursor?: CommitmentWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: CommitmentScalarFieldEnum | CommitmentScalarFieldEnum[]
+  }
+
+  /**
+   * RecurringRule without action
+   */
+  export type RecurringRuleDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RecurringRule
+     */
+    select?: RecurringRuleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RecurringRule
+     */
+    omit?: RecurringRuleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RecurringRuleInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model Commitment
+   */
+
+  export type AggregateCommitment = {
+    _count: CommitmentCountAggregateOutputType | null
+    _avg: CommitmentAvgAggregateOutputType | null
+    _sum: CommitmentSumAggregateOutputType | null
+    _min: CommitmentMinAggregateOutputType | null
+    _max: CommitmentMaxAggregateOutputType | null
+  }
+
+  export type CommitmentAvgAggregateOutputType = {
+    amount: number | null
+  }
+
+  export type CommitmentSumAggregateOutputType = {
+    amount: number | null
+  }
+
+  export type CommitmentMinAggregateOutputType = {
+    id: string | null
+    key: string | null
+    description: string | null
+    amount: number | null
+    dueDate: Date | null
+    status: string | null
+    category: string | null
+    source: string | null
+    coveredByCard: boolean | null
+    transactionId: string | null
+    ruleId: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type CommitmentMaxAggregateOutputType = {
+    id: string | null
+    key: string | null
+    description: string | null
+    amount: number | null
+    dueDate: Date | null
+    status: string | null
+    category: string | null
+    source: string | null
+    coveredByCard: boolean | null
+    transactionId: string | null
+    ruleId: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type CommitmentCountAggregateOutputType = {
+    id: number
+    key: number
+    description: number
+    amount: number
+    dueDate: number
+    status: number
+    category: number
+    source: number
+    coveredByCard: number
+    transactionId: number
+    ruleId: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type CommitmentAvgAggregateInputType = {
+    amount?: true
+  }
+
+  export type CommitmentSumAggregateInputType = {
+    amount?: true
+  }
+
+  export type CommitmentMinAggregateInputType = {
+    id?: true
+    key?: true
+    description?: true
+    amount?: true
+    dueDate?: true
+    status?: true
+    category?: true
+    source?: true
+    coveredByCard?: true
+    transactionId?: true
+    ruleId?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type CommitmentMaxAggregateInputType = {
+    id?: true
+    key?: true
+    description?: true
+    amount?: true
+    dueDate?: true
+    status?: true
+    category?: true
+    source?: true
+    coveredByCard?: true
+    transactionId?: true
+    ruleId?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type CommitmentCountAggregateInputType = {
+    id?: true
+    key?: true
+    description?: true
+    amount?: true
+    dueDate?: true
+    status?: true
+    category?: true
+    source?: true
+    coveredByCard?: true
+    transactionId?: true
+    ruleId?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type CommitmentAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Commitment to aggregate.
+     */
+    where?: CommitmentWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Commitments to fetch.
+     */
+    orderBy?: CommitmentOrderByWithRelationInput | CommitmentOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: CommitmentWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Commitments from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Commitments.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Commitments
+    **/
+    _count?: true | CommitmentCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: CommitmentAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: CommitmentSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: CommitmentMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: CommitmentMaxAggregateInputType
+  }
+
+  export type GetCommitmentAggregateType<T extends CommitmentAggregateArgs> = {
+        [P in keyof T & keyof AggregateCommitment]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateCommitment[P]>
+      : GetScalarType<T[P], AggregateCommitment[P]>
+  }
+
+
+
+
+  export type CommitmentGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: CommitmentWhereInput
+    orderBy?: CommitmentOrderByWithAggregationInput | CommitmentOrderByWithAggregationInput[]
+    by: CommitmentScalarFieldEnum[] | CommitmentScalarFieldEnum
+    having?: CommitmentScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: CommitmentCountAggregateInputType | true
+    _avg?: CommitmentAvgAggregateInputType
+    _sum?: CommitmentSumAggregateInputType
+    _min?: CommitmentMinAggregateInputType
+    _max?: CommitmentMaxAggregateInputType
+  }
+
+  export type CommitmentGroupByOutputType = {
+    id: string
+    key: string
+    description: string
+    amount: number
+    dueDate: Date
+    status: string
+    category: string
+    source: string
+    coveredByCard: boolean
+    transactionId: string | null
+    ruleId: string | null
+    createdAt: Date
+    updatedAt: Date
+    _count: CommitmentCountAggregateOutputType | null
+    _avg: CommitmentAvgAggregateOutputType | null
+    _sum: CommitmentSumAggregateOutputType | null
+    _min: CommitmentMinAggregateOutputType | null
+    _max: CommitmentMaxAggregateOutputType | null
+  }
+
+  type GetCommitmentGroupByPayload<T extends CommitmentGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<CommitmentGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof CommitmentGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], CommitmentGroupByOutputType[P]>
+            : GetScalarType<T[P], CommitmentGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type CommitmentSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    key?: boolean
+    description?: boolean
+    amount?: boolean
+    dueDate?: boolean
+    status?: boolean
+    category?: boolean
+    source?: boolean
+    coveredByCard?: boolean
+    transactionId?: boolean
+    ruleId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    transaction?: boolean | Commitment$transactionArgs<ExtArgs>
+    rule?: boolean | Commitment$ruleArgs<ExtArgs>
+  }, ExtArgs["result"]["commitment"]>
+
+  export type CommitmentSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    key?: boolean
+    description?: boolean
+    amount?: boolean
+    dueDate?: boolean
+    status?: boolean
+    category?: boolean
+    source?: boolean
+    coveredByCard?: boolean
+    transactionId?: boolean
+    ruleId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    transaction?: boolean | Commitment$transactionArgs<ExtArgs>
+    rule?: boolean | Commitment$ruleArgs<ExtArgs>
+  }, ExtArgs["result"]["commitment"]>
+
+  export type CommitmentSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    key?: boolean
+    description?: boolean
+    amount?: boolean
+    dueDate?: boolean
+    status?: boolean
+    category?: boolean
+    source?: boolean
+    coveredByCard?: boolean
+    transactionId?: boolean
+    ruleId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    transaction?: boolean | Commitment$transactionArgs<ExtArgs>
+    rule?: boolean | Commitment$ruleArgs<ExtArgs>
+  }, ExtArgs["result"]["commitment"]>
+
+  export type CommitmentSelectScalar = {
+    id?: boolean
+    key?: boolean
+    description?: boolean
+    amount?: boolean
+    dueDate?: boolean
+    status?: boolean
+    category?: boolean
+    source?: boolean
+    coveredByCard?: boolean
+    transactionId?: boolean
+    ruleId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type CommitmentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "key" | "description" | "amount" | "dueDate" | "status" | "category" | "source" | "coveredByCard" | "transactionId" | "ruleId" | "createdAt" | "updatedAt", ExtArgs["result"]["commitment"]>
+  export type CommitmentInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    transaction?: boolean | Commitment$transactionArgs<ExtArgs>
+    rule?: boolean | Commitment$ruleArgs<ExtArgs>
+  }
+  export type CommitmentIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    transaction?: boolean | Commitment$transactionArgs<ExtArgs>
+    rule?: boolean | Commitment$ruleArgs<ExtArgs>
+  }
+  export type CommitmentIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    transaction?: boolean | Commitment$transactionArgs<ExtArgs>
+    rule?: boolean | Commitment$ruleArgs<ExtArgs>
+  }
+
+  export type $CommitmentPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Commitment"
+    objects: {
+      transaction: Prisma.$TransactionPayload<ExtArgs> | null
+      rule: Prisma.$RecurringRulePayload<ExtArgs> | null
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      key: string
+      description: string
+      amount: number
+      dueDate: Date
+      status: string
+      category: string
+      source: string
+      coveredByCard: boolean
+      transactionId: string | null
+      ruleId: string | null
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["commitment"]>
+    composites: {}
+  }
+
+  type CommitmentGetPayload<S extends boolean | null | undefined | CommitmentDefaultArgs> = $Result.GetResult<Prisma.$CommitmentPayload, S>
+
+  type CommitmentCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<CommitmentFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: CommitmentCountAggregateInputType | true
+    }
+
+  export interface CommitmentDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Commitment'], meta: { name: 'Commitment' } }
+    /**
+     * Find zero or one Commitment that matches the filter.
+     * @param {CommitmentFindUniqueArgs} args - Arguments to find a Commitment
+     * @example
+     * // Get one Commitment
+     * const commitment = await prisma.commitment.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends CommitmentFindUniqueArgs>(args: SelectSubset<T, CommitmentFindUniqueArgs<ExtArgs>>): Prisma__CommitmentClient<$Result.GetResult<Prisma.$CommitmentPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Commitment that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {CommitmentFindUniqueOrThrowArgs} args - Arguments to find a Commitment
+     * @example
+     * // Get one Commitment
+     * const commitment = await prisma.commitment.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends CommitmentFindUniqueOrThrowArgs>(args: SelectSubset<T, CommitmentFindUniqueOrThrowArgs<ExtArgs>>): Prisma__CommitmentClient<$Result.GetResult<Prisma.$CommitmentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Commitment that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CommitmentFindFirstArgs} args - Arguments to find a Commitment
+     * @example
+     * // Get one Commitment
+     * const commitment = await prisma.commitment.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends CommitmentFindFirstArgs>(args?: SelectSubset<T, CommitmentFindFirstArgs<ExtArgs>>): Prisma__CommitmentClient<$Result.GetResult<Prisma.$CommitmentPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Commitment that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CommitmentFindFirstOrThrowArgs} args - Arguments to find a Commitment
+     * @example
+     * // Get one Commitment
+     * const commitment = await prisma.commitment.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends CommitmentFindFirstOrThrowArgs>(args?: SelectSubset<T, CommitmentFindFirstOrThrowArgs<ExtArgs>>): Prisma__CommitmentClient<$Result.GetResult<Prisma.$CommitmentPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Commitments that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CommitmentFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Commitments
+     * const commitments = await prisma.commitment.findMany()
+     * 
+     * // Get first 10 Commitments
+     * const commitments = await prisma.commitment.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const commitmentWithIdOnly = await prisma.commitment.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends CommitmentFindManyArgs>(args?: SelectSubset<T, CommitmentFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CommitmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Commitment.
+     * @param {CommitmentCreateArgs} args - Arguments to create a Commitment.
+     * @example
+     * // Create one Commitment
+     * const Commitment = await prisma.commitment.create({
+     *   data: {
+     *     // ... data to create a Commitment
+     *   }
+     * })
+     * 
+     */
+    create<T extends CommitmentCreateArgs>(args: SelectSubset<T, CommitmentCreateArgs<ExtArgs>>): Prisma__CommitmentClient<$Result.GetResult<Prisma.$CommitmentPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Commitments.
+     * @param {CommitmentCreateManyArgs} args - Arguments to create many Commitments.
+     * @example
+     * // Create many Commitments
+     * const commitment = await prisma.commitment.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends CommitmentCreateManyArgs>(args?: SelectSubset<T, CommitmentCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Commitments and returns the data saved in the database.
+     * @param {CommitmentCreateManyAndReturnArgs} args - Arguments to create many Commitments.
+     * @example
+     * // Create many Commitments
+     * const commitment = await prisma.commitment.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Commitments and only return the `id`
+     * const commitmentWithIdOnly = await prisma.commitment.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends CommitmentCreateManyAndReturnArgs>(args?: SelectSubset<T, CommitmentCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CommitmentPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Commitment.
+     * @param {CommitmentDeleteArgs} args - Arguments to delete one Commitment.
+     * @example
+     * // Delete one Commitment
+     * const Commitment = await prisma.commitment.delete({
+     *   where: {
+     *     // ... filter to delete one Commitment
+     *   }
+     * })
+     * 
+     */
+    delete<T extends CommitmentDeleteArgs>(args: SelectSubset<T, CommitmentDeleteArgs<ExtArgs>>): Prisma__CommitmentClient<$Result.GetResult<Prisma.$CommitmentPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Commitment.
+     * @param {CommitmentUpdateArgs} args - Arguments to update one Commitment.
+     * @example
+     * // Update one Commitment
+     * const commitment = await prisma.commitment.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends CommitmentUpdateArgs>(args: SelectSubset<T, CommitmentUpdateArgs<ExtArgs>>): Prisma__CommitmentClient<$Result.GetResult<Prisma.$CommitmentPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Commitments.
+     * @param {CommitmentDeleteManyArgs} args - Arguments to filter Commitments to delete.
+     * @example
+     * // Delete a few Commitments
+     * const { count } = await prisma.commitment.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends CommitmentDeleteManyArgs>(args?: SelectSubset<T, CommitmentDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Commitments.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CommitmentUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Commitments
+     * const commitment = await prisma.commitment.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends CommitmentUpdateManyArgs>(args: SelectSubset<T, CommitmentUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Commitments and returns the data updated in the database.
+     * @param {CommitmentUpdateManyAndReturnArgs} args - Arguments to update many Commitments.
+     * @example
+     * // Update many Commitments
+     * const commitment = await prisma.commitment.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Commitments and only return the `id`
+     * const commitmentWithIdOnly = await prisma.commitment.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends CommitmentUpdateManyAndReturnArgs>(args: SelectSubset<T, CommitmentUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CommitmentPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Commitment.
+     * @param {CommitmentUpsertArgs} args - Arguments to update or create a Commitment.
+     * @example
+     * // Update or create a Commitment
+     * const commitment = await prisma.commitment.upsert({
+     *   create: {
+     *     // ... data to create a Commitment
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Commitment we want to update
+     *   }
+     * })
+     */
+    upsert<T extends CommitmentUpsertArgs>(args: SelectSubset<T, CommitmentUpsertArgs<ExtArgs>>): Prisma__CommitmentClient<$Result.GetResult<Prisma.$CommitmentPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Commitments.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CommitmentCountArgs} args - Arguments to filter Commitments to count.
+     * @example
+     * // Count the number of Commitments
+     * const count = await prisma.commitment.count({
+     *   where: {
+     *     // ... the filter for the Commitments we want to count
+     *   }
+     * })
+    **/
+    count<T extends CommitmentCountArgs>(
+      args?: Subset<T, CommitmentCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], CommitmentCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Commitment.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CommitmentAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends CommitmentAggregateArgs>(args: Subset<T, CommitmentAggregateArgs>): Prisma.PrismaPromise<GetCommitmentAggregateType<T>>
+
+    /**
+     * Group by Commitment.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CommitmentGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends CommitmentGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: CommitmentGroupByArgs['orderBy'] }
+        : { orderBy?: CommitmentGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, CommitmentGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetCommitmentGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Commitment model
+   */
+  readonly fields: CommitmentFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Commitment.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__CommitmentClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    transaction<T extends Commitment$transactionArgs<ExtArgs> = {}>(args?: Subset<T, Commitment$transactionArgs<ExtArgs>>): Prisma__TransactionClient<$Result.GetResult<Prisma.$TransactionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    rule<T extends Commitment$ruleArgs<ExtArgs> = {}>(args?: Subset<T, Commitment$ruleArgs<ExtArgs>>): Prisma__RecurringRuleClient<$Result.GetResult<Prisma.$RecurringRulePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Commitment model
+   */
+  interface CommitmentFieldRefs {
+    readonly id: FieldRef<"Commitment", 'String'>
+    readonly key: FieldRef<"Commitment", 'String'>
+    readonly description: FieldRef<"Commitment", 'String'>
+    readonly amount: FieldRef<"Commitment", 'Int'>
+    readonly dueDate: FieldRef<"Commitment", 'DateTime'>
+    readonly status: FieldRef<"Commitment", 'String'>
+    readonly category: FieldRef<"Commitment", 'String'>
+    readonly source: FieldRef<"Commitment", 'String'>
+    readonly coveredByCard: FieldRef<"Commitment", 'Boolean'>
+    readonly transactionId: FieldRef<"Commitment", 'String'>
+    readonly ruleId: FieldRef<"Commitment", 'String'>
+    readonly createdAt: FieldRef<"Commitment", 'DateTime'>
+    readonly updatedAt: FieldRef<"Commitment", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Commitment findUnique
+   */
+  export type CommitmentFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Commitment
+     */
+    select?: CommitmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Commitment
+     */
+    omit?: CommitmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CommitmentInclude<ExtArgs> | null
+    /**
+     * Filter, which Commitment to fetch.
+     */
+    where: CommitmentWhereUniqueInput
+  }
+
+  /**
+   * Commitment findUniqueOrThrow
+   */
+  export type CommitmentFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Commitment
+     */
+    select?: CommitmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Commitment
+     */
+    omit?: CommitmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CommitmentInclude<ExtArgs> | null
+    /**
+     * Filter, which Commitment to fetch.
+     */
+    where: CommitmentWhereUniqueInput
+  }
+
+  /**
+   * Commitment findFirst
+   */
+  export type CommitmentFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Commitment
+     */
+    select?: CommitmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Commitment
+     */
+    omit?: CommitmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CommitmentInclude<ExtArgs> | null
+    /**
+     * Filter, which Commitment to fetch.
+     */
+    where?: CommitmentWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Commitments to fetch.
+     */
+    orderBy?: CommitmentOrderByWithRelationInput | CommitmentOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Commitments.
+     */
+    cursor?: CommitmentWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Commitments from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Commitments.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Commitments.
+     */
+    distinct?: CommitmentScalarFieldEnum | CommitmentScalarFieldEnum[]
+  }
+
+  /**
+   * Commitment findFirstOrThrow
+   */
+  export type CommitmentFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Commitment
+     */
+    select?: CommitmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Commitment
+     */
+    omit?: CommitmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CommitmentInclude<ExtArgs> | null
+    /**
+     * Filter, which Commitment to fetch.
+     */
+    where?: CommitmentWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Commitments to fetch.
+     */
+    orderBy?: CommitmentOrderByWithRelationInput | CommitmentOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Commitments.
+     */
+    cursor?: CommitmentWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Commitments from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Commitments.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Commitments.
+     */
+    distinct?: CommitmentScalarFieldEnum | CommitmentScalarFieldEnum[]
+  }
+
+  /**
+   * Commitment findMany
+   */
+  export type CommitmentFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Commitment
+     */
+    select?: CommitmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Commitment
+     */
+    omit?: CommitmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CommitmentInclude<ExtArgs> | null
+    /**
+     * Filter, which Commitments to fetch.
+     */
+    where?: CommitmentWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Commitments to fetch.
+     */
+    orderBy?: CommitmentOrderByWithRelationInput | CommitmentOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Commitments.
+     */
+    cursor?: CommitmentWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Commitments from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Commitments.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Commitments.
+     */
+    distinct?: CommitmentScalarFieldEnum | CommitmentScalarFieldEnum[]
+  }
+
+  /**
+   * Commitment create
+   */
+  export type CommitmentCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Commitment
+     */
+    select?: CommitmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Commitment
+     */
+    omit?: CommitmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CommitmentInclude<ExtArgs> | null
+    /**
+     * The data needed to create a Commitment.
+     */
+    data: XOR<CommitmentCreateInput, CommitmentUncheckedCreateInput>
+  }
+
+  /**
+   * Commitment createMany
+   */
+  export type CommitmentCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Commitments.
+     */
+    data: CommitmentCreateManyInput | CommitmentCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Commitment createManyAndReturn
+   */
+  export type CommitmentCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Commitment
+     */
+    select?: CommitmentSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Commitment
+     */
+    omit?: CommitmentOmit<ExtArgs> | null
+    /**
+     * The data used to create many Commitments.
+     */
+    data: CommitmentCreateManyInput | CommitmentCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CommitmentIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Commitment update
+   */
+  export type CommitmentUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Commitment
+     */
+    select?: CommitmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Commitment
+     */
+    omit?: CommitmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CommitmentInclude<ExtArgs> | null
+    /**
+     * The data needed to update a Commitment.
+     */
+    data: XOR<CommitmentUpdateInput, CommitmentUncheckedUpdateInput>
+    /**
+     * Choose, which Commitment to update.
+     */
+    where: CommitmentWhereUniqueInput
+  }
+
+  /**
+   * Commitment updateMany
+   */
+  export type CommitmentUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Commitments.
+     */
+    data: XOR<CommitmentUpdateManyMutationInput, CommitmentUncheckedUpdateManyInput>
+    /**
+     * Filter which Commitments to update
+     */
+    where?: CommitmentWhereInput
+    /**
+     * Limit how many Commitments to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Commitment updateManyAndReturn
+   */
+  export type CommitmentUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Commitment
+     */
+    select?: CommitmentSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Commitment
+     */
+    omit?: CommitmentOmit<ExtArgs> | null
+    /**
+     * The data used to update Commitments.
+     */
+    data: XOR<CommitmentUpdateManyMutationInput, CommitmentUncheckedUpdateManyInput>
+    /**
+     * Filter which Commitments to update
+     */
+    where?: CommitmentWhereInput
+    /**
+     * Limit how many Commitments to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CommitmentIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Commitment upsert
+   */
+  export type CommitmentUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Commitment
+     */
+    select?: CommitmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Commitment
+     */
+    omit?: CommitmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CommitmentInclude<ExtArgs> | null
+    /**
+     * The filter to search for the Commitment to update in case it exists.
+     */
+    where: CommitmentWhereUniqueInput
+    /**
+     * In case the Commitment found by the `where` argument doesn't exist, create a new Commitment with this data.
+     */
+    create: XOR<CommitmentCreateInput, CommitmentUncheckedCreateInput>
+    /**
+     * In case the Commitment was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<CommitmentUpdateInput, CommitmentUncheckedUpdateInput>
+  }
+
+  /**
+   * Commitment delete
+   */
+  export type CommitmentDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Commitment
+     */
+    select?: CommitmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Commitment
+     */
+    omit?: CommitmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CommitmentInclude<ExtArgs> | null
+    /**
+     * Filter which Commitment to delete.
+     */
+    where: CommitmentWhereUniqueInput
+  }
+
+  /**
+   * Commitment deleteMany
+   */
+  export type CommitmentDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Commitments to delete
+     */
+    where?: CommitmentWhereInput
+    /**
+     * Limit how many Commitments to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * Commitment.transaction
+   */
+  export type Commitment$transactionArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Transaction
+     */
+    select?: TransactionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Transaction
+     */
+    omit?: TransactionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: TransactionInclude<ExtArgs> | null
+    where?: TransactionWhereInput
+  }
+
+  /**
+   * Commitment.rule
+   */
+  export type Commitment$ruleArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RecurringRule
+     */
+    select?: RecurringRuleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RecurringRule
+     */
+    omit?: RecurringRuleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RecurringRuleInclude<ExtArgs> | null
+    where?: RecurringRuleWhereInput
+  }
+
+  /**
+   * Commitment without action
+   */
+  export type CommitmentDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Commitment
+     */
+    select?: CommitmentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Commitment
+     */
+    omit?: CommitmentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: CommitmentInclude<ExtArgs> | null
   }
 
 
@@ -3395,11 +6112,50 @@ export namespace Prisma {
     accountId: 'accountId',
     status: 'status',
     category: 'category',
+    categorySource: 'categorySource',
+    pluggyTransactionId: 'pluggyTransactionId',
+    isBillPayment: 'isBillPayment',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
 
   export type TransactionScalarFieldEnum = (typeof TransactionScalarFieldEnum)[keyof typeof TransactionScalarFieldEnum]
+
+
+  export const RecurringRuleScalarFieldEnum: {
+    id: 'id',
+    matchKey: 'matchKey',
+    description: 'description',
+    accountId: 'accountId',
+    amount: 'amount',
+    category: 'category',
+    dueDay: 'dueDay',
+    intervalMonths: 'intervalMonths',
+    startMonth: 'startMonth',
+    active: 'active',
+    createdAt: 'createdAt'
+  };
+
+  export type RecurringRuleScalarFieldEnum = (typeof RecurringRuleScalarFieldEnum)[keyof typeof RecurringRuleScalarFieldEnum]
+
+
+  export const CommitmentScalarFieldEnum: {
+    id: 'id',
+    key: 'key',
+    description: 'description',
+    amount: 'amount',
+    dueDate: 'dueDate',
+    status: 'status',
+    category: 'category',
+    source: 'source',
+    coveredByCard: 'coveredByCard',
+    transactionId: 'transactionId',
+    ruleId: 'ruleId',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type CommitmentScalarFieldEnum = (typeof CommitmentScalarFieldEnum)[keyof typeof CommitmentScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -3470,6 +6226,13 @@ export namespace Prisma {
    * Reference to a field of type 'DateTime[]'
    */
   export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'Boolean'
+   */
+  export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
     
 
 
@@ -3579,9 +6342,13 @@ export namespace Prisma {
     accountId?: StringNullableFilter<"Transaction"> | string | null
     status?: StringFilter<"Transaction"> | string
     category?: StringNullableFilter<"Transaction"> | string | null
+    categorySource?: StringFilter<"Transaction"> | string
+    pluggyTransactionId?: StringNullableFilter<"Transaction"> | string | null
+    isBillPayment?: BoolFilter<"Transaction"> | boolean
     createdAt?: DateTimeFilter<"Transaction"> | Date | string
     updatedAt?: DateTimeFilter<"Transaction"> | Date | string
     account?: XOR<AccountNullableScalarRelationFilter, AccountWhereInput> | null
+    commitment?: XOR<CommitmentNullableScalarRelationFilter, CommitmentWhereInput> | null
   }
 
   export type TransactionOrderByWithRelationInput = {
@@ -3593,13 +6360,18 @@ export namespace Prisma {
     accountId?: SortOrderInput | SortOrder
     status?: SortOrder
     category?: SortOrderInput | SortOrder
+    categorySource?: SortOrder
+    pluggyTransactionId?: SortOrderInput | SortOrder
+    isBillPayment?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     account?: AccountOrderByWithRelationInput
+    commitment?: CommitmentOrderByWithRelationInput
   }
 
   export type TransactionWhereUniqueInput = Prisma.AtLeast<{
     id?: string
+    pluggyTransactionId?: string
     AND?: TransactionWhereInput | TransactionWhereInput[]
     OR?: TransactionWhereInput[]
     NOT?: TransactionWhereInput | TransactionWhereInput[]
@@ -3610,10 +6382,13 @@ export namespace Prisma {
     accountId?: StringNullableFilter<"Transaction"> | string | null
     status?: StringFilter<"Transaction"> | string
     category?: StringNullableFilter<"Transaction"> | string | null
+    categorySource?: StringFilter<"Transaction"> | string
+    isBillPayment?: BoolFilter<"Transaction"> | boolean
     createdAt?: DateTimeFilter<"Transaction"> | Date | string
     updatedAt?: DateTimeFilter<"Transaction"> | Date | string
     account?: XOR<AccountNullableScalarRelationFilter, AccountWhereInput> | null
-  }, "id">
+    commitment?: XOR<CommitmentNullableScalarRelationFilter, CommitmentWhereInput> | null
+  }, "id" | "pluggyTransactionId">
 
   export type TransactionOrderByWithAggregationInput = {
     id?: SortOrder
@@ -3624,6 +6399,9 @@ export namespace Prisma {
     accountId?: SortOrderInput | SortOrder
     status?: SortOrder
     category?: SortOrderInput | SortOrder
+    categorySource?: SortOrder
+    pluggyTransactionId?: SortOrderInput | SortOrder
+    isBillPayment?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: TransactionCountOrderByAggregateInput
@@ -3645,8 +6423,198 @@ export namespace Prisma {
     accountId?: StringNullableWithAggregatesFilter<"Transaction"> | string | null
     status?: StringWithAggregatesFilter<"Transaction"> | string
     category?: StringNullableWithAggregatesFilter<"Transaction"> | string | null
+    categorySource?: StringWithAggregatesFilter<"Transaction"> | string
+    pluggyTransactionId?: StringNullableWithAggregatesFilter<"Transaction"> | string | null
+    isBillPayment?: BoolWithAggregatesFilter<"Transaction"> | boolean
     createdAt?: DateTimeWithAggregatesFilter<"Transaction"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Transaction"> | Date | string
+  }
+
+  export type RecurringRuleWhereInput = {
+    AND?: RecurringRuleWhereInput | RecurringRuleWhereInput[]
+    OR?: RecurringRuleWhereInput[]
+    NOT?: RecurringRuleWhereInput | RecurringRuleWhereInput[]
+    id?: StringFilter<"RecurringRule"> | string
+    matchKey?: StringFilter<"RecurringRule"> | string
+    description?: StringFilter<"RecurringRule"> | string
+    accountId?: StringNullableFilter<"RecurringRule"> | string | null
+    amount?: IntFilter<"RecurringRule"> | number
+    category?: StringFilter<"RecurringRule"> | string
+    dueDay?: IntFilter<"RecurringRule"> | number
+    intervalMonths?: IntFilter<"RecurringRule"> | number
+    startMonth?: StringFilter<"RecurringRule"> | string
+    active?: BoolFilter<"RecurringRule"> | boolean
+    createdAt?: DateTimeFilter<"RecurringRule"> | Date | string
+    commitments?: CommitmentListRelationFilter
+  }
+
+  export type RecurringRuleOrderByWithRelationInput = {
+    id?: SortOrder
+    matchKey?: SortOrder
+    description?: SortOrder
+    accountId?: SortOrderInput | SortOrder
+    amount?: SortOrder
+    category?: SortOrder
+    dueDay?: SortOrder
+    intervalMonths?: SortOrder
+    startMonth?: SortOrder
+    active?: SortOrder
+    createdAt?: SortOrder
+    commitments?: CommitmentOrderByRelationAggregateInput
+  }
+
+  export type RecurringRuleWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    matchKey?: string
+    AND?: RecurringRuleWhereInput | RecurringRuleWhereInput[]
+    OR?: RecurringRuleWhereInput[]
+    NOT?: RecurringRuleWhereInput | RecurringRuleWhereInput[]
+    description?: StringFilter<"RecurringRule"> | string
+    accountId?: StringNullableFilter<"RecurringRule"> | string | null
+    amount?: IntFilter<"RecurringRule"> | number
+    category?: StringFilter<"RecurringRule"> | string
+    dueDay?: IntFilter<"RecurringRule"> | number
+    intervalMonths?: IntFilter<"RecurringRule"> | number
+    startMonth?: StringFilter<"RecurringRule"> | string
+    active?: BoolFilter<"RecurringRule"> | boolean
+    createdAt?: DateTimeFilter<"RecurringRule"> | Date | string
+    commitments?: CommitmentListRelationFilter
+  }, "id" | "matchKey">
+
+  export type RecurringRuleOrderByWithAggregationInput = {
+    id?: SortOrder
+    matchKey?: SortOrder
+    description?: SortOrder
+    accountId?: SortOrderInput | SortOrder
+    amount?: SortOrder
+    category?: SortOrder
+    dueDay?: SortOrder
+    intervalMonths?: SortOrder
+    startMonth?: SortOrder
+    active?: SortOrder
+    createdAt?: SortOrder
+    _count?: RecurringRuleCountOrderByAggregateInput
+    _avg?: RecurringRuleAvgOrderByAggregateInput
+    _max?: RecurringRuleMaxOrderByAggregateInput
+    _min?: RecurringRuleMinOrderByAggregateInput
+    _sum?: RecurringRuleSumOrderByAggregateInput
+  }
+
+  export type RecurringRuleScalarWhereWithAggregatesInput = {
+    AND?: RecurringRuleScalarWhereWithAggregatesInput | RecurringRuleScalarWhereWithAggregatesInput[]
+    OR?: RecurringRuleScalarWhereWithAggregatesInput[]
+    NOT?: RecurringRuleScalarWhereWithAggregatesInput | RecurringRuleScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"RecurringRule"> | string
+    matchKey?: StringWithAggregatesFilter<"RecurringRule"> | string
+    description?: StringWithAggregatesFilter<"RecurringRule"> | string
+    accountId?: StringNullableWithAggregatesFilter<"RecurringRule"> | string | null
+    amount?: IntWithAggregatesFilter<"RecurringRule"> | number
+    category?: StringWithAggregatesFilter<"RecurringRule"> | string
+    dueDay?: IntWithAggregatesFilter<"RecurringRule"> | number
+    intervalMonths?: IntWithAggregatesFilter<"RecurringRule"> | number
+    startMonth?: StringWithAggregatesFilter<"RecurringRule"> | string
+    active?: BoolWithAggregatesFilter<"RecurringRule"> | boolean
+    createdAt?: DateTimeWithAggregatesFilter<"RecurringRule"> | Date | string
+  }
+
+  export type CommitmentWhereInput = {
+    AND?: CommitmentWhereInput | CommitmentWhereInput[]
+    OR?: CommitmentWhereInput[]
+    NOT?: CommitmentWhereInput | CommitmentWhereInput[]
+    id?: StringFilter<"Commitment"> | string
+    key?: StringFilter<"Commitment"> | string
+    description?: StringFilter<"Commitment"> | string
+    amount?: IntFilter<"Commitment"> | number
+    dueDate?: DateTimeFilter<"Commitment"> | Date | string
+    status?: StringFilter<"Commitment"> | string
+    category?: StringFilter<"Commitment"> | string
+    source?: StringFilter<"Commitment"> | string
+    coveredByCard?: BoolFilter<"Commitment"> | boolean
+    transactionId?: StringNullableFilter<"Commitment"> | string | null
+    ruleId?: StringNullableFilter<"Commitment"> | string | null
+    createdAt?: DateTimeFilter<"Commitment"> | Date | string
+    updatedAt?: DateTimeFilter<"Commitment"> | Date | string
+    transaction?: XOR<TransactionNullableScalarRelationFilter, TransactionWhereInput> | null
+    rule?: XOR<RecurringRuleNullableScalarRelationFilter, RecurringRuleWhereInput> | null
+  }
+
+  export type CommitmentOrderByWithRelationInput = {
+    id?: SortOrder
+    key?: SortOrder
+    description?: SortOrder
+    amount?: SortOrder
+    dueDate?: SortOrder
+    status?: SortOrder
+    category?: SortOrder
+    source?: SortOrder
+    coveredByCard?: SortOrder
+    transactionId?: SortOrderInput | SortOrder
+    ruleId?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    transaction?: TransactionOrderByWithRelationInput
+    rule?: RecurringRuleOrderByWithRelationInput
+  }
+
+  export type CommitmentWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    key?: string
+    transactionId?: string
+    AND?: CommitmentWhereInput | CommitmentWhereInput[]
+    OR?: CommitmentWhereInput[]
+    NOT?: CommitmentWhereInput | CommitmentWhereInput[]
+    description?: StringFilter<"Commitment"> | string
+    amount?: IntFilter<"Commitment"> | number
+    dueDate?: DateTimeFilter<"Commitment"> | Date | string
+    status?: StringFilter<"Commitment"> | string
+    category?: StringFilter<"Commitment"> | string
+    source?: StringFilter<"Commitment"> | string
+    coveredByCard?: BoolFilter<"Commitment"> | boolean
+    ruleId?: StringNullableFilter<"Commitment"> | string | null
+    createdAt?: DateTimeFilter<"Commitment"> | Date | string
+    updatedAt?: DateTimeFilter<"Commitment"> | Date | string
+    transaction?: XOR<TransactionNullableScalarRelationFilter, TransactionWhereInput> | null
+    rule?: XOR<RecurringRuleNullableScalarRelationFilter, RecurringRuleWhereInput> | null
+  }, "id" | "key" | "transactionId">
+
+  export type CommitmentOrderByWithAggregationInput = {
+    id?: SortOrder
+    key?: SortOrder
+    description?: SortOrder
+    amount?: SortOrder
+    dueDate?: SortOrder
+    status?: SortOrder
+    category?: SortOrder
+    source?: SortOrder
+    coveredByCard?: SortOrder
+    transactionId?: SortOrderInput | SortOrder
+    ruleId?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: CommitmentCountOrderByAggregateInput
+    _avg?: CommitmentAvgOrderByAggregateInput
+    _max?: CommitmentMaxOrderByAggregateInput
+    _min?: CommitmentMinOrderByAggregateInput
+    _sum?: CommitmentSumOrderByAggregateInput
+  }
+
+  export type CommitmentScalarWhereWithAggregatesInput = {
+    AND?: CommitmentScalarWhereWithAggregatesInput | CommitmentScalarWhereWithAggregatesInput[]
+    OR?: CommitmentScalarWhereWithAggregatesInput[]
+    NOT?: CommitmentScalarWhereWithAggregatesInput | CommitmentScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"Commitment"> | string
+    key?: StringWithAggregatesFilter<"Commitment"> | string
+    description?: StringWithAggregatesFilter<"Commitment"> | string
+    amount?: IntWithAggregatesFilter<"Commitment"> | number
+    dueDate?: DateTimeWithAggregatesFilter<"Commitment"> | Date | string
+    status?: StringWithAggregatesFilter<"Commitment"> | string
+    category?: StringWithAggregatesFilter<"Commitment"> | string
+    source?: StringWithAggregatesFilter<"Commitment"> | string
+    coveredByCard?: BoolWithAggregatesFilter<"Commitment"> | boolean
+    transactionId?: StringNullableWithAggregatesFilter<"Commitment"> | string | null
+    ruleId?: StringNullableWithAggregatesFilter<"Commitment"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"Commitment"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"Commitment"> | Date | string
   }
 
   export type AccountCreateInput = {
@@ -3745,9 +6713,13 @@ export namespace Prisma {
     date: Date | string
     status?: string
     category?: string | null
+    categorySource?: string
+    pluggyTransactionId?: string | null
+    isBillPayment?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     account?: AccountCreateNestedOneWithoutTransactionsInput
+    commitment?: CommitmentCreateNestedOneWithoutTransactionInput
   }
 
   export type TransactionUncheckedCreateInput = {
@@ -3759,8 +6731,12 @@ export namespace Prisma {
     accountId?: string | null
     status?: string
     category?: string | null
+    categorySource?: string
+    pluggyTransactionId?: string | null
+    isBillPayment?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    commitment?: CommitmentUncheckedCreateNestedOneWithoutTransactionInput
   }
 
   export type TransactionUpdateInput = {
@@ -3771,9 +6747,13 @@ export namespace Prisma {
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: StringFieldUpdateOperationsInput | string
     category?: NullableStringFieldUpdateOperationsInput | string | null
+    categorySource?: StringFieldUpdateOperationsInput | string
+    pluggyTransactionId?: NullableStringFieldUpdateOperationsInput | string | null
+    isBillPayment?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     account?: AccountUpdateOneWithoutTransactionsNestedInput
+    commitment?: CommitmentUpdateOneWithoutTransactionNestedInput
   }
 
   export type TransactionUncheckedUpdateInput = {
@@ -3785,8 +6765,12 @@ export namespace Prisma {
     accountId?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
     category?: NullableStringFieldUpdateOperationsInput | string | null
+    categorySource?: StringFieldUpdateOperationsInput | string
+    pluggyTransactionId?: NullableStringFieldUpdateOperationsInput | string | null
+    isBillPayment?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    commitment?: CommitmentUncheckedUpdateOneWithoutTransactionNestedInput
   }
 
   export type TransactionCreateManyInput = {
@@ -3798,6 +6782,9 @@ export namespace Prisma {
     accountId?: string | null
     status?: string
     category?: string | null
+    categorySource?: string
+    pluggyTransactionId?: string | null
+    isBillPayment?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -3810,6 +6797,9 @@ export namespace Prisma {
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: StringFieldUpdateOperationsInput | string
     category?: NullableStringFieldUpdateOperationsInput | string | null
+    categorySource?: StringFieldUpdateOperationsInput | string
+    pluggyTransactionId?: NullableStringFieldUpdateOperationsInput | string | null
+    isBillPayment?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -3823,6 +6813,221 @@ export namespace Prisma {
     accountId?: NullableStringFieldUpdateOperationsInput | string | null
     status?: StringFieldUpdateOperationsInput | string
     category?: NullableStringFieldUpdateOperationsInput | string | null
+    categorySource?: StringFieldUpdateOperationsInput | string
+    pluggyTransactionId?: NullableStringFieldUpdateOperationsInput | string | null
+    isBillPayment?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type RecurringRuleCreateInput = {
+    id?: string
+    matchKey: string
+    description: string
+    accountId?: string | null
+    amount: number
+    category: string
+    dueDay: number
+    intervalMonths?: number
+    startMonth: string
+    active?: boolean
+    createdAt?: Date | string
+    commitments?: CommitmentCreateNestedManyWithoutRuleInput
+  }
+
+  export type RecurringRuleUncheckedCreateInput = {
+    id?: string
+    matchKey: string
+    description: string
+    accountId?: string | null
+    amount: number
+    category: string
+    dueDay: number
+    intervalMonths?: number
+    startMonth: string
+    active?: boolean
+    createdAt?: Date | string
+    commitments?: CommitmentUncheckedCreateNestedManyWithoutRuleInput
+  }
+
+  export type RecurringRuleUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    matchKey?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    accountId?: NullableStringFieldUpdateOperationsInput | string | null
+    amount?: IntFieldUpdateOperationsInput | number
+    category?: StringFieldUpdateOperationsInput | string
+    dueDay?: IntFieldUpdateOperationsInput | number
+    intervalMonths?: IntFieldUpdateOperationsInput | number
+    startMonth?: StringFieldUpdateOperationsInput | string
+    active?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    commitments?: CommitmentUpdateManyWithoutRuleNestedInput
+  }
+
+  export type RecurringRuleUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    matchKey?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    accountId?: NullableStringFieldUpdateOperationsInput | string | null
+    amount?: IntFieldUpdateOperationsInput | number
+    category?: StringFieldUpdateOperationsInput | string
+    dueDay?: IntFieldUpdateOperationsInput | number
+    intervalMonths?: IntFieldUpdateOperationsInput | number
+    startMonth?: StringFieldUpdateOperationsInput | string
+    active?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    commitments?: CommitmentUncheckedUpdateManyWithoutRuleNestedInput
+  }
+
+  export type RecurringRuleCreateManyInput = {
+    id?: string
+    matchKey: string
+    description: string
+    accountId?: string | null
+    amount: number
+    category: string
+    dueDay: number
+    intervalMonths?: number
+    startMonth: string
+    active?: boolean
+    createdAt?: Date | string
+  }
+
+  export type RecurringRuleUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    matchKey?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    accountId?: NullableStringFieldUpdateOperationsInput | string | null
+    amount?: IntFieldUpdateOperationsInput | number
+    category?: StringFieldUpdateOperationsInput | string
+    dueDay?: IntFieldUpdateOperationsInput | number
+    intervalMonths?: IntFieldUpdateOperationsInput | number
+    startMonth?: StringFieldUpdateOperationsInput | string
+    active?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type RecurringRuleUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    matchKey?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    accountId?: NullableStringFieldUpdateOperationsInput | string | null
+    amount?: IntFieldUpdateOperationsInput | number
+    category?: StringFieldUpdateOperationsInput | string
+    dueDay?: IntFieldUpdateOperationsInput | number
+    intervalMonths?: IntFieldUpdateOperationsInput | number
+    startMonth?: StringFieldUpdateOperationsInput | string
+    active?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CommitmentCreateInput = {
+    id?: string
+    key: string
+    description: string
+    amount: number
+    dueDate: Date | string
+    status?: string
+    category?: string
+    source?: string
+    coveredByCard?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    transaction?: TransactionCreateNestedOneWithoutCommitmentInput
+    rule?: RecurringRuleCreateNestedOneWithoutCommitmentsInput
+  }
+
+  export type CommitmentUncheckedCreateInput = {
+    id?: string
+    key: string
+    description: string
+    amount: number
+    dueDate: Date | string
+    status?: string
+    category?: string
+    source?: string
+    coveredByCard?: boolean
+    transactionId?: string | null
+    ruleId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type CommitmentUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    key?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    amount?: IntFieldUpdateOperationsInput | number
+    dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: StringFieldUpdateOperationsInput | string
+    category?: StringFieldUpdateOperationsInput | string
+    source?: StringFieldUpdateOperationsInput | string
+    coveredByCard?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    transaction?: TransactionUpdateOneWithoutCommitmentNestedInput
+    rule?: RecurringRuleUpdateOneWithoutCommitmentsNestedInput
+  }
+
+  export type CommitmentUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    key?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    amount?: IntFieldUpdateOperationsInput | number
+    dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: StringFieldUpdateOperationsInput | string
+    category?: StringFieldUpdateOperationsInput | string
+    source?: StringFieldUpdateOperationsInput | string
+    coveredByCard?: BoolFieldUpdateOperationsInput | boolean
+    transactionId?: NullableStringFieldUpdateOperationsInput | string | null
+    ruleId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CommitmentCreateManyInput = {
+    id?: string
+    key: string
+    description: string
+    amount: number
+    dueDate: Date | string
+    status?: string
+    category?: string
+    source?: string
+    coveredByCard?: boolean
+    transactionId?: string | null
+    ruleId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type CommitmentUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    key?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    amount?: IntFieldUpdateOperationsInput | number
+    dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: StringFieldUpdateOperationsInput | string
+    category?: StringFieldUpdateOperationsInput | string
+    source?: StringFieldUpdateOperationsInput | string
+    coveredByCard?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CommitmentUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    key?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    amount?: IntFieldUpdateOperationsInput | number
+    dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: StringFieldUpdateOperationsInput | string
+    category?: StringFieldUpdateOperationsInput | string
+    source?: StringFieldUpdateOperationsInput | string
+    coveredByCard?: BoolFieldUpdateOperationsInput | boolean
+    transactionId?: NullableStringFieldUpdateOperationsInput | string | null
+    ruleId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -4029,9 +7234,19 @@ export namespace Prisma {
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
+  export type BoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
+  }
+
   export type AccountNullableScalarRelationFilter = {
     is?: AccountWhereInput | null
     isNot?: AccountWhereInput | null
+  }
+
+  export type CommitmentNullableScalarRelationFilter = {
+    is?: CommitmentWhereInput | null
+    isNot?: CommitmentWhereInput | null
   }
 
   export type TransactionCountOrderByAggregateInput = {
@@ -4043,6 +7258,9 @@ export namespace Prisma {
     accountId?: SortOrder
     status?: SortOrder
     category?: SortOrder
+    categorySource?: SortOrder
+    pluggyTransactionId?: SortOrder
+    isBillPayment?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -4060,6 +7278,9 @@ export namespace Prisma {
     accountId?: SortOrder
     status?: SortOrder
     category?: SortOrder
+    categorySource?: SortOrder
+    pluggyTransactionId?: SortOrder
+    isBillPayment?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -4073,11 +7294,152 @@ export namespace Prisma {
     accountId?: SortOrder
     status?: SortOrder
     category?: SortOrder
+    categorySource?: SortOrder
+    pluggyTransactionId?: SortOrder
+    isBillPayment?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
 
   export type TransactionSumOrderByAggregateInput = {
+    amount?: SortOrder
+  }
+
+  export type BoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
+  }
+
+  export type CommitmentListRelationFilter = {
+    every?: CommitmentWhereInput
+    some?: CommitmentWhereInput
+    none?: CommitmentWhereInput
+  }
+
+  export type CommitmentOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type RecurringRuleCountOrderByAggregateInput = {
+    id?: SortOrder
+    matchKey?: SortOrder
+    description?: SortOrder
+    accountId?: SortOrder
+    amount?: SortOrder
+    category?: SortOrder
+    dueDay?: SortOrder
+    intervalMonths?: SortOrder
+    startMonth?: SortOrder
+    active?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type RecurringRuleAvgOrderByAggregateInput = {
+    amount?: SortOrder
+    dueDay?: SortOrder
+    intervalMonths?: SortOrder
+  }
+
+  export type RecurringRuleMaxOrderByAggregateInput = {
+    id?: SortOrder
+    matchKey?: SortOrder
+    description?: SortOrder
+    accountId?: SortOrder
+    amount?: SortOrder
+    category?: SortOrder
+    dueDay?: SortOrder
+    intervalMonths?: SortOrder
+    startMonth?: SortOrder
+    active?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type RecurringRuleMinOrderByAggregateInput = {
+    id?: SortOrder
+    matchKey?: SortOrder
+    description?: SortOrder
+    accountId?: SortOrder
+    amount?: SortOrder
+    category?: SortOrder
+    dueDay?: SortOrder
+    intervalMonths?: SortOrder
+    startMonth?: SortOrder
+    active?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type RecurringRuleSumOrderByAggregateInput = {
+    amount?: SortOrder
+    dueDay?: SortOrder
+    intervalMonths?: SortOrder
+  }
+
+  export type TransactionNullableScalarRelationFilter = {
+    is?: TransactionWhereInput | null
+    isNot?: TransactionWhereInput | null
+  }
+
+  export type RecurringRuleNullableScalarRelationFilter = {
+    is?: RecurringRuleWhereInput | null
+    isNot?: RecurringRuleWhereInput | null
+  }
+
+  export type CommitmentCountOrderByAggregateInput = {
+    id?: SortOrder
+    key?: SortOrder
+    description?: SortOrder
+    amount?: SortOrder
+    dueDate?: SortOrder
+    status?: SortOrder
+    category?: SortOrder
+    source?: SortOrder
+    coveredByCard?: SortOrder
+    transactionId?: SortOrder
+    ruleId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type CommitmentAvgOrderByAggregateInput = {
+    amount?: SortOrder
+  }
+
+  export type CommitmentMaxOrderByAggregateInput = {
+    id?: SortOrder
+    key?: SortOrder
+    description?: SortOrder
+    amount?: SortOrder
+    dueDate?: SortOrder
+    status?: SortOrder
+    category?: SortOrder
+    source?: SortOrder
+    coveredByCard?: SortOrder
+    transactionId?: SortOrder
+    ruleId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type CommitmentMinOrderByAggregateInput = {
+    id?: SortOrder
+    key?: SortOrder
+    description?: SortOrder
+    amount?: SortOrder
+    dueDate?: SortOrder
+    status?: SortOrder
+    category?: SortOrder
+    source?: SortOrder
+    coveredByCard?: SortOrder
+    transactionId?: SortOrder
+    ruleId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type CommitmentSumOrderByAggregateInput = {
     amount?: SortOrder
   }
 
@@ -4153,6 +7515,22 @@ export namespace Prisma {
     connect?: AccountWhereUniqueInput
   }
 
+  export type CommitmentCreateNestedOneWithoutTransactionInput = {
+    create?: XOR<CommitmentCreateWithoutTransactionInput, CommitmentUncheckedCreateWithoutTransactionInput>
+    connectOrCreate?: CommitmentCreateOrConnectWithoutTransactionInput
+    connect?: CommitmentWhereUniqueInput
+  }
+
+  export type CommitmentUncheckedCreateNestedOneWithoutTransactionInput = {
+    create?: XOR<CommitmentCreateWithoutTransactionInput, CommitmentUncheckedCreateWithoutTransactionInput>
+    connectOrCreate?: CommitmentCreateOrConnectWithoutTransactionInput
+    connect?: CommitmentWhereUniqueInput
+  }
+
+  export type BoolFieldUpdateOperationsInput = {
+    set?: boolean
+  }
+
   export type AccountUpdateOneWithoutTransactionsNestedInput = {
     create?: XOR<AccountCreateWithoutTransactionsInput, AccountUncheckedCreateWithoutTransactionsInput>
     connectOrCreate?: AccountCreateOrConnectWithoutTransactionsInput
@@ -4161,6 +7539,100 @@ export namespace Prisma {
     delete?: AccountWhereInput | boolean
     connect?: AccountWhereUniqueInput
     update?: XOR<XOR<AccountUpdateToOneWithWhereWithoutTransactionsInput, AccountUpdateWithoutTransactionsInput>, AccountUncheckedUpdateWithoutTransactionsInput>
+  }
+
+  export type CommitmentUpdateOneWithoutTransactionNestedInput = {
+    create?: XOR<CommitmentCreateWithoutTransactionInput, CommitmentUncheckedCreateWithoutTransactionInput>
+    connectOrCreate?: CommitmentCreateOrConnectWithoutTransactionInput
+    upsert?: CommitmentUpsertWithoutTransactionInput
+    disconnect?: CommitmentWhereInput | boolean
+    delete?: CommitmentWhereInput | boolean
+    connect?: CommitmentWhereUniqueInput
+    update?: XOR<XOR<CommitmentUpdateToOneWithWhereWithoutTransactionInput, CommitmentUpdateWithoutTransactionInput>, CommitmentUncheckedUpdateWithoutTransactionInput>
+  }
+
+  export type CommitmentUncheckedUpdateOneWithoutTransactionNestedInput = {
+    create?: XOR<CommitmentCreateWithoutTransactionInput, CommitmentUncheckedCreateWithoutTransactionInput>
+    connectOrCreate?: CommitmentCreateOrConnectWithoutTransactionInput
+    upsert?: CommitmentUpsertWithoutTransactionInput
+    disconnect?: CommitmentWhereInput | boolean
+    delete?: CommitmentWhereInput | boolean
+    connect?: CommitmentWhereUniqueInput
+    update?: XOR<XOR<CommitmentUpdateToOneWithWhereWithoutTransactionInput, CommitmentUpdateWithoutTransactionInput>, CommitmentUncheckedUpdateWithoutTransactionInput>
+  }
+
+  export type CommitmentCreateNestedManyWithoutRuleInput = {
+    create?: XOR<CommitmentCreateWithoutRuleInput, CommitmentUncheckedCreateWithoutRuleInput> | CommitmentCreateWithoutRuleInput[] | CommitmentUncheckedCreateWithoutRuleInput[]
+    connectOrCreate?: CommitmentCreateOrConnectWithoutRuleInput | CommitmentCreateOrConnectWithoutRuleInput[]
+    createMany?: CommitmentCreateManyRuleInputEnvelope
+    connect?: CommitmentWhereUniqueInput | CommitmentWhereUniqueInput[]
+  }
+
+  export type CommitmentUncheckedCreateNestedManyWithoutRuleInput = {
+    create?: XOR<CommitmentCreateWithoutRuleInput, CommitmentUncheckedCreateWithoutRuleInput> | CommitmentCreateWithoutRuleInput[] | CommitmentUncheckedCreateWithoutRuleInput[]
+    connectOrCreate?: CommitmentCreateOrConnectWithoutRuleInput | CommitmentCreateOrConnectWithoutRuleInput[]
+    createMany?: CommitmentCreateManyRuleInputEnvelope
+    connect?: CommitmentWhereUniqueInput | CommitmentWhereUniqueInput[]
+  }
+
+  export type CommitmentUpdateManyWithoutRuleNestedInput = {
+    create?: XOR<CommitmentCreateWithoutRuleInput, CommitmentUncheckedCreateWithoutRuleInput> | CommitmentCreateWithoutRuleInput[] | CommitmentUncheckedCreateWithoutRuleInput[]
+    connectOrCreate?: CommitmentCreateOrConnectWithoutRuleInput | CommitmentCreateOrConnectWithoutRuleInput[]
+    upsert?: CommitmentUpsertWithWhereUniqueWithoutRuleInput | CommitmentUpsertWithWhereUniqueWithoutRuleInput[]
+    createMany?: CommitmentCreateManyRuleInputEnvelope
+    set?: CommitmentWhereUniqueInput | CommitmentWhereUniqueInput[]
+    disconnect?: CommitmentWhereUniqueInput | CommitmentWhereUniqueInput[]
+    delete?: CommitmentWhereUniqueInput | CommitmentWhereUniqueInput[]
+    connect?: CommitmentWhereUniqueInput | CommitmentWhereUniqueInput[]
+    update?: CommitmentUpdateWithWhereUniqueWithoutRuleInput | CommitmentUpdateWithWhereUniqueWithoutRuleInput[]
+    updateMany?: CommitmentUpdateManyWithWhereWithoutRuleInput | CommitmentUpdateManyWithWhereWithoutRuleInput[]
+    deleteMany?: CommitmentScalarWhereInput | CommitmentScalarWhereInput[]
+  }
+
+  export type CommitmentUncheckedUpdateManyWithoutRuleNestedInput = {
+    create?: XOR<CommitmentCreateWithoutRuleInput, CommitmentUncheckedCreateWithoutRuleInput> | CommitmentCreateWithoutRuleInput[] | CommitmentUncheckedCreateWithoutRuleInput[]
+    connectOrCreate?: CommitmentCreateOrConnectWithoutRuleInput | CommitmentCreateOrConnectWithoutRuleInput[]
+    upsert?: CommitmentUpsertWithWhereUniqueWithoutRuleInput | CommitmentUpsertWithWhereUniqueWithoutRuleInput[]
+    createMany?: CommitmentCreateManyRuleInputEnvelope
+    set?: CommitmentWhereUniqueInput | CommitmentWhereUniqueInput[]
+    disconnect?: CommitmentWhereUniqueInput | CommitmentWhereUniqueInput[]
+    delete?: CommitmentWhereUniqueInput | CommitmentWhereUniqueInput[]
+    connect?: CommitmentWhereUniqueInput | CommitmentWhereUniqueInput[]
+    update?: CommitmentUpdateWithWhereUniqueWithoutRuleInput | CommitmentUpdateWithWhereUniqueWithoutRuleInput[]
+    updateMany?: CommitmentUpdateManyWithWhereWithoutRuleInput | CommitmentUpdateManyWithWhereWithoutRuleInput[]
+    deleteMany?: CommitmentScalarWhereInput | CommitmentScalarWhereInput[]
+  }
+
+  export type TransactionCreateNestedOneWithoutCommitmentInput = {
+    create?: XOR<TransactionCreateWithoutCommitmentInput, TransactionUncheckedCreateWithoutCommitmentInput>
+    connectOrCreate?: TransactionCreateOrConnectWithoutCommitmentInput
+    connect?: TransactionWhereUniqueInput
+  }
+
+  export type RecurringRuleCreateNestedOneWithoutCommitmentsInput = {
+    create?: XOR<RecurringRuleCreateWithoutCommitmentsInput, RecurringRuleUncheckedCreateWithoutCommitmentsInput>
+    connectOrCreate?: RecurringRuleCreateOrConnectWithoutCommitmentsInput
+    connect?: RecurringRuleWhereUniqueInput
+  }
+
+  export type TransactionUpdateOneWithoutCommitmentNestedInput = {
+    create?: XOR<TransactionCreateWithoutCommitmentInput, TransactionUncheckedCreateWithoutCommitmentInput>
+    connectOrCreate?: TransactionCreateOrConnectWithoutCommitmentInput
+    upsert?: TransactionUpsertWithoutCommitmentInput
+    disconnect?: TransactionWhereInput | boolean
+    delete?: TransactionWhereInput | boolean
+    connect?: TransactionWhereUniqueInput
+    update?: XOR<XOR<TransactionUpdateToOneWithWhereWithoutCommitmentInput, TransactionUpdateWithoutCommitmentInput>, TransactionUncheckedUpdateWithoutCommitmentInput>
+  }
+
+  export type RecurringRuleUpdateOneWithoutCommitmentsNestedInput = {
+    create?: XOR<RecurringRuleCreateWithoutCommitmentsInput, RecurringRuleUncheckedCreateWithoutCommitmentsInput>
+    connectOrCreate?: RecurringRuleCreateOrConnectWithoutCommitmentsInput
+    upsert?: RecurringRuleUpsertWithoutCommitmentsInput
+    disconnect?: RecurringRuleWhereInput | boolean
+    delete?: RecurringRuleWhereInput | boolean
+    connect?: RecurringRuleWhereUniqueInput
+    update?: XOR<XOR<RecurringRuleUpdateToOneWithWhereWithoutCommitmentsInput, RecurringRuleUpdateWithoutCommitmentsInput>, RecurringRuleUncheckedUpdateWithoutCommitmentsInput>
   }
 
   export type NestedStringFilter<$PrismaModel = never> = {
@@ -4324,6 +7796,19 @@ export namespace Prisma {
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
+  export type NestedBoolFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolFilter<$PrismaModel> | boolean
+  }
+
+  export type NestedBoolWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: boolean | BooleanFieldRefInput<$PrismaModel>
+    not?: NestedBoolWithAggregatesFilter<$PrismaModel> | boolean
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedBoolFilter<$PrismaModel>
+    _max?: NestedBoolFilter<$PrismaModel>
+  }
+
   export type TransactionCreateWithoutAccountInput = {
     id?: string
     description: string
@@ -4332,8 +7817,12 @@ export namespace Prisma {
     date: Date | string
     status?: string
     category?: string | null
+    categorySource?: string
+    pluggyTransactionId?: string | null
+    isBillPayment?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    commitment?: CommitmentCreateNestedOneWithoutTransactionInput
   }
 
   export type TransactionUncheckedCreateWithoutAccountInput = {
@@ -4344,8 +7833,12 @@ export namespace Prisma {
     date: Date | string
     status?: string
     category?: string | null
+    categorySource?: string
+    pluggyTransactionId?: string | null
+    isBillPayment?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    commitment?: CommitmentUncheckedCreateNestedOneWithoutTransactionInput
   }
 
   export type TransactionCreateOrConnectWithoutAccountInput = {
@@ -4386,6 +7879,9 @@ export namespace Prisma {
     accountId?: StringNullableFilter<"Transaction"> | string | null
     status?: StringFilter<"Transaction"> | string
     category?: StringNullableFilter<"Transaction"> | string | null
+    categorySource?: StringFilter<"Transaction"> | string
+    pluggyTransactionId?: StringNullableFilter<"Transaction"> | string | null
+    isBillPayment?: BoolFilter<"Transaction"> | boolean
     createdAt?: DateTimeFilter<"Transaction"> | Date | string
     updatedAt?: DateTimeFilter<"Transaction"> | Date | string
   }
@@ -4417,6 +7913,41 @@ export namespace Prisma {
   export type AccountCreateOrConnectWithoutTransactionsInput = {
     where: AccountWhereUniqueInput
     create: XOR<AccountCreateWithoutTransactionsInput, AccountUncheckedCreateWithoutTransactionsInput>
+  }
+
+  export type CommitmentCreateWithoutTransactionInput = {
+    id?: string
+    key: string
+    description: string
+    amount: number
+    dueDate: Date | string
+    status?: string
+    category?: string
+    source?: string
+    coveredByCard?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    rule?: RecurringRuleCreateNestedOneWithoutCommitmentsInput
+  }
+
+  export type CommitmentUncheckedCreateWithoutTransactionInput = {
+    id?: string
+    key: string
+    description: string
+    amount: number
+    dueDate: Date | string
+    status?: string
+    category?: string
+    source?: string
+    coveredByCard?: boolean
+    ruleId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type CommitmentCreateOrConnectWithoutTransactionInput = {
+    where: CommitmentWhereUniqueInput
+    create: XOR<CommitmentCreateWithoutTransactionInput, CommitmentUncheckedCreateWithoutTransactionInput>
   }
 
   export type AccountUpsertWithoutTransactionsInput = {
@@ -4454,6 +7985,274 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type CommitmentUpsertWithoutTransactionInput = {
+    update: XOR<CommitmentUpdateWithoutTransactionInput, CommitmentUncheckedUpdateWithoutTransactionInput>
+    create: XOR<CommitmentCreateWithoutTransactionInput, CommitmentUncheckedCreateWithoutTransactionInput>
+    where?: CommitmentWhereInput
+  }
+
+  export type CommitmentUpdateToOneWithWhereWithoutTransactionInput = {
+    where?: CommitmentWhereInput
+    data: XOR<CommitmentUpdateWithoutTransactionInput, CommitmentUncheckedUpdateWithoutTransactionInput>
+  }
+
+  export type CommitmentUpdateWithoutTransactionInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    key?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    amount?: IntFieldUpdateOperationsInput | number
+    dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: StringFieldUpdateOperationsInput | string
+    category?: StringFieldUpdateOperationsInput | string
+    source?: StringFieldUpdateOperationsInput | string
+    coveredByCard?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    rule?: RecurringRuleUpdateOneWithoutCommitmentsNestedInput
+  }
+
+  export type CommitmentUncheckedUpdateWithoutTransactionInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    key?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    amount?: IntFieldUpdateOperationsInput | number
+    dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: StringFieldUpdateOperationsInput | string
+    category?: StringFieldUpdateOperationsInput | string
+    source?: StringFieldUpdateOperationsInput | string
+    coveredByCard?: BoolFieldUpdateOperationsInput | boolean
+    ruleId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CommitmentCreateWithoutRuleInput = {
+    id?: string
+    key: string
+    description: string
+    amount: number
+    dueDate: Date | string
+    status?: string
+    category?: string
+    source?: string
+    coveredByCard?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    transaction?: TransactionCreateNestedOneWithoutCommitmentInput
+  }
+
+  export type CommitmentUncheckedCreateWithoutRuleInput = {
+    id?: string
+    key: string
+    description: string
+    amount: number
+    dueDate: Date | string
+    status?: string
+    category?: string
+    source?: string
+    coveredByCard?: boolean
+    transactionId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type CommitmentCreateOrConnectWithoutRuleInput = {
+    where: CommitmentWhereUniqueInput
+    create: XOR<CommitmentCreateWithoutRuleInput, CommitmentUncheckedCreateWithoutRuleInput>
+  }
+
+  export type CommitmentCreateManyRuleInputEnvelope = {
+    data: CommitmentCreateManyRuleInput | CommitmentCreateManyRuleInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type CommitmentUpsertWithWhereUniqueWithoutRuleInput = {
+    where: CommitmentWhereUniqueInput
+    update: XOR<CommitmentUpdateWithoutRuleInput, CommitmentUncheckedUpdateWithoutRuleInput>
+    create: XOR<CommitmentCreateWithoutRuleInput, CommitmentUncheckedCreateWithoutRuleInput>
+  }
+
+  export type CommitmentUpdateWithWhereUniqueWithoutRuleInput = {
+    where: CommitmentWhereUniqueInput
+    data: XOR<CommitmentUpdateWithoutRuleInput, CommitmentUncheckedUpdateWithoutRuleInput>
+  }
+
+  export type CommitmentUpdateManyWithWhereWithoutRuleInput = {
+    where: CommitmentScalarWhereInput
+    data: XOR<CommitmentUpdateManyMutationInput, CommitmentUncheckedUpdateManyWithoutRuleInput>
+  }
+
+  export type CommitmentScalarWhereInput = {
+    AND?: CommitmentScalarWhereInput | CommitmentScalarWhereInput[]
+    OR?: CommitmentScalarWhereInput[]
+    NOT?: CommitmentScalarWhereInput | CommitmentScalarWhereInput[]
+    id?: StringFilter<"Commitment"> | string
+    key?: StringFilter<"Commitment"> | string
+    description?: StringFilter<"Commitment"> | string
+    amount?: IntFilter<"Commitment"> | number
+    dueDate?: DateTimeFilter<"Commitment"> | Date | string
+    status?: StringFilter<"Commitment"> | string
+    category?: StringFilter<"Commitment"> | string
+    source?: StringFilter<"Commitment"> | string
+    coveredByCard?: BoolFilter<"Commitment"> | boolean
+    transactionId?: StringNullableFilter<"Commitment"> | string | null
+    ruleId?: StringNullableFilter<"Commitment"> | string | null
+    createdAt?: DateTimeFilter<"Commitment"> | Date | string
+    updatedAt?: DateTimeFilter<"Commitment"> | Date | string
+  }
+
+  export type TransactionCreateWithoutCommitmentInput = {
+    id?: string
+    description: string
+    amount: number
+    type: string
+    date: Date | string
+    status?: string
+    category?: string | null
+    categorySource?: string
+    pluggyTransactionId?: string | null
+    isBillPayment?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    account?: AccountCreateNestedOneWithoutTransactionsInput
+  }
+
+  export type TransactionUncheckedCreateWithoutCommitmentInput = {
+    id?: string
+    description: string
+    amount: number
+    type: string
+    date: Date | string
+    accountId?: string | null
+    status?: string
+    category?: string | null
+    categorySource?: string
+    pluggyTransactionId?: string | null
+    isBillPayment?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type TransactionCreateOrConnectWithoutCommitmentInput = {
+    where: TransactionWhereUniqueInput
+    create: XOR<TransactionCreateWithoutCommitmentInput, TransactionUncheckedCreateWithoutCommitmentInput>
+  }
+
+  export type RecurringRuleCreateWithoutCommitmentsInput = {
+    id?: string
+    matchKey: string
+    description: string
+    accountId?: string | null
+    amount: number
+    category: string
+    dueDay: number
+    intervalMonths?: number
+    startMonth: string
+    active?: boolean
+    createdAt?: Date | string
+  }
+
+  export type RecurringRuleUncheckedCreateWithoutCommitmentsInput = {
+    id?: string
+    matchKey: string
+    description: string
+    accountId?: string | null
+    amount: number
+    category: string
+    dueDay: number
+    intervalMonths?: number
+    startMonth: string
+    active?: boolean
+    createdAt?: Date | string
+  }
+
+  export type RecurringRuleCreateOrConnectWithoutCommitmentsInput = {
+    where: RecurringRuleWhereUniqueInput
+    create: XOR<RecurringRuleCreateWithoutCommitmentsInput, RecurringRuleUncheckedCreateWithoutCommitmentsInput>
+  }
+
+  export type TransactionUpsertWithoutCommitmentInput = {
+    update: XOR<TransactionUpdateWithoutCommitmentInput, TransactionUncheckedUpdateWithoutCommitmentInput>
+    create: XOR<TransactionCreateWithoutCommitmentInput, TransactionUncheckedCreateWithoutCommitmentInput>
+    where?: TransactionWhereInput
+  }
+
+  export type TransactionUpdateToOneWithWhereWithoutCommitmentInput = {
+    where?: TransactionWhereInput
+    data: XOR<TransactionUpdateWithoutCommitmentInput, TransactionUncheckedUpdateWithoutCommitmentInput>
+  }
+
+  export type TransactionUpdateWithoutCommitmentInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    amount?: IntFieldUpdateOperationsInput | number
+    type?: StringFieldUpdateOperationsInput | string
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: StringFieldUpdateOperationsInput | string
+    category?: NullableStringFieldUpdateOperationsInput | string | null
+    categorySource?: StringFieldUpdateOperationsInput | string
+    pluggyTransactionId?: NullableStringFieldUpdateOperationsInput | string | null
+    isBillPayment?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    account?: AccountUpdateOneWithoutTransactionsNestedInput
+  }
+
+  export type TransactionUncheckedUpdateWithoutCommitmentInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    amount?: IntFieldUpdateOperationsInput | number
+    type?: StringFieldUpdateOperationsInput | string
+    date?: DateTimeFieldUpdateOperationsInput | Date | string
+    accountId?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
+    category?: NullableStringFieldUpdateOperationsInput | string | null
+    categorySource?: StringFieldUpdateOperationsInput | string
+    pluggyTransactionId?: NullableStringFieldUpdateOperationsInput | string | null
+    isBillPayment?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type RecurringRuleUpsertWithoutCommitmentsInput = {
+    update: XOR<RecurringRuleUpdateWithoutCommitmentsInput, RecurringRuleUncheckedUpdateWithoutCommitmentsInput>
+    create: XOR<RecurringRuleCreateWithoutCommitmentsInput, RecurringRuleUncheckedCreateWithoutCommitmentsInput>
+    where?: RecurringRuleWhereInput
+  }
+
+  export type RecurringRuleUpdateToOneWithWhereWithoutCommitmentsInput = {
+    where?: RecurringRuleWhereInput
+    data: XOR<RecurringRuleUpdateWithoutCommitmentsInput, RecurringRuleUncheckedUpdateWithoutCommitmentsInput>
+  }
+
+  export type RecurringRuleUpdateWithoutCommitmentsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    matchKey?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    accountId?: NullableStringFieldUpdateOperationsInput | string | null
+    amount?: IntFieldUpdateOperationsInput | number
+    category?: StringFieldUpdateOperationsInput | string
+    dueDay?: IntFieldUpdateOperationsInput | number
+    intervalMonths?: IntFieldUpdateOperationsInput | number
+    startMonth?: StringFieldUpdateOperationsInput | string
+    active?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type RecurringRuleUncheckedUpdateWithoutCommitmentsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    matchKey?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    accountId?: NullableStringFieldUpdateOperationsInput | string | null
+    amount?: IntFieldUpdateOperationsInput | number
+    category?: StringFieldUpdateOperationsInput | string
+    dueDay?: IntFieldUpdateOperationsInput | number
+    intervalMonths?: IntFieldUpdateOperationsInput | number
+    startMonth?: StringFieldUpdateOperationsInput | string
+    active?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type TransactionCreateManyAccountInput = {
     id?: string
     description: string
@@ -4462,6 +8261,9 @@ export namespace Prisma {
     date: Date | string
     status?: string
     category?: string | null
+    categorySource?: string
+    pluggyTransactionId?: string | null
+    isBillPayment?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -4474,8 +8276,12 @@ export namespace Prisma {
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: StringFieldUpdateOperationsInput | string
     category?: NullableStringFieldUpdateOperationsInput | string | null
+    categorySource?: StringFieldUpdateOperationsInput | string
+    pluggyTransactionId?: NullableStringFieldUpdateOperationsInput | string | null
+    isBillPayment?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    commitment?: CommitmentUpdateOneWithoutTransactionNestedInput
   }
 
   export type TransactionUncheckedUpdateWithoutAccountInput = {
@@ -4486,8 +8292,12 @@ export namespace Prisma {
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: StringFieldUpdateOperationsInput | string
     category?: NullableStringFieldUpdateOperationsInput | string | null
+    categorySource?: StringFieldUpdateOperationsInput | string
+    pluggyTransactionId?: NullableStringFieldUpdateOperationsInput | string | null
+    isBillPayment?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    commitment?: CommitmentUncheckedUpdateOneWithoutTransactionNestedInput
   }
 
   export type TransactionUncheckedUpdateManyWithoutAccountInput = {
@@ -4498,6 +8308,69 @@ export namespace Prisma {
     date?: DateTimeFieldUpdateOperationsInput | Date | string
     status?: StringFieldUpdateOperationsInput | string
     category?: NullableStringFieldUpdateOperationsInput | string | null
+    categorySource?: StringFieldUpdateOperationsInput | string
+    pluggyTransactionId?: NullableStringFieldUpdateOperationsInput | string | null
+    isBillPayment?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CommitmentCreateManyRuleInput = {
+    id?: string
+    key: string
+    description: string
+    amount: number
+    dueDate: Date | string
+    status?: string
+    category?: string
+    source?: string
+    coveredByCard?: boolean
+    transactionId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type CommitmentUpdateWithoutRuleInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    key?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    amount?: IntFieldUpdateOperationsInput | number
+    dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: StringFieldUpdateOperationsInput | string
+    category?: StringFieldUpdateOperationsInput | string
+    source?: StringFieldUpdateOperationsInput | string
+    coveredByCard?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    transaction?: TransactionUpdateOneWithoutCommitmentNestedInput
+  }
+
+  export type CommitmentUncheckedUpdateWithoutRuleInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    key?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    amount?: IntFieldUpdateOperationsInput | number
+    dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: StringFieldUpdateOperationsInput | string
+    category?: StringFieldUpdateOperationsInput | string
+    source?: StringFieldUpdateOperationsInput | string
+    coveredByCard?: BoolFieldUpdateOperationsInput | boolean
+    transactionId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CommitmentUncheckedUpdateManyWithoutRuleInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    key?: StringFieldUpdateOperationsInput | string
+    description?: StringFieldUpdateOperationsInput | string
+    amount?: IntFieldUpdateOperationsInput | number
+    dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: StringFieldUpdateOperationsInput | string
+    category?: StringFieldUpdateOperationsInput | string
+    source?: StringFieldUpdateOperationsInput | string
+    coveredByCard?: BoolFieldUpdateOperationsInput | boolean
+    transactionId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }

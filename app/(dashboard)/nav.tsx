@@ -86,7 +86,7 @@ export function DashboardNav({ onOpenModal }: { onOpenModal: () => void }) {
 
       {/* NAV MOBILE */}
       <nav className="fixed bottom-0 left-0 right-0 z-40 flex h-16 items-center justify-around border-t border-border bg-card px-2 pb-safe md:hidden">
-        {navItems.slice(0, 2).map((item) => {
+        {[{ name: "Início", href: "/", icon: Home }, { name: "Gastos", href: "/transactions", icon: Receipt }].map((item) => {
           const isActive = pathname === item.href;
           return (
             <Link 
@@ -105,11 +105,11 @@ export function DashboardNav({ onOpenModal }: { onOpenModal: () => void }) {
             onClick={onOpenModal} 
             className="flex h-14 w-14 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg shadow-primary/30 transition-transform active:scale-95"
           >
-            <Plus className="h-6 w-6" />
+            <Plus aria-label="Nova transação" className="h-6 w-6" />
           </button>
         </div>
 
-        {navItems.slice(2, 4).map((item) => {
+        {[{ name: "Análises", href: "/reports", icon: PieChart }].map((item) => {
           const isActive = pathname === item.href;
           return (
             <Link 

@@ -1,3 +1,5 @@
+import { reconcileCommitments } from "@/lib/commitments";
+import { isCardBillPayment } from "@/lib/commitment-rules";
 import { PluggyClient } from "pluggy-sdk";
 import { prisma } from "@/lib/prisma";
 import { financialDay, pluggyTransactionType } from "@/lib/statement";
@@ -68,7 +70,9 @@ export async function syncPluggyItem(itemId: string) {
         const existing = await db.transaction.findMany({ where: { accountId: dbAccountId } });
         const key = (t: { description: string; amount: number; date: Date }) =>
           JSON.stringify([t.description, t.amount, t.date.toISOString()]);
-        const byKey = new Map(existing.map(t => [key(t), t]));
+        const byId = new Map(existing.filter(t => t.pluggyTransactionId).map(t => [t.pluggyTransactionId, t]));
+        const legacy = existing.filter(t => !t.pluggyTransactionId);
+        const claimed = new Set<string>();
         const today = financialDay();
         const seen = new Set<string>();
         const writes = [];
@@ -76,21 +80,23 @@ export async function syncPluggyItem(itemId: string) {
           if (financialDay(tx.date) > today) continue;
           const data = {
             description: tx.description,
+            isBillPayment: isCardBillPayment(tx.description, tx.operationType),
             amount: Math.round(Math.abs(tx.amount) * 100),
             date: new Date(tx.date),
             type: pluggyTransactionType(tx.type, tx.amount, acc.type),
             status: tx.status === "PENDING" ? "pending" : "paid",
           };
-          const identity = key(data);
+          const identity = tx.id;
           if (seen.has(identity)) continue;
           seen.add(identity);
-          const old = byKey.get(identity);
+          const old = byId.get(tx.id) ?? legacy.find(t => !claimed.has(t.id) && key(t) === key(data));
+          if (old) claimed.add(old.id);
           if (old) {
-            if (old.type !== data.type || old.status !== data.status) {
-              writes.push(db.transaction.update({ where: { id: old.id }, data: { type: data.type, status: data.status } }));
+            if (old.type !== data.type || old.status !== data.status || old.isBillPayment !== data.isBillPayment || !old.pluggyTransactionId) {
+              writes.push(db.transaction.update({ where: { id: old.id }, data: { type: data.type, status: data.status, isBillPayment: data.isBillPayment, pluggyTransactionId: tx.id } }));
             }
           } else {
-            writes.push(db.transaction.create({ data: { ...data, category: "outros", accountId: dbAccountId } }));
+            writes.push(db.transaction.create({ data: { ...data, pluggyTransactionId: tx.id, category: "outros", accountId: dbAccountId } }));
             totalSaved++;
           }
         }
@@ -103,6 +109,7 @@ export async function syncPluggyItem(itemId: string) {
       }
     }
 
+    await reconcileCommitments(db);
     return { success: true, totalSaved };
     }, { maxWait: 10000, timeout: 90000 });
 }
