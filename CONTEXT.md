@@ -90,6 +90,8 @@ zion/
 │   └── ...
 ├── lib/
 │   ├── prisma.ts              # Instância do Prisma com adaptador PG
+│   ├── statement.ts           # Funções de data/fuso horário (America/Sao_Paulo)
+│   ├── pluggy-sync.ts         # Lógica compartilhada de sincronização
 │   └── utils.ts               # Função cn()
 ├── prisma/
 │   └── schema.prisma          # Modelos Account e Transaction
@@ -120,11 +122,15 @@ Logout: Rota em /api/logout que apaga o cookie.
 6. Integração Open Finance (Pluggy)
 MeuPluggy: Como o Zion é pessoal, usamos o conector MeuPluggy para evitar custos com o plano Trial. O usuário conecta os bancos no site do MeuPluggy e autoriza a leitura no widget do Zion.
 
-Sincronização: O onSuccess do widget chama /api/pluggy/sync. A rotina compartilhada lib/pluggy-sync.ts busca contas e transações do último ano até hoje e também é chamada pelo webhook. Saldo e vencimento do cartão vêm dos dados da conta; não há chamada ao endpoint /bills. As gravações são atômicas e serializadas por conexão no PostgreSQL.
+Sincronização: O onSuccess do widget chama /api/pluggy/sync. A rotina compartilhada lib/pluggy-sync.ts busca contas e transações do último ano até hoje e também é chamada pelo webhook. Saldo utilizado vem dos dados da conta. Faturas são consultadas em /bills por lib/pluggy-bills.ts e selecionadas pelo mês de vencimento. As gravações são atômicas e serializadas por conexão no PostgreSQL.
 
-Tela de Loading: Modal com limite de tempo e fechamento; a lista de contas é atualizada ao terminar. Widget Pluggy renderizado por portal fora do contêiner animado. Não adicionar botão manual de sincronização: preferência do usuário por atualização via webhooks.
+Atualização Manual: Implementado um botão "Atualizar" no cabeçalho da Visão Geral. Ele chama a rota /api/pluggy/sync com um POST vazio. A rota foi adaptada para, caso não receba um itemId, buscar todos os pluggyItemId distintos no banco e sincronizar todas as conexões de uma vez.
 
-Itaú: havia movimentações na Pluggy, mas nenhuma importada no Zion. A conexão foi reprocessada e 363 movimentações foram salvas; repetir a importação adicionou zero duplicatas. Não atribuir essa falha à indisponibilidade de dados do banco sem consultar a Pluggy.
+Tela de Loading: Modal com limite de tempo e fechamento; a lista de contas é atualizada ao terminar. Widget Pluggy renderizado por portal fora do contêiner animado.
+
+Itaú: Havia movimentações na Pluggy, mas nenhuma importada no Zion. A conexão foi reprocessada e 363 movimentações foram salvas; repetir a importação adicionou zero duplicatas. Não atribuir essa falha à indisponibilidade de dados do banco sem consultar a Pluggy.
+
+Delay: O botão "Atualizar" e o webhook dependem do tempo de processamento da Pluggy e dos limites do Open Finance. Transações recentes podem levar alguns minutos para aparecer.
 
 7. UI/UX e Design System
 Temas: Suporta Modo Claro e Escuro. O padrão é o Light. As cores usam variáveis CSS (--background, --primary, etc.) mapeadas no tailwind.config.js.
@@ -137,6 +143,8 @@ Animações: animate-slide-up (entrada de elementos) e animate-gradient-text (te
 
 Categorias: As transações são categorizadas com ícones e cores (Alimentação, Transporte, Moradia, etc.) mapeados no objeto CATEGORY_MAP em overview-client.tsx e quick-actions-modal.tsx.
 
+Filtro do Extrato: Histórico é o padrão; há Período, busca por nome e paginação de 15 resultados.
+
 8. Próximos Passos (Roadmap)
 Fase 1 — Concluída
 ☑ Autenticação e proteção de rotas
@@ -147,20 +155,34 @@ Fase 1 — Concluída
 Fase 2 — Webhooks implementados e configurados
 ☑ Configurar os quatro eventos e headers na Pluggy.
 ☑ Implementar app/api/pluggy/webhook/route.ts com autenticação e importação compartilhada.
+☑ Implementar botão de "Atualizar" manual na Visão Geral.
 □ Confirmar uma entrega automática real no painel Events da Pluggy.
 Fase 3 — Futuro
 □ Tela de Orçamentos (/budgets)
 □ Relatórios e Gráficos (/reports)
 □ PWA Completo (Service Worker com Serwist)
+Atualização operacional — 02/11/2026
+Produção: https://meuzion.vercel.app
 
+Endpoint: https://meuzion.vercel.app/api/pluggy/webhook
 
-## Atualização operacional — 02/11/2026
+Eventos ativos existentes: item/created, item/updated, transactions/created, transactions/updated. Os quatro cadastros foram atualizados via API com o header x-pluggy-secret, sem criar novos cadastros.
 
-- Produção: https://meuzion.vercel.app
-- Endpoint: https://meuzion.vercel.app/api/pluggy/webhook
-- Eventos ativos existentes: `item/created`, `item/updated`, `transactions/created`, `transactions/updated`. Os quatro cadastros foram atualizados via API com o header `x-pluggy-secret`, sem criar novos cadastros.
-- O valor do header corresponde a `PLUGGY_WEBHOOK_SECRET`, salvo no `.env` local e configurado em produção. Não registrar o valor em documentação, logs ou Git. `.env` permanece ignorado pelo Git.
-- Validação em produção: POST autenticado com evento de diagnóstico não suportado retornou HTTP 200 e `{ "received": true, "ignored": true }`. Isso confirma o endpoint e a autenticação; não equivale a uma entrega automática originada pela Pluggy.
-- Headers personalizados da Pluggy são configurados somente pela API. Para visualizar os cadastros: Dashboard > Applications > lápis da aplicação > Webhooks. Para acompanhar entregas: Events.
-- Código da integração: commit `fe97958`; build e seis testes passaram. Guia complementar: `PLUGGY-WEBHOOKS.md`.
-- Limitações: eventos de exclusão não são processados; conciliação usa conta, descrição, valor e data. O webhook não agenda atualizações bancárias: depende dos eventos e da atualização da conexão na Pluggy.
+O valor do header corresponde a PLUGGY_WEBHOOK_SECRET, salvo no .env local e configurado em produção. Não registrar o valor em documentação, logs ou Git. .env permanece ignorado pelo Git.
+
+Validação em produção: POST autenticado com evento de diagnóstico não suportado retornou HTTP 200 e { "received": true, "ignored": true }. Isso confirma o endpoint e a autenticação; não equivale a uma entrega automática originada pela Pluggy.
+
+Headers personalizados da Pluggy são configurados somente pela API. Para visualizar os cadastros: Dashboard > Applications > lápis da aplicação > Webhooks. Para acompanhar entregas: Events.
+
+Código da integração: commit fe97958; build e seis testes passaram. Guia complementar: PLUGGY-WEBHOOKS.md.
+
+Limitações: Eventos de exclusão não são processados; conciliação usa conta, descrição, valor e data. O webhook não agenda atualizações bancárias: depende dos eventos e da atualização da conexão na Pluggy.
+
+## Faturas abertas — 03/11/2026
+
+- Fatura oficial do mês tem prioridade. Sem ela, a prévia usa billForecastDate dos lançamentos da Pluggy, incluindo parcelas já disponibilizadas para aquele mês, estornos e encargos. Não duplica nem inventa a próxima parcela.
+- Pagamentos de faturas anteriores são excluídos da prévia. A tela identifica o valor como estimado.
+- Nubank: usuário confirmou fechamento no dia 08 e vencimento no dia 15; o ciclo de novembro inicia em 08/10. O mês previsto informado pela instituição determina a inclusão de cada parcela.
+- Divergência encontrada: lançamentos de novembro somavam R$ 1.829,84; saldo consolidado R$ 2.974,05 menos R$ 1.144,23 de parcelas futuras resultava em R$ 1.829,82, confirmado pelo usuário. Não foi encontrado lançamento isolado explicando os R$ 0,02; todos os valores recebidos tinham duas casas decimais.
+- Conciliação da estimativa: usa saldo consolidado menos lançamentos dos meses futuros apenas quando a diferença para a soma do ciclo é de até dois centavos e não existem pendências sem mês previsto. Não aplica desconto fixo nem altera faturas oficiais. O ajuste fica registrado em reconciliationCents.
+- Compra adicional de R$ 6,20 ainda não constava na consulta à Pluggy; não inserir manualmente para evitar duplicidade na próxima atualização.

@@ -182,7 +182,7 @@ export default function AccountsPage() {
                 {account.type === "checking" ? "Conta Corrente" : account.type === "credit" ? "Cartão de Crédito" : "Poupança"}
               </p>
               <div className="mt-4 pt-4 border-t border-border flex items-center justify-between">
-                <span className="text-xs text-muted-foreground">{account.type === "credit" ? "Fatura do mês" : "Saldo atual"}</span>
+                <span className="text-xs text-muted-foreground">{account.type === "credit" ? (account.currentBill?.estimated ? "Fatura aberta (estimada)" : "Fatura do mês") : "Saldo atual"}</span>
                 <span className={`font-bold ${account.type === "credit" ? "text-amber-600 dark:text-amber-400" : "text-foreground"}`}>
                   {account.type === "credit" ? (account.currentBill ? formatMoney(account.currentBill.amount) : "Não disponível") : formatMoney(account.balance)}
                 </span>

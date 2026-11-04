@@ -327,6 +327,7 @@ export function OverviewClient({
                       <span className="font-medium text-amber-700 dark:text-amber-400">{card.name}</span>
                       <span className="font-bold text-amber-700 dark:text-amber-400">{card.currentBill ? formatMoney(card.currentBill.amount) : "Não disponível"}</span>
                     </div>
+                    {card.currentBill?.estimated && <span className="text-xs text-amber-600 dark:text-amber-400">Fatura aberta — valor estimado</span>}
                     {card.currentBill && (
                       <span className="text-xs text-amber-600/80 dark:text-amber-500">
                         Vencimento: {formatDate(card.currentBill.dueDate)}
@@ -335,7 +336,7 @@ export function OverviewClient({
                   </div>
                 ))}
                 <div className="pt-2 border-t border-border flex justify-between">
-                  <span className="text-sm font-medium text-muted-foreground">{availableBills.length < creditCards.length ? "Total disponível" : "Total do mês"}</span>
+                  <span className="text-sm font-medium text-muted-foreground">{availableBills.length < creditCards.length ? "Total disponível" : availableBills.some(card => card.currentBill?.estimated) ? "Total com estimativas" : "Total do mês"}</span>
                   <span className="font-bold text-amber-600">{availableBills.length ? formatMoney(totalCredit) : "Não disponível"}</span>
                 </div>
               </div>
