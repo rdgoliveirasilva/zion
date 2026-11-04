@@ -1,4 +1,5 @@
-import { currentCardBill } from "./pluggy-bills";
+import { currentCardBill, cardBillArchive } from "./pluggy-bills";
+import { invoicePaymentMatches, lastTwelveMonths, institutionLabel } from "./financial-history";
 import { prisma } from "@/lib/prisma";
 import type { Prisma } from "@/generated/prisma";
 import { financialDay } from "./statement";
@@ -6,6 +7,12 @@ import { PAID_STATUSES, normalizeMerchant, monthOffset, monthsBetween, dueDateFo
 
 export async function reconcileCommitments(db: Prisma.TransactionClient, now = new Date()) {
   await db.$queryRaw`SELECT pg_advisory_xact_lock(hashtext('zion-commitments'))::text`;
+  const invoices = await db.commitment.findMany({ where: { source: "card", status: "pending" } });
+  const payments = invoices.length ? await db.transaction.findMany({ where: { accountId: { in: invoices.map(b => b.key.split(":")[1]) }, type: "income", status: { in: [...PAID_STATUSES] } }, include: { commitment: { select: { id: true } } } }) : [];
+  for (const match of invoicePaymentMatches(invoices, payments, financialDay(now))) {
+    await db.commitment.update({ where: { id: match.commitmentId }, data: { status: "paid", transactionId: match.transactionId } });
+    await db.transaction.update({ where: { id: match.transactionId }, data: { isBillPayment: true } });
+  }
   const rules=await db.recurringRule.findMany({where:{active:true}});
   const currentMonth=financialDay(now).slice(0,7);
   for(const rule of rules) {
@@ -39,19 +46,32 @@ export async function reconcileCommitments(db: Prisma.TransactionClient, now = n
   }
 }
 export async function loadCommitments() {
-  const accounts = await prisma.account.findMany({ where: { type: "credit" } });
-  const bills = await Promise.all(accounts.map(async account => ({ account, bill: await currentCardBill(account) })));
+  const allAccounts = await prisma.account.findMany();
+  const accounts = allAccounts.filter(account => account.type === "credit");
+  const months = lastTwelveMonths();
+  const bills = (await Promise.all(accounts.map(async account => {
+    const [current, archive] = await Promise.all([currentCardBill(account), cardBillArchive(account)]);
+    // Preserve the existing current-bill calculation; only official older bills
+    // populate the archive. Missing historical bills are not invented.
+    const byMonth = new Map(archive.filter(b => months.includes(b.dueDate.slice(0,7))).map(b => [b.dueDate.slice(0,7), b]));
+    if (current) byMonth.set(current.dueDate.slice(0,7), current);
+    return [...byMonth.values()].map(bill => ({ account, bill }));
+  }))).flat();
   await prisma.$transaction(async db => {
     await db.$queryRaw`SELECT pg_advisory_xact_lock(hashtext('zion-commitments'))::text`;
     for (const { account, bill } of bills) {
       if (!bill) continue;
       const key = `card:${account.id}:${bill.dueDate.slice(0,7)}`;
       const existing = await db.commitment.findUnique({ where: { key } });
-      const data = { description: `Fatura ${account.name}`, amount: bill.amount, dueDate: dueDateFor(bill.dueDate.slice(0,7), Number(bill.dueDate.slice(8,10))), source: "card" };
+      const bank = institutionLabel([account.name, ...allAccounts.filter(a => account.pluggyItemId && a.pluggyItemId === account.pluggyItemId).map(a => a.name)]);
+      const name = bank && !institutionLabel([account.name]) ? `${bank} · ${account.name}` : account.name;
+      const data = { description: `Fatura ${name}`, amount: bill.amount, dueDate: dueDateFor(bill.dueDate.slice(0,7), Number(bill.dueDate.slice(8,10))), source: "card", estimated: bill.estimated ?? false };
       if (!existing) await db.commitment.create({ data: { ...data, key } });
       else if (existing.status !== "paid") await db.commitment.update({ where: { key }, data });
+      else if (existing.description !== data.description) await db.commitment.update({ where: { key }, data: { description: data.description } });
     }
   }, { timeout: 60000 });
   await prisma.$transaction(db=>reconcileCommitments(db),{timeout:60000});
-  return prisma.commitment.findMany({orderBy:{dueDate:"asc"}});
+  const [commitments, categories] = await Promise.all([prisma.commitment.findMany({orderBy:{dueDate:"asc"}}), prisma.category.findMany()]);
+  return commitments.map(c => ({ ...c, color: categories.find(category => category.value === c.category)?.color }));
 }

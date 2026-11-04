@@ -2,8 +2,8 @@
 
 import { financialDay, formatFinancialDate, statementIncludes } from "@/lib/statement";
 import { TransactionAccountTags } from "@/components/ui/transaction-account-tags";
-import type { CurrentCardBill } from "@/lib/card-bill";
 import Link from "next/link";
+import { useCategories } from "@/components/ui/categories-provider";
 import { TransactionDetails } from "@/components/ui/transaction-details";
 import { CommitmentSummary, CommitmentList, type CommitmentView } from "@/components/ui/commitment-summary";
 import { spendingSummary } from "@/lib/commitment-rules";
@@ -48,7 +48,6 @@ interface Account {
   balance: number;
   type: string;
   dueDate?: Date | null;
-  currentBill: CurrentCardBill | null;
 }
 
 export function OverviewClient({ 
@@ -60,6 +59,7 @@ export function OverviewClient({
   commitments: CommitmentView[];
 }) {
   const router = useRouter();
+  const { categories } = useCategories();
   const [selected, setSelected] = useState<Transaction | null>(null);
   const [showValues, setShowValues] = useState(true);
   const [expandExplain, setExpandExplain] = useState(false);
@@ -112,10 +112,6 @@ export function OverviewClient({
   const baseBalance = accounts
     .filter(acc => acc.type !== "credit")
     .reduce((acc, account) => acc + account.balance, 0);
-
-  const creditCards = accounts.filter(acc => acc.type === "credit");
-  const availableBills = creditCards.filter(card => card.currentBill !== null);
-  const totalCredit = availableBills.reduce((sum, card) => sum + card.currentBill!.amount, 0);
 
   const totalExpenses = transactions
     .filter(t => (t.type === "expense" || t.type === "bill") && t.status !== "pending" && statementIncludes(t.date, "all"))
@@ -173,10 +169,10 @@ export function OverviewClient({
       </header>
 
       <div className="grid gap-6 md:grid-cols-3">
-        <div className="contents">
+        <div className="md:col-span-2 min-w-0 space-y-6">
           
           {/* CARD PRINCIPAL */}
-          <div className="md:col-span-2 relative overflow-hidden rounded-3xl bg-gradient-to-br from-primary to-primary/80 p-6 text-primary-foreground shadow-xl">
+          <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-primary to-primary/80 p-6 text-primary-foreground shadow-xl">
             <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-white/10 blur-2xl" />
             
             <div className="flex items-center justify-between">
@@ -217,15 +213,8 @@ export function OverviewClient({
             </div>
           </div>
 
-          <CommitmentSummary commitments={commitments} today={today} formatMoney={formatMoney} />
-          <section className="md:col-span-2 rounded-2xl border border-border bg-card p-6 shadow-sm">
-            <h3 className="text-lg font-bold">Seus Gastos</h3><p className="mt-3 text-3xl font-bold">{formatMoney(spending.current)}</p>
-            <p className="mt-2 text-sm text-muted-foreground">{spending.variation === null ? "Sem base de comparação no mês anterior" : `${spending.variation > 0 ? "+" : ""}${spending.variation.toFixed(1).replace(".", ",")}% em relação ao mês anterior`}</p>
-            <Link href="/reports" className="mt-4 inline-block rounded-xl bg-primary/10 px-4 py-3 text-sm font-medium text-primary">Analisar gastos</Link>
-          </section>
-          <section className="rounded-2xl border border-border bg-card p-6 shadow-sm"><h3 className="mb-4 text-lg font-bold">Próximos Vencimentos</h3><CommitmentList commitments={upcoming} today={today} formatMoney={formatMoney} /><Link href="/commitments" className="mt-4 block text-center text-sm font-medium text-primary">Ver todos</Link></section>
           {/* EXTRATO */}
-          <div className="md:col-span-2 min-w-0 rounded-2xl bg-card p-6 shadow-sm border border-border">
+          <div className="min-w-0 rounded-2xl bg-card p-6 shadow-sm border border-border">
             <div className="mb-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
               <h3 className="text-lg font-bold text-foreground">Extrato</h3>
               
@@ -256,14 +245,15 @@ export function OverviewClient({
                 </div>
               ) : (
                 visibleTransactions.map((tx) => {
-                  const categoryData = CATEGORY_MAP[tx.category || "outros"] || CATEGORY_MAP.outros;
+                  const customCategory = categories.find(c => c.value === tx.category);
+                  const categoryData = { ...(CATEGORY_MAP[tx.category || "outros"] || CATEGORY_MAP.outros), label: customCategory?.label || "Outros" };
                   const Icon = categoryData.icon;
                   const isIncome = tx.type === "income";
 
                   return (
                   <button type="button" key={tx.id} onClick={() => setSelected(tx)} className="flex w-full items-center justify-between gap-3 rounded-xl text-left hover:bg-accent focus-visible:ring-2 focus-visible:ring-primary">
                     <div className="flex min-w-0 items-center gap-3">
-                      <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${categoryData.color}`}>
+                      <div style={customCategory?.color ? { color: customCategory.color, backgroundColor: customCategory.color + "18" } : undefined} className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${categoryData.color}`}>
                         <Icon className="h-5 w-5" />
                       </div>
                       <div className="min-w-0">
@@ -295,59 +285,15 @@ export function OverviewClient({
           </div>
         </div>
 
-        {/* COLUNA LATERAL */}
-        <div className="space-y-6">
-          {/* CARD DE FATURA DE CARTÃO */}
-          {creditCards.length > 0 && (
-            <div className="rounded-2xl bg-card p-6 shadow-sm border border-border">
-              <h3 className="mb-4 text-lg font-bold text-foreground flex items-center gap-2">
-                <CreditCard className="h-5 w-5 text-amber-500" /> Faturas do mês
-              </h3>
-              <div className="space-y-3">
-                {creditCards.map(card => (
-                  <div key={card.id} className="flex flex-col rounded-xl bg-amber-500/10 p-3 border border-amber-500/20 gap-1">
-                    <div className="flex items-center justify-between">
-                      <span className="font-medium text-amber-700 dark:text-amber-400">{card.name}</span>
-                      <span className="font-bold text-amber-700 dark:text-amber-400">{card.currentBill ? formatMoney(card.currentBill.amount) : "Não disponível"}</span>
-                    </div>
-                    {card.currentBill?.estimated && <span className="text-xs text-amber-600 dark:text-amber-400">Fatura aberta — valor estimado</span>}
-                    {card.currentBill && (
-                      <span className="text-xs text-amber-600/80 dark:text-amber-500">
-                        Vencimento: {formatDate(card.currentBill.dueDate)}
-                      </span>
-                    )}
-                  </div>
-                ))}
-                <div className="pt-2 border-t border-border flex justify-between">
-                  <span className="text-sm font-medium text-muted-foreground">{availableBills.length < creditCards.length ? "Total disponível" : availableBills.some(card => card.currentBill?.estimated) ? "Total com estimativas" : "Total do mês"}</span>
-                  <span className="font-bold text-amber-600">{availableBills.length ? formatMoney(totalCredit) : "Não disponível"}</span>
-                </div>
-              </div>
-            </div>
-          )}
-
-          <div className="rounded-2xl bg-card p-6 shadow-sm border border-border">
-            <h3 className="mb-4 text-lg font-bold text-foreground flex items-center gap-2">
-              <Wallet className="h-5 w-5 text-primary" /> Contas Conectadas
-            </h3>
-            <Link href="/accounts" className="mb-4 inline-block text-sm font-medium text-primary">Gerenciar contas</Link>
-            <div className="space-y-3">
-              {accounts.length > 0 ? (
-                 accounts.map(acc => (
-                  <div key={acc.id} className="flex items-center justify-between rounded-xl bg-secondary p-3">
-                    <span className="font-medium text-foreground">{acc.name}</span>
-                    <span className="font-semibold text-foreground">{formatMoney(acc.balance)}</span>
-                  </div>
-                ))
-              ) : (
-                <div className="rounded-xl bg-secondary p-3 border border-border">
-                  <p className="text-sm font-medium text-foreground">Nenhuma conta</p>
-                  <p className="text-xs text-muted-foreground mt-1">Conecte via Open Finance.</p>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
+        <aside className="space-y-6">
+          <CommitmentSummary commitments={commitments} today={today} formatMoney={formatMoney} />
+          <section className="rounded-2xl border border-border bg-card p-6 shadow-sm">
+            <h3 className="text-lg font-bold">Seus Gastos</h3><p className="mt-3 text-3xl font-bold">{formatMoney(spending.current)}</p>
+            <p className="mt-2 text-sm text-muted-foreground">{spending.variation === null ? "Sem base de comparação no mês anterior" : `${spending.variation > 0 ? "+" : ""}${spending.variation.toFixed(1).replace(".", ",")}% em relação ao mês anterior`}</p>
+            <Link href="/reports" className="mt-4 inline-block rounded-xl bg-primary/10 px-4 py-3 text-sm font-medium text-primary">Analisar gastos</Link>
+          </section>
+          <section className="rounded-2xl border border-border bg-card p-6 shadow-sm"><h3 className="mb-4 text-lg font-bold">Próximos Vencimentos</h3><CommitmentList commitments={upcoming} today={today} formatMoney={formatMoney} /><Link href="/commitments" className="mt-4 block text-center text-sm font-medium text-primary">Ver todos</Link></section>
+        </aside>
       </div>
       {selected && <TransactionDetails key={selected.id} transaction={selected} onClose={() => setSelected(null)} onSaved={() => router.refresh()} />}
     </div>

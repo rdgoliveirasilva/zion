@@ -1,4 +1,3 @@
-import { currentCardBill } from "@/lib/pluggy-bills";
 import { prisma } from "@/lib/prisma";
 import { loadCommitments } from "@/lib/commitments";
 import { OverviewClient } from "./overview-client";
@@ -38,7 +37,6 @@ export default async function OverviewPage() {
     balance: a.balance,
     type: a.type,
     dueDate: a.dueDate ?? undefined,
-    currentBill: await currentCardBill(a),
   })));
 
   return <OverviewClient transactions={transactions} accounts={accounts} commitments={commitments} />;

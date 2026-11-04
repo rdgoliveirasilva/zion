@@ -2,6 +2,7 @@
 
 import { formatFinancialDate, statementIncludes } from "@/lib/statement";
 import { TransactionAccountTags } from "@/components/ui/transaction-account-tags";
+import { useCategories } from "@/components/ui/categories-provider";
 import { TransactionDetails } from "@/components/ui/transaction-details";
 import { useState, useEffect } from "react";
 import { 
@@ -36,6 +37,7 @@ interface Transaction {
 }
 
 export default function TransactionsPage() {
+  const { categories } = useCategories();
   const [selected, setSelected] = useState<Transaction | null>(null);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -137,8 +139,8 @@ export default function TransactionsPage() {
           className="rounded-xl bg-card border border-border p-3 text-foreground focus:outline-none focus:border-primary appearance-none min-w-[150px]"
         >
           <option value="all">Todas as categorias</option>
-          {Object.entries(CATEGORY_MAP).map(([key, value]) => (
-            <option key={key} value={key}>{value.label}</option>
+          {categories.map(value => (
+            <option key={value.value} value={value.value}>{value.label}</option>
           ))}
         </select>
       </div>
@@ -158,14 +160,15 @@ export default function TransactionsPage() {
         ) : (
           <div className="divide-y divide-border">
             {filteredTransactions.map((tx) => {
-              const categoryData = CATEGORY_MAP[tx.category || "outros"] || CATEGORY_MAP.outros;
+              const customCategory = categories.find(c => c.value === tx.category);
+                  const categoryData = { ...(CATEGORY_MAP[tx.category || "outros"] || CATEGORY_MAP.outros), label: customCategory?.label || "Outros" };
               const Icon = categoryData.icon;
               const isIncome = tx.type === "income";
 
               return (
                 <div key={tx.id} className="flex items-center justify-between p-4 hover:bg-accent/50 transition-colors group">
                   <div className="flex items-center gap-4">
-                    <div className={`flex h-12 w-12 items-center justify-center rounded-xl ${categoryData.color}`}>
+                    <div style={customCategory?.color ? { color: customCategory.color, background: customCategory.color + "18" } : undefined} className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl ${categoryData.color}`}>
                       <Icon className="h-6 w-6" />
                     </div>
                     <div>

@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { CATEGORIES } from "@/lib/categories";
+import { useCategories } from "@/components/ui/categories-provider";
 import { financialDay, formatFinancialDate } from "@/lib/statement";
 import { isCardBillPayment } from "@/lib/commitment-rules";
 import { TransactionAccountTags } from "./transaction-account-tags";
@@ -16,6 +16,7 @@ export type EditableTransaction = {
 export function TransactionDetails({ transaction: tx, onClose, onSaved }: {
   transaction: EditableTransaction; onClose: () => void; onSaved: () => void;
 }) {
+  const { categories } = useCategories();
   const dialog = useRef<HTMLDialogElement>(null);
   const [category, setCategory] = useState(tx.category || "outros");
   const [step, setStep] = useState<"category" | "question" | "rule">("category");
@@ -41,7 +42,7 @@ export function TransactionDetails({ transaction: tx, onClose, onSaved }: {
     <p className="mt-5 break-words font-medium">{tx.description}</p>
     <p className="mt-1 text-2xl font-bold">{new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(tx.amount / 100)}</p>
     <p className="text-sm text-muted-foreground">{formatFinancialDate(tx.date)}</p><TransactionAccountTags account={tx.account} />
-    <label className="mt-5 block space-y-2 text-sm">Categoria<select disabled={saving} value={category} onChange={e => { setCategory(e.target.value); setStep(canRecur ? "question" : "category"); }} className={input}>{CATEGORIES.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}</select></label>
+    <label className="mt-5 block space-y-2 text-sm">Categoria<select disabled={saving} value={category} onChange={e => { setCategory(e.target.value); setStep(canRecur ? "question" : "category"); }} className={input}>{categories.filter(c => !c.archived || c.value === category).map(c => <option key={c.value} value={c.value}>{c.label}</option>)}</select></label>
     {step === "question" && <div className="mt-5 space-y-3"><p className="font-medium">Deseja transformar esta despesa em uma conta a pagar recorrente?</p><div className="flex gap-3"><button disabled={saving} onClick={() => save(false)} className="flex-1 rounded-xl border border-border p-3">Não, salvar categoria</button><button onClick={() => setStep("rule")} className="flex-1 rounded-xl bg-primary p-3 text-primary-foreground">Sim</button></div></div>}
     {step === "rule" && <div className="mt-5 space-y-4"><label className="block text-sm">Dia de vencimento<input type="number" min={1} max={31} value={dueDay} onChange={e => setDueDay(Number(e.target.value))} className={input} /></label><label className="block text-sm">Frequência<select value={intervalMonths} onChange={e => setIntervalMonths(Number(e.target.value))} className={input}><option value={1}>Mensal</option><option value={3}>Trimestral</option><option value={12}>Anual</option></select></label><p className="text-sm text-muted-foreground">Serão vinculadas movimentações da mesma conta, descrição e valor no período correspondente. Correspondências ambíguas ficam pendentes. Compras no cartão ficam incluídas na fatura, sem somar duas vezes. Uma regra já existente mantém seu calendário.</p><button disabled={saving || dueDay < 1 || dueDay > 31 || !Number.isInteger(dueDay)} onClick={() => save(true)} className="w-full rounded-xl bg-primary p-3 font-medium text-primary-foreground disabled:opacity-50">{saving ? "Salvando…" : "Confirmar categoria e recorrência"}</button><button disabled={saving} onClick={() => save(false)} className="w-full p-2 text-sm">Salvar somente categoria</button></div>}
     {step === "category" && <button disabled={saving} onClick={() => canRecur ? setStep("question") : save(false)} className="mt-5 w-full rounded-xl bg-primary p-3 text-primary-foreground">{saving ? "Salvando…" : "Salvar categoria"}</button>}

@@ -1,0 +1,18 @@
+"use client";
+import { useState } from "react";
+import { CalendarDays } from "lucide-react";
+import { CommitmentList, CommitmentSummary, type CommitmentView } from "@/components/ui/commitment-summary";
+import { DownloadCsv } from "@/components/ui/download-csv";
+import { MonthPicker } from "@/components/ui/month-picker";
+import { lastTwelveMonths, money, monthLabel } from "@/lib/financial-history";
+import { financialDay } from "@/lib/statement";
+
+export default function CommitmentsClient({ commitments, today }: { commitments: CommitmentView[]; today: string }) {
+  const months = lastTwelveMonths(today);
+  const [month, setMonth] = useState(months[0]);
+  const [filter, setFilter] = useState("all");
+  const [future, setFuture] = useState(false);
+  const monthly = commitments.filter(c => future ? financialDay(c.dueDate).slice(0,7) > months[0] : financialDay(c.dueDate).slice(0,7) === month);
+  const filtered = monthly.filter(c => filter === "all" || (filter === "paid" ? c.status === "paid" : c.status !== "paid"));
+  return <div className="mx-auto w-full max-w-5xl space-y-6 p-4 pb-24 md:p-8"><header><h1 className="text-2xl font-bold">Contas a pagar</h1><p className="mt-1 text-sm text-muted-foreground">Faturas e compromissos, com o histórico de pagamentos.</p></header><DownloadCsv filename="zion-contas-a-pagar-12-meses.csv" headers={["Descrição", "Vencimento", "Valor (R$)", "Pagamento", "Incluída na fatura"]} rows={commitments.filter(c => months.includes(financialDay(c.dueDate).slice(0,7))).map(c => [c.description, financialDay(c.dueDate), (c.amount / 100).toFixed(2).replace(".", ","), c.status === "paid" ? "Pago" : "Pagamento não identificado", c.coveredByCard ? "Sim" : "Não"])} /><div className="flex gap-2 rounded-2xl bg-secondary p-1"><button onClick={() => setFuture(false)} className={`flex-1 rounded-xl p-3 text-sm ${!future ? "bg-card text-primary shadow-sm" : "text-muted-foreground"}`}>Mês e histórico</button><button onClick={() => setFuture(true)} className={`flex-1 rounded-xl p-3 text-sm ${future ? "bg-card text-primary shadow-sm" : "text-muted-foreground"}`}>Próximos meses</button></div>{!future && <MonthPicker months={months} value={month} onChange={setMonth} id="commitments-month" />}{!future && <CommitmentSummary commitments={commitments} today={today} month={month} formatMoney={money} showLink={false} />}<section className="rounded-2xl border border-border bg-card p-5"><div className="mb-5 flex flex-wrap items-center justify-between gap-3"><h2 className="flex items-center gap-2 font-bold capitalize"><CalendarDays className="h-5 w-5 text-primary" />{future ? "Próximos vencimentos" : monthLabel(month)}</h2><div className="flex gap-1 rounded-xl bg-secondary p-1">{[['all','Todas'],['paid','Pagas'],['pending','Não pagas']].map(([value,label]) => <button key={value} onClick={() => setFilter(value)} aria-pressed={filter === value} className={`rounded-lg px-3 py-2 text-xs ${filter === value ? "bg-card text-primary shadow-sm" : "text-muted-foreground"}`}>{label}</button>)}</div></div><CommitmentList commitments={filtered} today={today} formatMoney={money} /><p className="mt-5 text-xs text-muted-foreground">Faturas são importadas automaticamente quando disponibilizadas pelo banco. A baixa exige pagamento confirmado correspondente no extrato. Sem confirmação, a conta permanece pendente. Compras incluídas na fatura não somam novamente.</p><p className="mt-2 text-xs text-muted-foreground">Meses sem registros disponíveis não significam que todas as contas foram pagas. Para registrar um pagamento confirmado manualmente, use o botão +.</p></section></div>;
+}

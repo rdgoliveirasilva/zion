@@ -66,6 +66,7 @@ model Commitment {
   category      String         @default("outros")
   source        String         @default("recurring")
   coveredByCard Boolean        @default(false)
+  estimated     Boolean        @default(false)
   transactionId String?        @unique
   transaction   Transaction?   @relation(fields: [transactionId], references: [id], onDelete: SetNull)
   ruleId        String?
@@ -74,4 +75,18 @@ model Commitment {
   updatedAt     DateTime       @updatedAt
 
   @@index([dueDate, status])
+}
+
+model Category {
+  value    String  @id
+  label    String
+  nameKey  String  @unique
+  color    String  @default("#8b5cf6")
+  archived Boolean @default(false)
+}
+
+model SpendingGoal {
+  month     String   @id
+  amount    Int
+  updatedAt DateTime @updatedAt
 }

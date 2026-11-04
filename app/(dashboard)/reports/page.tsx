@@ -1,16 +1,22 @@
-import Link from "next/link";
 import { prisma } from "@/lib/prisma";
-import { spendingSummary } from "@/lib/commitment-rules";
 import { financialDay } from "@/lib/statement";
-import { CATEGORIES } from "@/lib/categories";
-
+import { lastTwelveMonths, monthlyExpenses } from "@/lib/financial-history";
+import ReportsClient from "./reports-client";
 export const dynamic = "force-dynamic";
 export default async function ReportsPage() {
-  const transactions = await prisma.transaction.findMany({ where: { date: { lte: new Date() } } });
-  const today = financialDay(), summary = spendingSummary(transactions, today);
-  const money = (value: number) => new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(value / 100);
-  return <main className="mx-auto w-full max-w-4xl space-y-6 p-4 pb-24 md:p-8"><Link href="/" className="text-sm text-primary">← Início</Link><h1 className="text-2xl font-bold">Análises de gastos</h1><section className="rounded-2xl border border-border bg-card p-6"><p className="text-muted-foreground">Gastos do mês</p><p className="mt-2 text-3xl font-bold">{money(summary.current)}</p><p className="mt-2 text-sm text-muted-foreground">Mês anterior: {money(summary.previous)} · {summary.variation === null ? "Sem base de comparação" : `${summary.variation.toFixed(1).replace(".", ",")}% de variação`}</p></section><section className="rounded-2xl border border-border bg-card p-6"><h2 className="mb-4 text-lg font-bold">Por categoria</h2><div className="space-y-4">{CATEGORIES.map(category => {
-    const total = spendingSummary(transactions.filter(tx => (tx.category || "outros") === category.value), today).current;
-    return <div key={category.value}><div className="flex justify-between text-sm"><span>{category.label}</span><strong>{money(total)}</strong></div><div className="mt-2 h-2 overflow-hidden rounded-full bg-secondary"><div className="h-full bg-primary" style={{ width: `${summary.current ? total / summary.current * 100 : 0}%` }} /></div></div>;
-  })}</div><p className="mt-5 text-xs text-muted-foreground">Pagamentos de fatura são excluídos para evitar contar novamente as compras. Comparação do mês corrente até hoje com o mês anterior completo.</p><Link href="/transactions" className="mt-4 inline-block text-sm text-primary">Ver transações</Link></section></main>;
+  const today = financialDay();
+  const months = lastTwelveMonths(today);
+  const [transactions, categories, goals] = await Promise.all([
+    prisma.transaction.findMany({ where: { date: { gte: new Date(months[11] + "-01T03:00:00Z"), lte: new Date() } } }),
+    prisma.category.findMany(),
+    prisma.spendingGoal.findMany({ where: { month: { in: months } } }),
+  ]);
+  const history = months.map(month => {
+    const expenses = monthlyExpenses(transactions, month, today);
+    const totals = new Map<string, number>();
+    for (const tx of expenses) totals.set(tx.category || "outros", (totals.get(tx.category || "outros") || 0) + tx.amount);
+    return { month, total: expenses.reduce((sum, t) => sum + t.amount, 0), count: expenses.length,
+      categories: [...totals.entries()].map(([value, amount]) => { const category = categories.find(c => c.value === value); return { value, amount, label: category?.label || value, color: category?.color || "#6b7280" }; }).sort((a,b) => b.amount - a.amount) };
+  });
+  return <ReportsClient history={history} initialGoals={Object.fromEntries(goals.map(g => [g.month, g.amount]))} />;
 }

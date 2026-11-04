@@ -1,5 +1,4 @@
 import { hasSession } from "@/lib/session";
-import { CATEGORIES } from "@/lib/categories";
 import { normalizeMerchant, isCardBillPayment, PAID_STATUSES } from "@/lib/commitment-rules";
 import { financialDay } from "@/lib/statement";
 import { reconcileCommitments } from "@/lib/commitments";
@@ -34,6 +33,7 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { description, amount, date, type, status, linkedBillId, category } = body;
 
+    if (category && (typeof category !== "string" || !await prisma.category.findFirst({where:{value:category,archived:false}}))) return NextResponse.json({error:"Categoria indisponível."},{status:400});
     const numericAmount = parseFloat(String(amount).replace(",", "."));
     if (isNaN(numericAmount) || numericAmount <= 0) {
       return NextResponse.json({ error: "Valor inválido." }, { status: 400 });
@@ -99,7 +99,7 @@ export async function PATCH(request: Request) {
   if(!await hasSession()) return NextResponse.json({error:"Não autorizado."},{status:401});
   try {
     const body=await request.json();
-    if(typeof body.id!=="string" || !CATEGORIES.some(c=>c.value===body.category)) return NextResponse.json({error:"Categoria inválida."},{status:400});
+    if(typeof body.id!=="string" || (typeof body.category !== "string" || !await prisma.category.findFirst({where:{value:body.category,archived:false}}))) return NextResponse.json({error:"Categoria inválida."},{status:400});
     if(body.recurring && (!Number.isInteger(body.dueDay)||body.dueDay<1||body.dueDay>31||![1,3,12].includes(body.intervalMonths))) return NextResponse.json({error:"Vencimento ou frequência inválidos."},{status:400});
     const result=await prisma.$transaction(async db=>{
       await db.$queryRaw`SELECT pg_advisory_xact_lock(hashtext('zion-commitments'))::text`;

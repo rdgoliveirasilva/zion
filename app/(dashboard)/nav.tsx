@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation"; // Importando useRouter
-import { Home, Receipt, PieChart, Wallet, Plus, LogOut } from "lucide-react"; // Importando LogOut
+import { Home, Receipt, PieChart, Wallet, Plus, LogOut, Settings } from "lucide-react"; // Importando LogOut
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 
 export function DashboardNav({ onOpenModal }: { onOpenModal: () => void }) {
@@ -11,10 +11,10 @@ export function DashboardNav({ onOpenModal }: { onOpenModal: () => void }) {
   const router = useRouter();
 
   const navItems = [
-    { name: "Visão Geral", href: "/", icon: Home },
-    { name: "Transações", href: "/transactions", icon: Receipt },
-    { name: "Orçamentos", href: "/budgets", icon: PieChart },
-    { name: "Contas", href: "/accounts", icon: Wallet },
+    { name: "Início", href: "/", icon: Home },
+    { name: "Gastos", href: "/transactions", icon: Receipt },
+    { name: "Análises", href: "/reports", icon: PieChart },
+    { name: "Configurações", href: "/settings", icon: Settings },
   ];
 
   const handleLogout = async () => {
@@ -46,7 +46,7 @@ export function DashboardNav({ onOpenModal }: { onOpenModal: () => void }) {
 
         <nav className="flex-1 space-y-1 px-3 pt-6">
           {navItems.map((item) => {
-            const isActive = pathname === item.href;
+            const isActive = pathname === item.href || (item.href === "/settings" && pathname === "/accounts");
             return (
               <Link
                 key={item.name}
@@ -86,8 +86,8 @@ export function DashboardNav({ onOpenModal }: { onOpenModal: () => void }) {
 
       {/* NAV MOBILE */}
       <nav className="fixed bottom-0 left-0 right-0 z-40 flex h-16 items-center justify-around border-t border-border bg-card px-2 pb-safe md:hidden">
-        {[{ name: "Início", href: "/", icon: Home }, { name: "Gastos", href: "/transactions", icon: Receipt }].map((item) => {
-          const isActive = pathname === item.href;
+        {navItems.slice(0, 2).map((item) => {
+          const isActive = pathname === item.href || (item.href === "/settings" && pathname === "/accounts");
           return (
             <Link 
               key={item.name} 
@@ -109,8 +109,8 @@ export function DashboardNav({ onOpenModal }: { onOpenModal: () => void }) {
           </button>
         </div>
 
-        {[{ name: "Análises", href: "/reports", icon: PieChart }].map((item) => {
-          const isActive = pathname === item.href;
+        {navItems.slice(2).map((item) => {
+          const isActive = pathname === item.href || (item.href === "/settings" && pathname === "/accounts");
           return (
             <Link 
               key={item.name} 

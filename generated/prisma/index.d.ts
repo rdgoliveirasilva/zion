@@ -33,6 +33,16 @@ export type RecurringRule = $Result.DefaultSelection<Prisma.$RecurringRulePayloa
  * 
  */
 export type Commitment = $Result.DefaultSelection<Prisma.$CommitmentPayload>
+/**
+ * Model Category
+ * 
+ */
+export type Category = $Result.DefaultSelection<Prisma.$CategoryPayload>
+/**
+ * Model SpendingGoal
+ * 
+ */
+export type SpendingGoal = $Result.DefaultSelection<Prisma.$SpendingGoalPayload>
 
 /**
  * ##  Prisma Client ʲˢ
@@ -194,6 +204,26 @@ export class PrismaClient<
     * ```
     */
   get commitment(): Prisma.CommitmentDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.category`: Exposes CRUD operations for the **Category** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Categories
+    * const categories = await prisma.category.findMany()
+    * ```
+    */
+  get category(): Prisma.CategoryDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.spendingGoal`: Exposes CRUD operations for the **SpendingGoal** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more SpendingGoals
+    * const spendingGoals = await prisma.spendingGoal.findMany()
+    * ```
+    */
+  get spendingGoal(): Prisma.SpendingGoalDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -644,7 +674,9 @@ export namespace Prisma {
     Account: 'Account',
     Transaction: 'Transaction',
     RecurringRule: 'RecurringRule',
-    Commitment: 'Commitment'
+    Commitment: 'Commitment',
+    Category: 'Category',
+    SpendingGoal: 'SpendingGoal'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -660,7 +692,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "account" | "transaction" | "recurringRule" | "commitment"
+      modelProps: "account" | "transaction" | "recurringRule" | "commitment" | "category" | "spendingGoal"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -960,6 +992,154 @@ export namespace Prisma {
           }
         }
       }
+      Category: {
+        payload: Prisma.$CategoryPayload<ExtArgs>
+        fields: Prisma.CategoryFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.CategoryFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CategoryPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.CategoryFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CategoryPayload>
+          }
+          findFirst: {
+            args: Prisma.CategoryFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CategoryPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.CategoryFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CategoryPayload>
+          }
+          findMany: {
+            args: Prisma.CategoryFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CategoryPayload>[]
+          }
+          create: {
+            args: Prisma.CategoryCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CategoryPayload>
+          }
+          createMany: {
+            args: Prisma.CategoryCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.CategoryCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CategoryPayload>[]
+          }
+          delete: {
+            args: Prisma.CategoryDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CategoryPayload>
+          }
+          update: {
+            args: Prisma.CategoryUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CategoryPayload>
+          }
+          deleteMany: {
+            args: Prisma.CategoryDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.CategoryUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.CategoryUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CategoryPayload>[]
+          }
+          upsert: {
+            args: Prisma.CategoryUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$CategoryPayload>
+          }
+          aggregate: {
+            args: Prisma.CategoryAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateCategory>
+          }
+          groupBy: {
+            args: Prisma.CategoryGroupByArgs<ExtArgs>
+            result: $Utils.Optional<CategoryGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.CategoryCountArgs<ExtArgs>
+            result: $Utils.Optional<CategoryCountAggregateOutputType> | number
+          }
+        }
+      }
+      SpendingGoal: {
+        payload: Prisma.$SpendingGoalPayload<ExtArgs>
+        fields: Prisma.SpendingGoalFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.SpendingGoalFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SpendingGoalPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.SpendingGoalFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SpendingGoalPayload>
+          }
+          findFirst: {
+            args: Prisma.SpendingGoalFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SpendingGoalPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.SpendingGoalFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SpendingGoalPayload>
+          }
+          findMany: {
+            args: Prisma.SpendingGoalFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SpendingGoalPayload>[]
+          }
+          create: {
+            args: Prisma.SpendingGoalCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SpendingGoalPayload>
+          }
+          createMany: {
+            args: Prisma.SpendingGoalCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.SpendingGoalCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SpendingGoalPayload>[]
+          }
+          delete: {
+            args: Prisma.SpendingGoalDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SpendingGoalPayload>
+          }
+          update: {
+            args: Prisma.SpendingGoalUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SpendingGoalPayload>
+          }
+          deleteMany: {
+            args: Prisma.SpendingGoalDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.SpendingGoalUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.SpendingGoalUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SpendingGoalPayload>[]
+          }
+          upsert: {
+            args: Prisma.SpendingGoalUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SpendingGoalPayload>
+          }
+          aggregate: {
+            args: Prisma.SpendingGoalAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateSpendingGoal>
+          }
+          groupBy: {
+            args: Prisma.SpendingGoalGroupByArgs<ExtArgs>
+            result: $Utils.Optional<SpendingGoalGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.SpendingGoalCountArgs<ExtArgs>
+            result: $Utils.Optional<SpendingGoalCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -1087,6 +1267,8 @@ export namespace Prisma {
     transaction?: TransactionOmit
     recurringRule?: RecurringRuleOmit
     commitment?: CommitmentOmit
+    category?: CategoryOmit
+    spendingGoal?: SpendingGoalOmit
   }
 
   /* Types for Logging */
@@ -4857,6 +5039,7 @@ export namespace Prisma {
     category: string | null
     source: string | null
     coveredByCard: boolean | null
+    estimated: boolean | null
     transactionId: string | null
     ruleId: string | null
     createdAt: Date | null
@@ -4873,6 +5056,7 @@ export namespace Prisma {
     category: string | null
     source: string | null
     coveredByCard: boolean | null
+    estimated: boolean | null
     transactionId: string | null
     ruleId: string | null
     createdAt: Date | null
@@ -4889,6 +5073,7 @@ export namespace Prisma {
     category: number
     source: number
     coveredByCard: number
+    estimated: number
     transactionId: number
     ruleId: number
     createdAt: number
@@ -4915,6 +5100,7 @@ export namespace Prisma {
     category?: true
     source?: true
     coveredByCard?: true
+    estimated?: true
     transactionId?: true
     ruleId?: true
     createdAt?: true
@@ -4931,6 +5117,7 @@ export namespace Prisma {
     category?: true
     source?: true
     coveredByCard?: true
+    estimated?: true
     transactionId?: true
     ruleId?: true
     createdAt?: true
@@ -4947,6 +5134,7 @@ export namespace Prisma {
     category?: true
     source?: true
     coveredByCard?: true
+    estimated?: true
     transactionId?: true
     ruleId?: true
     createdAt?: true
@@ -5050,6 +5238,7 @@ export namespace Prisma {
     category: string
     source: string
     coveredByCard: boolean
+    estimated: boolean
     transactionId: string | null
     ruleId: string | null
     createdAt: Date
@@ -5085,6 +5274,7 @@ export namespace Prisma {
     category?: boolean
     source?: boolean
     coveredByCard?: boolean
+    estimated?: boolean
     transactionId?: boolean
     ruleId?: boolean
     createdAt?: boolean
@@ -5103,6 +5293,7 @@ export namespace Prisma {
     category?: boolean
     source?: boolean
     coveredByCard?: boolean
+    estimated?: boolean
     transactionId?: boolean
     ruleId?: boolean
     createdAt?: boolean
@@ -5121,6 +5312,7 @@ export namespace Prisma {
     category?: boolean
     source?: boolean
     coveredByCard?: boolean
+    estimated?: boolean
     transactionId?: boolean
     ruleId?: boolean
     createdAt?: boolean
@@ -5139,13 +5331,14 @@ export namespace Prisma {
     category?: boolean
     source?: boolean
     coveredByCard?: boolean
+    estimated?: boolean
     transactionId?: boolean
     ruleId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type CommitmentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "key" | "description" | "amount" | "dueDate" | "status" | "category" | "source" | "coveredByCard" | "transactionId" | "ruleId" | "createdAt" | "updatedAt", ExtArgs["result"]["commitment"]>
+  export type CommitmentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "key" | "description" | "amount" | "dueDate" | "status" | "category" | "source" | "coveredByCard" | "estimated" | "transactionId" | "ruleId" | "createdAt" | "updatedAt", ExtArgs["result"]["commitment"]>
   export type CommitmentInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     transaction?: boolean | Commitment$transactionArgs<ExtArgs>
     rule?: boolean | Commitment$ruleArgs<ExtArgs>
@@ -5175,6 +5368,7 @@ export namespace Prisma {
       category: string
       source: string
       coveredByCard: boolean
+      estimated: boolean
       transactionId: string | null
       ruleId: string | null
       createdAt: Date
@@ -5613,6 +5807,7 @@ export namespace Prisma {
     readonly category: FieldRef<"Commitment", 'String'>
     readonly source: FieldRef<"Commitment", 'String'>
     readonly coveredByCard: FieldRef<"Commitment", 'Boolean'>
+    readonly estimated: FieldRef<"Commitment", 'Boolean'>
     readonly transactionId: FieldRef<"Commitment", 'String'>
     readonly ruleId: FieldRef<"Commitment", 'String'>
     readonly createdAt: FieldRef<"Commitment", 'DateTime'>
@@ -6075,6 +6270,2014 @@ export namespace Prisma {
 
 
   /**
+   * Model Category
+   */
+
+  export type AggregateCategory = {
+    _count: CategoryCountAggregateOutputType | null
+    _min: CategoryMinAggregateOutputType | null
+    _max: CategoryMaxAggregateOutputType | null
+  }
+
+  export type CategoryMinAggregateOutputType = {
+    value: string | null
+    label: string | null
+    nameKey: string | null
+    color: string | null
+    archived: boolean | null
+  }
+
+  export type CategoryMaxAggregateOutputType = {
+    value: string | null
+    label: string | null
+    nameKey: string | null
+    color: string | null
+    archived: boolean | null
+  }
+
+  export type CategoryCountAggregateOutputType = {
+    value: number
+    label: number
+    nameKey: number
+    color: number
+    archived: number
+    _all: number
+  }
+
+
+  export type CategoryMinAggregateInputType = {
+    value?: true
+    label?: true
+    nameKey?: true
+    color?: true
+    archived?: true
+  }
+
+  export type CategoryMaxAggregateInputType = {
+    value?: true
+    label?: true
+    nameKey?: true
+    color?: true
+    archived?: true
+  }
+
+  export type CategoryCountAggregateInputType = {
+    value?: true
+    label?: true
+    nameKey?: true
+    color?: true
+    archived?: true
+    _all?: true
+  }
+
+  export type CategoryAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Category to aggregate.
+     */
+    where?: CategoryWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Categories to fetch.
+     */
+    orderBy?: CategoryOrderByWithRelationInput | CategoryOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: CategoryWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Categories from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Categories.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Categories
+    **/
+    _count?: true | CategoryCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: CategoryMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: CategoryMaxAggregateInputType
+  }
+
+  export type GetCategoryAggregateType<T extends CategoryAggregateArgs> = {
+        [P in keyof T & keyof AggregateCategory]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateCategory[P]>
+      : GetScalarType<T[P], AggregateCategory[P]>
+  }
+
+
+
+
+  export type CategoryGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: CategoryWhereInput
+    orderBy?: CategoryOrderByWithAggregationInput | CategoryOrderByWithAggregationInput[]
+    by: CategoryScalarFieldEnum[] | CategoryScalarFieldEnum
+    having?: CategoryScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: CategoryCountAggregateInputType | true
+    _min?: CategoryMinAggregateInputType
+    _max?: CategoryMaxAggregateInputType
+  }
+
+  export type CategoryGroupByOutputType = {
+    value: string
+    label: string
+    nameKey: string
+    color: string
+    archived: boolean
+    _count: CategoryCountAggregateOutputType | null
+    _min: CategoryMinAggregateOutputType | null
+    _max: CategoryMaxAggregateOutputType | null
+  }
+
+  type GetCategoryGroupByPayload<T extends CategoryGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<CategoryGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof CategoryGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], CategoryGroupByOutputType[P]>
+            : GetScalarType<T[P], CategoryGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type CategorySelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    value?: boolean
+    label?: boolean
+    nameKey?: boolean
+    color?: boolean
+    archived?: boolean
+  }, ExtArgs["result"]["category"]>
+
+  export type CategorySelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    value?: boolean
+    label?: boolean
+    nameKey?: boolean
+    color?: boolean
+    archived?: boolean
+  }, ExtArgs["result"]["category"]>
+
+  export type CategorySelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    value?: boolean
+    label?: boolean
+    nameKey?: boolean
+    color?: boolean
+    archived?: boolean
+  }, ExtArgs["result"]["category"]>
+
+  export type CategorySelectScalar = {
+    value?: boolean
+    label?: boolean
+    nameKey?: boolean
+    color?: boolean
+    archived?: boolean
+  }
+
+  export type CategoryOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"value" | "label" | "nameKey" | "color" | "archived", ExtArgs["result"]["category"]>
+
+  export type $CategoryPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Category"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      value: string
+      label: string
+      nameKey: string
+      color: string
+      archived: boolean
+    }, ExtArgs["result"]["category"]>
+    composites: {}
+  }
+
+  type CategoryGetPayload<S extends boolean | null | undefined | CategoryDefaultArgs> = $Result.GetResult<Prisma.$CategoryPayload, S>
+
+  type CategoryCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<CategoryFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: CategoryCountAggregateInputType | true
+    }
+
+  export interface CategoryDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Category'], meta: { name: 'Category' } }
+    /**
+     * Find zero or one Category that matches the filter.
+     * @param {CategoryFindUniqueArgs} args - Arguments to find a Category
+     * @example
+     * // Get one Category
+     * const category = await prisma.category.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends CategoryFindUniqueArgs>(args: SelectSubset<T, CategoryFindUniqueArgs<ExtArgs>>): Prisma__CategoryClient<$Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Category that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {CategoryFindUniqueOrThrowArgs} args - Arguments to find a Category
+     * @example
+     * // Get one Category
+     * const category = await prisma.category.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends CategoryFindUniqueOrThrowArgs>(args: SelectSubset<T, CategoryFindUniqueOrThrowArgs<ExtArgs>>): Prisma__CategoryClient<$Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Category that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CategoryFindFirstArgs} args - Arguments to find a Category
+     * @example
+     * // Get one Category
+     * const category = await prisma.category.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends CategoryFindFirstArgs>(args?: SelectSubset<T, CategoryFindFirstArgs<ExtArgs>>): Prisma__CategoryClient<$Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Category that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CategoryFindFirstOrThrowArgs} args - Arguments to find a Category
+     * @example
+     * // Get one Category
+     * const category = await prisma.category.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends CategoryFindFirstOrThrowArgs>(args?: SelectSubset<T, CategoryFindFirstOrThrowArgs<ExtArgs>>): Prisma__CategoryClient<$Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Categories that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CategoryFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Categories
+     * const categories = await prisma.category.findMany()
+     * 
+     * // Get first 10 Categories
+     * const categories = await prisma.category.findMany({ take: 10 })
+     * 
+     * // Only select the `value`
+     * const categoryWithValueOnly = await prisma.category.findMany({ select: { value: true } })
+     * 
+     */
+    findMany<T extends CategoryFindManyArgs>(args?: SelectSubset<T, CategoryFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Category.
+     * @param {CategoryCreateArgs} args - Arguments to create a Category.
+     * @example
+     * // Create one Category
+     * const Category = await prisma.category.create({
+     *   data: {
+     *     // ... data to create a Category
+     *   }
+     * })
+     * 
+     */
+    create<T extends CategoryCreateArgs>(args: SelectSubset<T, CategoryCreateArgs<ExtArgs>>): Prisma__CategoryClient<$Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Categories.
+     * @param {CategoryCreateManyArgs} args - Arguments to create many Categories.
+     * @example
+     * // Create many Categories
+     * const category = await prisma.category.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends CategoryCreateManyArgs>(args?: SelectSubset<T, CategoryCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Categories and returns the data saved in the database.
+     * @param {CategoryCreateManyAndReturnArgs} args - Arguments to create many Categories.
+     * @example
+     * // Create many Categories
+     * const category = await prisma.category.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Categories and only return the `value`
+     * const categoryWithValueOnly = await prisma.category.createManyAndReturn({
+     *   select: { value: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends CategoryCreateManyAndReturnArgs>(args?: SelectSubset<T, CategoryCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Category.
+     * @param {CategoryDeleteArgs} args - Arguments to delete one Category.
+     * @example
+     * // Delete one Category
+     * const Category = await prisma.category.delete({
+     *   where: {
+     *     // ... filter to delete one Category
+     *   }
+     * })
+     * 
+     */
+    delete<T extends CategoryDeleteArgs>(args: SelectSubset<T, CategoryDeleteArgs<ExtArgs>>): Prisma__CategoryClient<$Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Category.
+     * @param {CategoryUpdateArgs} args - Arguments to update one Category.
+     * @example
+     * // Update one Category
+     * const category = await prisma.category.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends CategoryUpdateArgs>(args: SelectSubset<T, CategoryUpdateArgs<ExtArgs>>): Prisma__CategoryClient<$Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Categories.
+     * @param {CategoryDeleteManyArgs} args - Arguments to filter Categories to delete.
+     * @example
+     * // Delete a few Categories
+     * const { count } = await prisma.category.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends CategoryDeleteManyArgs>(args?: SelectSubset<T, CategoryDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Categories.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CategoryUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Categories
+     * const category = await prisma.category.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends CategoryUpdateManyArgs>(args: SelectSubset<T, CategoryUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Categories and returns the data updated in the database.
+     * @param {CategoryUpdateManyAndReturnArgs} args - Arguments to update many Categories.
+     * @example
+     * // Update many Categories
+     * const category = await prisma.category.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Categories and only return the `value`
+     * const categoryWithValueOnly = await prisma.category.updateManyAndReturn({
+     *   select: { value: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends CategoryUpdateManyAndReturnArgs>(args: SelectSubset<T, CategoryUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Category.
+     * @param {CategoryUpsertArgs} args - Arguments to update or create a Category.
+     * @example
+     * // Update or create a Category
+     * const category = await prisma.category.upsert({
+     *   create: {
+     *     // ... data to create a Category
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Category we want to update
+     *   }
+     * })
+     */
+    upsert<T extends CategoryUpsertArgs>(args: SelectSubset<T, CategoryUpsertArgs<ExtArgs>>): Prisma__CategoryClient<$Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Categories.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CategoryCountArgs} args - Arguments to filter Categories to count.
+     * @example
+     * // Count the number of Categories
+     * const count = await prisma.category.count({
+     *   where: {
+     *     // ... the filter for the Categories we want to count
+     *   }
+     * })
+    **/
+    count<T extends CategoryCountArgs>(
+      args?: Subset<T, CategoryCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], CategoryCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Category.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CategoryAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends CategoryAggregateArgs>(args: Subset<T, CategoryAggregateArgs>): Prisma.PrismaPromise<GetCategoryAggregateType<T>>
+
+    /**
+     * Group by Category.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {CategoryGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends CategoryGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: CategoryGroupByArgs['orderBy'] }
+        : { orderBy?: CategoryGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, CategoryGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetCategoryGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Category model
+   */
+  readonly fields: CategoryFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Category.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__CategoryClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Category model
+   */
+  interface CategoryFieldRefs {
+    readonly value: FieldRef<"Category", 'String'>
+    readonly label: FieldRef<"Category", 'String'>
+    readonly nameKey: FieldRef<"Category", 'String'>
+    readonly color: FieldRef<"Category", 'String'>
+    readonly archived: FieldRef<"Category", 'Boolean'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Category findUnique
+   */
+  export type CategoryFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Category
+     */
+    select?: CategorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Category
+     */
+    omit?: CategoryOmit<ExtArgs> | null
+    /**
+     * Filter, which Category to fetch.
+     */
+    where: CategoryWhereUniqueInput
+  }
+
+  /**
+   * Category findUniqueOrThrow
+   */
+  export type CategoryFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Category
+     */
+    select?: CategorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Category
+     */
+    omit?: CategoryOmit<ExtArgs> | null
+    /**
+     * Filter, which Category to fetch.
+     */
+    where: CategoryWhereUniqueInput
+  }
+
+  /**
+   * Category findFirst
+   */
+  export type CategoryFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Category
+     */
+    select?: CategorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Category
+     */
+    omit?: CategoryOmit<ExtArgs> | null
+    /**
+     * Filter, which Category to fetch.
+     */
+    where?: CategoryWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Categories to fetch.
+     */
+    orderBy?: CategoryOrderByWithRelationInput | CategoryOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Categories.
+     */
+    cursor?: CategoryWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Categories from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Categories.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Categories.
+     */
+    distinct?: CategoryScalarFieldEnum | CategoryScalarFieldEnum[]
+  }
+
+  /**
+   * Category findFirstOrThrow
+   */
+  export type CategoryFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Category
+     */
+    select?: CategorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Category
+     */
+    omit?: CategoryOmit<ExtArgs> | null
+    /**
+     * Filter, which Category to fetch.
+     */
+    where?: CategoryWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Categories to fetch.
+     */
+    orderBy?: CategoryOrderByWithRelationInput | CategoryOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Categories.
+     */
+    cursor?: CategoryWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Categories from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Categories.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Categories.
+     */
+    distinct?: CategoryScalarFieldEnum | CategoryScalarFieldEnum[]
+  }
+
+  /**
+   * Category findMany
+   */
+  export type CategoryFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Category
+     */
+    select?: CategorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Category
+     */
+    omit?: CategoryOmit<ExtArgs> | null
+    /**
+     * Filter, which Categories to fetch.
+     */
+    where?: CategoryWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Categories to fetch.
+     */
+    orderBy?: CategoryOrderByWithRelationInput | CategoryOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Categories.
+     */
+    cursor?: CategoryWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Categories from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Categories.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Categories.
+     */
+    distinct?: CategoryScalarFieldEnum | CategoryScalarFieldEnum[]
+  }
+
+  /**
+   * Category create
+   */
+  export type CategoryCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Category
+     */
+    select?: CategorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Category
+     */
+    omit?: CategoryOmit<ExtArgs> | null
+    /**
+     * The data needed to create a Category.
+     */
+    data: XOR<CategoryCreateInput, CategoryUncheckedCreateInput>
+  }
+
+  /**
+   * Category createMany
+   */
+  export type CategoryCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Categories.
+     */
+    data: CategoryCreateManyInput | CategoryCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Category createManyAndReturn
+   */
+  export type CategoryCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Category
+     */
+    select?: CategorySelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Category
+     */
+    omit?: CategoryOmit<ExtArgs> | null
+    /**
+     * The data used to create many Categories.
+     */
+    data: CategoryCreateManyInput | CategoryCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Category update
+   */
+  export type CategoryUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Category
+     */
+    select?: CategorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Category
+     */
+    omit?: CategoryOmit<ExtArgs> | null
+    /**
+     * The data needed to update a Category.
+     */
+    data: XOR<CategoryUpdateInput, CategoryUncheckedUpdateInput>
+    /**
+     * Choose, which Category to update.
+     */
+    where: CategoryWhereUniqueInput
+  }
+
+  /**
+   * Category updateMany
+   */
+  export type CategoryUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Categories.
+     */
+    data: XOR<CategoryUpdateManyMutationInput, CategoryUncheckedUpdateManyInput>
+    /**
+     * Filter which Categories to update
+     */
+    where?: CategoryWhereInput
+    /**
+     * Limit how many Categories to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Category updateManyAndReturn
+   */
+  export type CategoryUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Category
+     */
+    select?: CategorySelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Category
+     */
+    omit?: CategoryOmit<ExtArgs> | null
+    /**
+     * The data used to update Categories.
+     */
+    data: XOR<CategoryUpdateManyMutationInput, CategoryUncheckedUpdateManyInput>
+    /**
+     * Filter which Categories to update
+     */
+    where?: CategoryWhereInput
+    /**
+     * Limit how many Categories to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Category upsert
+   */
+  export type CategoryUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Category
+     */
+    select?: CategorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Category
+     */
+    omit?: CategoryOmit<ExtArgs> | null
+    /**
+     * The filter to search for the Category to update in case it exists.
+     */
+    where: CategoryWhereUniqueInput
+    /**
+     * In case the Category found by the `where` argument doesn't exist, create a new Category with this data.
+     */
+    create: XOR<CategoryCreateInput, CategoryUncheckedCreateInput>
+    /**
+     * In case the Category was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<CategoryUpdateInput, CategoryUncheckedUpdateInput>
+  }
+
+  /**
+   * Category delete
+   */
+  export type CategoryDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Category
+     */
+    select?: CategorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Category
+     */
+    omit?: CategoryOmit<ExtArgs> | null
+    /**
+     * Filter which Category to delete.
+     */
+    where: CategoryWhereUniqueInput
+  }
+
+  /**
+   * Category deleteMany
+   */
+  export type CategoryDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Categories to delete
+     */
+    where?: CategoryWhereInput
+    /**
+     * Limit how many Categories to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * Category without action
+   */
+  export type CategoryDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Category
+     */
+    select?: CategorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Category
+     */
+    omit?: CategoryOmit<ExtArgs> | null
+  }
+
+
+  /**
+   * Model SpendingGoal
+   */
+
+  export type AggregateSpendingGoal = {
+    _count: SpendingGoalCountAggregateOutputType | null
+    _avg: SpendingGoalAvgAggregateOutputType | null
+    _sum: SpendingGoalSumAggregateOutputType | null
+    _min: SpendingGoalMinAggregateOutputType | null
+    _max: SpendingGoalMaxAggregateOutputType | null
+  }
+
+  export type SpendingGoalAvgAggregateOutputType = {
+    amount: number | null
+  }
+
+  export type SpendingGoalSumAggregateOutputType = {
+    amount: number | null
+  }
+
+  export type SpendingGoalMinAggregateOutputType = {
+    month: string | null
+    amount: number | null
+    updatedAt: Date | null
+  }
+
+  export type SpendingGoalMaxAggregateOutputType = {
+    month: string | null
+    amount: number | null
+    updatedAt: Date | null
+  }
+
+  export type SpendingGoalCountAggregateOutputType = {
+    month: number
+    amount: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type SpendingGoalAvgAggregateInputType = {
+    amount?: true
+  }
+
+  export type SpendingGoalSumAggregateInputType = {
+    amount?: true
+  }
+
+  export type SpendingGoalMinAggregateInputType = {
+    month?: true
+    amount?: true
+    updatedAt?: true
+  }
+
+  export type SpendingGoalMaxAggregateInputType = {
+    month?: true
+    amount?: true
+    updatedAt?: true
+  }
+
+  export type SpendingGoalCountAggregateInputType = {
+    month?: true
+    amount?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type SpendingGoalAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which SpendingGoal to aggregate.
+     */
+    where?: SpendingGoalWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SpendingGoals to fetch.
+     */
+    orderBy?: SpendingGoalOrderByWithRelationInput | SpendingGoalOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: SpendingGoalWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SpendingGoals from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SpendingGoals.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned SpendingGoals
+    **/
+    _count?: true | SpendingGoalCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: SpendingGoalAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: SpendingGoalSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: SpendingGoalMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: SpendingGoalMaxAggregateInputType
+  }
+
+  export type GetSpendingGoalAggregateType<T extends SpendingGoalAggregateArgs> = {
+        [P in keyof T & keyof AggregateSpendingGoal]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateSpendingGoal[P]>
+      : GetScalarType<T[P], AggregateSpendingGoal[P]>
+  }
+
+
+
+
+  export type SpendingGoalGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: SpendingGoalWhereInput
+    orderBy?: SpendingGoalOrderByWithAggregationInput | SpendingGoalOrderByWithAggregationInput[]
+    by: SpendingGoalScalarFieldEnum[] | SpendingGoalScalarFieldEnum
+    having?: SpendingGoalScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: SpendingGoalCountAggregateInputType | true
+    _avg?: SpendingGoalAvgAggregateInputType
+    _sum?: SpendingGoalSumAggregateInputType
+    _min?: SpendingGoalMinAggregateInputType
+    _max?: SpendingGoalMaxAggregateInputType
+  }
+
+  export type SpendingGoalGroupByOutputType = {
+    month: string
+    amount: number
+    updatedAt: Date
+    _count: SpendingGoalCountAggregateOutputType | null
+    _avg: SpendingGoalAvgAggregateOutputType | null
+    _sum: SpendingGoalSumAggregateOutputType | null
+    _min: SpendingGoalMinAggregateOutputType | null
+    _max: SpendingGoalMaxAggregateOutputType | null
+  }
+
+  type GetSpendingGoalGroupByPayload<T extends SpendingGoalGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<SpendingGoalGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof SpendingGoalGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], SpendingGoalGroupByOutputType[P]>
+            : GetScalarType<T[P], SpendingGoalGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type SpendingGoalSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    month?: boolean
+    amount?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["spendingGoal"]>
+
+  export type SpendingGoalSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    month?: boolean
+    amount?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["spendingGoal"]>
+
+  export type SpendingGoalSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    month?: boolean
+    amount?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["spendingGoal"]>
+
+  export type SpendingGoalSelectScalar = {
+    month?: boolean
+    amount?: boolean
+    updatedAt?: boolean
+  }
+
+  export type SpendingGoalOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"month" | "amount" | "updatedAt", ExtArgs["result"]["spendingGoal"]>
+
+  export type $SpendingGoalPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "SpendingGoal"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      month: string
+      amount: number
+      updatedAt: Date
+    }, ExtArgs["result"]["spendingGoal"]>
+    composites: {}
+  }
+
+  type SpendingGoalGetPayload<S extends boolean | null | undefined | SpendingGoalDefaultArgs> = $Result.GetResult<Prisma.$SpendingGoalPayload, S>
+
+  type SpendingGoalCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<SpendingGoalFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: SpendingGoalCountAggregateInputType | true
+    }
+
+  export interface SpendingGoalDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['SpendingGoal'], meta: { name: 'SpendingGoal' } }
+    /**
+     * Find zero or one SpendingGoal that matches the filter.
+     * @param {SpendingGoalFindUniqueArgs} args - Arguments to find a SpendingGoal
+     * @example
+     * // Get one SpendingGoal
+     * const spendingGoal = await prisma.spendingGoal.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends SpendingGoalFindUniqueArgs>(args: SelectSubset<T, SpendingGoalFindUniqueArgs<ExtArgs>>): Prisma__SpendingGoalClient<$Result.GetResult<Prisma.$SpendingGoalPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one SpendingGoal that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {SpendingGoalFindUniqueOrThrowArgs} args - Arguments to find a SpendingGoal
+     * @example
+     * // Get one SpendingGoal
+     * const spendingGoal = await prisma.spendingGoal.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends SpendingGoalFindUniqueOrThrowArgs>(args: SelectSubset<T, SpendingGoalFindUniqueOrThrowArgs<ExtArgs>>): Prisma__SpendingGoalClient<$Result.GetResult<Prisma.$SpendingGoalPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first SpendingGoal that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SpendingGoalFindFirstArgs} args - Arguments to find a SpendingGoal
+     * @example
+     * // Get one SpendingGoal
+     * const spendingGoal = await prisma.spendingGoal.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends SpendingGoalFindFirstArgs>(args?: SelectSubset<T, SpendingGoalFindFirstArgs<ExtArgs>>): Prisma__SpendingGoalClient<$Result.GetResult<Prisma.$SpendingGoalPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first SpendingGoal that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SpendingGoalFindFirstOrThrowArgs} args - Arguments to find a SpendingGoal
+     * @example
+     * // Get one SpendingGoal
+     * const spendingGoal = await prisma.spendingGoal.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends SpendingGoalFindFirstOrThrowArgs>(args?: SelectSubset<T, SpendingGoalFindFirstOrThrowArgs<ExtArgs>>): Prisma__SpendingGoalClient<$Result.GetResult<Prisma.$SpendingGoalPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more SpendingGoals that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SpendingGoalFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all SpendingGoals
+     * const spendingGoals = await prisma.spendingGoal.findMany()
+     * 
+     * // Get first 10 SpendingGoals
+     * const spendingGoals = await prisma.spendingGoal.findMany({ take: 10 })
+     * 
+     * // Only select the `month`
+     * const spendingGoalWithMonthOnly = await prisma.spendingGoal.findMany({ select: { month: true } })
+     * 
+     */
+    findMany<T extends SpendingGoalFindManyArgs>(args?: SelectSubset<T, SpendingGoalFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SpendingGoalPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a SpendingGoal.
+     * @param {SpendingGoalCreateArgs} args - Arguments to create a SpendingGoal.
+     * @example
+     * // Create one SpendingGoal
+     * const SpendingGoal = await prisma.spendingGoal.create({
+     *   data: {
+     *     // ... data to create a SpendingGoal
+     *   }
+     * })
+     * 
+     */
+    create<T extends SpendingGoalCreateArgs>(args: SelectSubset<T, SpendingGoalCreateArgs<ExtArgs>>): Prisma__SpendingGoalClient<$Result.GetResult<Prisma.$SpendingGoalPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many SpendingGoals.
+     * @param {SpendingGoalCreateManyArgs} args - Arguments to create many SpendingGoals.
+     * @example
+     * // Create many SpendingGoals
+     * const spendingGoal = await prisma.spendingGoal.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends SpendingGoalCreateManyArgs>(args?: SelectSubset<T, SpendingGoalCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many SpendingGoals and returns the data saved in the database.
+     * @param {SpendingGoalCreateManyAndReturnArgs} args - Arguments to create many SpendingGoals.
+     * @example
+     * // Create many SpendingGoals
+     * const spendingGoal = await prisma.spendingGoal.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many SpendingGoals and only return the `month`
+     * const spendingGoalWithMonthOnly = await prisma.spendingGoal.createManyAndReturn({
+     *   select: { month: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends SpendingGoalCreateManyAndReturnArgs>(args?: SelectSubset<T, SpendingGoalCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SpendingGoalPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a SpendingGoal.
+     * @param {SpendingGoalDeleteArgs} args - Arguments to delete one SpendingGoal.
+     * @example
+     * // Delete one SpendingGoal
+     * const SpendingGoal = await prisma.spendingGoal.delete({
+     *   where: {
+     *     // ... filter to delete one SpendingGoal
+     *   }
+     * })
+     * 
+     */
+    delete<T extends SpendingGoalDeleteArgs>(args: SelectSubset<T, SpendingGoalDeleteArgs<ExtArgs>>): Prisma__SpendingGoalClient<$Result.GetResult<Prisma.$SpendingGoalPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one SpendingGoal.
+     * @param {SpendingGoalUpdateArgs} args - Arguments to update one SpendingGoal.
+     * @example
+     * // Update one SpendingGoal
+     * const spendingGoal = await prisma.spendingGoal.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends SpendingGoalUpdateArgs>(args: SelectSubset<T, SpendingGoalUpdateArgs<ExtArgs>>): Prisma__SpendingGoalClient<$Result.GetResult<Prisma.$SpendingGoalPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more SpendingGoals.
+     * @param {SpendingGoalDeleteManyArgs} args - Arguments to filter SpendingGoals to delete.
+     * @example
+     * // Delete a few SpendingGoals
+     * const { count } = await prisma.spendingGoal.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends SpendingGoalDeleteManyArgs>(args?: SelectSubset<T, SpendingGoalDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more SpendingGoals.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SpendingGoalUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many SpendingGoals
+     * const spendingGoal = await prisma.spendingGoal.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends SpendingGoalUpdateManyArgs>(args: SelectSubset<T, SpendingGoalUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more SpendingGoals and returns the data updated in the database.
+     * @param {SpendingGoalUpdateManyAndReturnArgs} args - Arguments to update many SpendingGoals.
+     * @example
+     * // Update many SpendingGoals
+     * const spendingGoal = await prisma.spendingGoal.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more SpendingGoals and only return the `month`
+     * const spendingGoalWithMonthOnly = await prisma.spendingGoal.updateManyAndReturn({
+     *   select: { month: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends SpendingGoalUpdateManyAndReturnArgs>(args: SelectSubset<T, SpendingGoalUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SpendingGoalPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one SpendingGoal.
+     * @param {SpendingGoalUpsertArgs} args - Arguments to update or create a SpendingGoal.
+     * @example
+     * // Update or create a SpendingGoal
+     * const spendingGoal = await prisma.spendingGoal.upsert({
+     *   create: {
+     *     // ... data to create a SpendingGoal
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the SpendingGoal we want to update
+     *   }
+     * })
+     */
+    upsert<T extends SpendingGoalUpsertArgs>(args: SelectSubset<T, SpendingGoalUpsertArgs<ExtArgs>>): Prisma__SpendingGoalClient<$Result.GetResult<Prisma.$SpendingGoalPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of SpendingGoals.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SpendingGoalCountArgs} args - Arguments to filter SpendingGoals to count.
+     * @example
+     * // Count the number of SpendingGoals
+     * const count = await prisma.spendingGoal.count({
+     *   where: {
+     *     // ... the filter for the SpendingGoals we want to count
+     *   }
+     * })
+    **/
+    count<T extends SpendingGoalCountArgs>(
+      args?: Subset<T, SpendingGoalCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], SpendingGoalCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a SpendingGoal.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SpendingGoalAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends SpendingGoalAggregateArgs>(args: Subset<T, SpendingGoalAggregateArgs>): Prisma.PrismaPromise<GetSpendingGoalAggregateType<T>>
+
+    /**
+     * Group by SpendingGoal.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SpendingGoalGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends SpendingGoalGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: SpendingGoalGroupByArgs['orderBy'] }
+        : { orderBy?: SpendingGoalGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, SpendingGoalGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetSpendingGoalGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the SpendingGoal model
+   */
+  readonly fields: SpendingGoalFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for SpendingGoal.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__SpendingGoalClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the SpendingGoal model
+   */
+  interface SpendingGoalFieldRefs {
+    readonly month: FieldRef<"SpendingGoal", 'String'>
+    readonly amount: FieldRef<"SpendingGoal", 'Int'>
+    readonly updatedAt: FieldRef<"SpendingGoal", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * SpendingGoal findUnique
+   */
+  export type SpendingGoalFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SpendingGoal
+     */
+    select?: SpendingGoalSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SpendingGoal
+     */
+    omit?: SpendingGoalOmit<ExtArgs> | null
+    /**
+     * Filter, which SpendingGoal to fetch.
+     */
+    where: SpendingGoalWhereUniqueInput
+  }
+
+  /**
+   * SpendingGoal findUniqueOrThrow
+   */
+  export type SpendingGoalFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SpendingGoal
+     */
+    select?: SpendingGoalSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SpendingGoal
+     */
+    omit?: SpendingGoalOmit<ExtArgs> | null
+    /**
+     * Filter, which SpendingGoal to fetch.
+     */
+    where: SpendingGoalWhereUniqueInput
+  }
+
+  /**
+   * SpendingGoal findFirst
+   */
+  export type SpendingGoalFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SpendingGoal
+     */
+    select?: SpendingGoalSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SpendingGoal
+     */
+    omit?: SpendingGoalOmit<ExtArgs> | null
+    /**
+     * Filter, which SpendingGoal to fetch.
+     */
+    where?: SpendingGoalWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SpendingGoals to fetch.
+     */
+    orderBy?: SpendingGoalOrderByWithRelationInput | SpendingGoalOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for SpendingGoals.
+     */
+    cursor?: SpendingGoalWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SpendingGoals from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SpendingGoals.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of SpendingGoals.
+     */
+    distinct?: SpendingGoalScalarFieldEnum | SpendingGoalScalarFieldEnum[]
+  }
+
+  /**
+   * SpendingGoal findFirstOrThrow
+   */
+  export type SpendingGoalFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SpendingGoal
+     */
+    select?: SpendingGoalSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SpendingGoal
+     */
+    omit?: SpendingGoalOmit<ExtArgs> | null
+    /**
+     * Filter, which SpendingGoal to fetch.
+     */
+    where?: SpendingGoalWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SpendingGoals to fetch.
+     */
+    orderBy?: SpendingGoalOrderByWithRelationInput | SpendingGoalOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for SpendingGoals.
+     */
+    cursor?: SpendingGoalWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SpendingGoals from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SpendingGoals.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of SpendingGoals.
+     */
+    distinct?: SpendingGoalScalarFieldEnum | SpendingGoalScalarFieldEnum[]
+  }
+
+  /**
+   * SpendingGoal findMany
+   */
+  export type SpendingGoalFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SpendingGoal
+     */
+    select?: SpendingGoalSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SpendingGoal
+     */
+    omit?: SpendingGoalOmit<ExtArgs> | null
+    /**
+     * Filter, which SpendingGoals to fetch.
+     */
+    where?: SpendingGoalWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SpendingGoals to fetch.
+     */
+    orderBy?: SpendingGoalOrderByWithRelationInput | SpendingGoalOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing SpendingGoals.
+     */
+    cursor?: SpendingGoalWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SpendingGoals from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SpendingGoals.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of SpendingGoals.
+     */
+    distinct?: SpendingGoalScalarFieldEnum | SpendingGoalScalarFieldEnum[]
+  }
+
+  /**
+   * SpendingGoal create
+   */
+  export type SpendingGoalCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SpendingGoal
+     */
+    select?: SpendingGoalSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SpendingGoal
+     */
+    omit?: SpendingGoalOmit<ExtArgs> | null
+    /**
+     * The data needed to create a SpendingGoal.
+     */
+    data: XOR<SpendingGoalCreateInput, SpendingGoalUncheckedCreateInput>
+  }
+
+  /**
+   * SpendingGoal createMany
+   */
+  export type SpendingGoalCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many SpendingGoals.
+     */
+    data: SpendingGoalCreateManyInput | SpendingGoalCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * SpendingGoal createManyAndReturn
+   */
+  export type SpendingGoalCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SpendingGoal
+     */
+    select?: SpendingGoalSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the SpendingGoal
+     */
+    omit?: SpendingGoalOmit<ExtArgs> | null
+    /**
+     * The data used to create many SpendingGoals.
+     */
+    data: SpendingGoalCreateManyInput | SpendingGoalCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * SpendingGoal update
+   */
+  export type SpendingGoalUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SpendingGoal
+     */
+    select?: SpendingGoalSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SpendingGoal
+     */
+    omit?: SpendingGoalOmit<ExtArgs> | null
+    /**
+     * The data needed to update a SpendingGoal.
+     */
+    data: XOR<SpendingGoalUpdateInput, SpendingGoalUncheckedUpdateInput>
+    /**
+     * Choose, which SpendingGoal to update.
+     */
+    where: SpendingGoalWhereUniqueInput
+  }
+
+  /**
+   * SpendingGoal updateMany
+   */
+  export type SpendingGoalUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update SpendingGoals.
+     */
+    data: XOR<SpendingGoalUpdateManyMutationInput, SpendingGoalUncheckedUpdateManyInput>
+    /**
+     * Filter which SpendingGoals to update
+     */
+    where?: SpendingGoalWhereInput
+    /**
+     * Limit how many SpendingGoals to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * SpendingGoal updateManyAndReturn
+   */
+  export type SpendingGoalUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SpendingGoal
+     */
+    select?: SpendingGoalSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the SpendingGoal
+     */
+    omit?: SpendingGoalOmit<ExtArgs> | null
+    /**
+     * The data used to update SpendingGoals.
+     */
+    data: XOR<SpendingGoalUpdateManyMutationInput, SpendingGoalUncheckedUpdateManyInput>
+    /**
+     * Filter which SpendingGoals to update
+     */
+    where?: SpendingGoalWhereInput
+    /**
+     * Limit how many SpendingGoals to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * SpendingGoal upsert
+   */
+  export type SpendingGoalUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SpendingGoal
+     */
+    select?: SpendingGoalSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SpendingGoal
+     */
+    omit?: SpendingGoalOmit<ExtArgs> | null
+    /**
+     * The filter to search for the SpendingGoal to update in case it exists.
+     */
+    where: SpendingGoalWhereUniqueInput
+    /**
+     * In case the SpendingGoal found by the `where` argument doesn't exist, create a new SpendingGoal with this data.
+     */
+    create: XOR<SpendingGoalCreateInput, SpendingGoalUncheckedCreateInput>
+    /**
+     * In case the SpendingGoal was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<SpendingGoalUpdateInput, SpendingGoalUncheckedUpdateInput>
+  }
+
+  /**
+   * SpendingGoal delete
+   */
+  export type SpendingGoalDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SpendingGoal
+     */
+    select?: SpendingGoalSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SpendingGoal
+     */
+    omit?: SpendingGoalOmit<ExtArgs> | null
+    /**
+     * Filter which SpendingGoal to delete.
+     */
+    where: SpendingGoalWhereUniqueInput
+  }
+
+  /**
+   * SpendingGoal deleteMany
+   */
+  export type SpendingGoalDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which SpendingGoals to delete
+     */
+    where?: SpendingGoalWhereInput
+    /**
+     * Limit how many SpendingGoals to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * SpendingGoal without action
+   */
+  export type SpendingGoalDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SpendingGoal
+     */
+    select?: SpendingGoalSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SpendingGoal
+     */
+    omit?: SpendingGoalOmit<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -6149,6 +8352,7 @@ export namespace Prisma {
     category: 'category',
     source: 'source',
     coveredByCard: 'coveredByCard',
+    estimated: 'estimated',
     transactionId: 'transactionId',
     ruleId: 'ruleId',
     createdAt: 'createdAt',
@@ -6156,6 +8360,26 @@ export namespace Prisma {
   };
 
   export type CommitmentScalarFieldEnum = (typeof CommitmentScalarFieldEnum)[keyof typeof CommitmentScalarFieldEnum]
+
+
+  export const CategoryScalarFieldEnum: {
+    value: 'value',
+    label: 'label',
+    nameKey: 'nameKey',
+    color: 'color',
+    archived: 'archived'
+  };
+
+  export type CategoryScalarFieldEnum = (typeof CategoryScalarFieldEnum)[keyof typeof CategoryScalarFieldEnum]
+
+
+  export const SpendingGoalScalarFieldEnum: {
+    month: 'month',
+    amount: 'amount',
+    updatedAt: 'updatedAt'
+  };
+
+  export type SpendingGoalScalarFieldEnum = (typeof SpendingGoalScalarFieldEnum)[keyof typeof SpendingGoalScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -6530,6 +8754,7 @@ export namespace Prisma {
     category?: StringFilter<"Commitment"> | string
     source?: StringFilter<"Commitment"> | string
     coveredByCard?: BoolFilter<"Commitment"> | boolean
+    estimated?: BoolFilter<"Commitment"> | boolean
     transactionId?: StringNullableFilter<"Commitment"> | string | null
     ruleId?: StringNullableFilter<"Commitment"> | string | null
     createdAt?: DateTimeFilter<"Commitment"> | Date | string
@@ -6548,6 +8773,7 @@ export namespace Prisma {
     category?: SortOrder
     source?: SortOrder
     coveredByCard?: SortOrder
+    estimated?: SortOrder
     transactionId?: SortOrderInput | SortOrder
     ruleId?: SortOrderInput | SortOrder
     createdAt?: SortOrder
@@ -6570,6 +8796,7 @@ export namespace Prisma {
     category?: StringFilter<"Commitment"> | string
     source?: StringFilter<"Commitment"> | string
     coveredByCard?: BoolFilter<"Commitment"> | boolean
+    estimated?: BoolFilter<"Commitment"> | boolean
     ruleId?: StringNullableFilter<"Commitment"> | string | null
     createdAt?: DateTimeFilter<"Commitment"> | Date | string
     updatedAt?: DateTimeFilter<"Commitment"> | Date | string
@@ -6587,6 +8814,7 @@ export namespace Prisma {
     category?: SortOrder
     source?: SortOrder
     coveredByCard?: SortOrder
+    estimated?: SortOrder
     transactionId?: SortOrderInput | SortOrder
     ruleId?: SortOrderInput | SortOrder
     createdAt?: SortOrder
@@ -6611,10 +8839,107 @@ export namespace Prisma {
     category?: StringWithAggregatesFilter<"Commitment"> | string
     source?: StringWithAggregatesFilter<"Commitment"> | string
     coveredByCard?: BoolWithAggregatesFilter<"Commitment"> | boolean
+    estimated?: BoolWithAggregatesFilter<"Commitment"> | boolean
     transactionId?: StringNullableWithAggregatesFilter<"Commitment"> | string | null
     ruleId?: StringNullableWithAggregatesFilter<"Commitment"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"Commitment"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Commitment"> | Date | string
+  }
+
+  export type CategoryWhereInput = {
+    AND?: CategoryWhereInput | CategoryWhereInput[]
+    OR?: CategoryWhereInput[]
+    NOT?: CategoryWhereInput | CategoryWhereInput[]
+    value?: StringFilter<"Category"> | string
+    label?: StringFilter<"Category"> | string
+    nameKey?: StringFilter<"Category"> | string
+    color?: StringFilter<"Category"> | string
+    archived?: BoolFilter<"Category"> | boolean
+  }
+
+  export type CategoryOrderByWithRelationInput = {
+    value?: SortOrder
+    label?: SortOrder
+    nameKey?: SortOrder
+    color?: SortOrder
+    archived?: SortOrder
+  }
+
+  export type CategoryWhereUniqueInput = Prisma.AtLeast<{
+    value?: string
+    nameKey?: string
+    AND?: CategoryWhereInput | CategoryWhereInput[]
+    OR?: CategoryWhereInput[]
+    NOT?: CategoryWhereInput | CategoryWhereInput[]
+    label?: StringFilter<"Category"> | string
+    color?: StringFilter<"Category"> | string
+    archived?: BoolFilter<"Category"> | boolean
+  }, "value" | "nameKey">
+
+  export type CategoryOrderByWithAggregationInput = {
+    value?: SortOrder
+    label?: SortOrder
+    nameKey?: SortOrder
+    color?: SortOrder
+    archived?: SortOrder
+    _count?: CategoryCountOrderByAggregateInput
+    _max?: CategoryMaxOrderByAggregateInput
+    _min?: CategoryMinOrderByAggregateInput
+  }
+
+  export type CategoryScalarWhereWithAggregatesInput = {
+    AND?: CategoryScalarWhereWithAggregatesInput | CategoryScalarWhereWithAggregatesInput[]
+    OR?: CategoryScalarWhereWithAggregatesInput[]
+    NOT?: CategoryScalarWhereWithAggregatesInput | CategoryScalarWhereWithAggregatesInput[]
+    value?: StringWithAggregatesFilter<"Category"> | string
+    label?: StringWithAggregatesFilter<"Category"> | string
+    nameKey?: StringWithAggregatesFilter<"Category"> | string
+    color?: StringWithAggregatesFilter<"Category"> | string
+    archived?: BoolWithAggregatesFilter<"Category"> | boolean
+  }
+
+  export type SpendingGoalWhereInput = {
+    AND?: SpendingGoalWhereInput | SpendingGoalWhereInput[]
+    OR?: SpendingGoalWhereInput[]
+    NOT?: SpendingGoalWhereInput | SpendingGoalWhereInput[]
+    month?: StringFilter<"SpendingGoal"> | string
+    amount?: IntFilter<"SpendingGoal"> | number
+    updatedAt?: DateTimeFilter<"SpendingGoal"> | Date | string
+  }
+
+  export type SpendingGoalOrderByWithRelationInput = {
+    month?: SortOrder
+    amount?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type SpendingGoalWhereUniqueInput = Prisma.AtLeast<{
+    month?: string
+    AND?: SpendingGoalWhereInput | SpendingGoalWhereInput[]
+    OR?: SpendingGoalWhereInput[]
+    NOT?: SpendingGoalWhereInput | SpendingGoalWhereInput[]
+    amount?: IntFilter<"SpendingGoal"> | number
+    updatedAt?: DateTimeFilter<"SpendingGoal"> | Date | string
+  }, "month">
+
+  export type SpendingGoalOrderByWithAggregationInput = {
+    month?: SortOrder
+    amount?: SortOrder
+    updatedAt?: SortOrder
+    _count?: SpendingGoalCountOrderByAggregateInput
+    _avg?: SpendingGoalAvgOrderByAggregateInput
+    _max?: SpendingGoalMaxOrderByAggregateInput
+    _min?: SpendingGoalMinOrderByAggregateInput
+    _sum?: SpendingGoalSumOrderByAggregateInput
+  }
+
+  export type SpendingGoalScalarWhereWithAggregatesInput = {
+    AND?: SpendingGoalScalarWhereWithAggregatesInput | SpendingGoalScalarWhereWithAggregatesInput[]
+    OR?: SpendingGoalScalarWhereWithAggregatesInput[]
+    NOT?: SpendingGoalScalarWhereWithAggregatesInput | SpendingGoalScalarWhereWithAggregatesInput[]
+    month?: StringWithAggregatesFilter<"SpendingGoal"> | string
+    amount?: IntWithAggregatesFilter<"SpendingGoal"> | number
+    updatedAt?: DateTimeWithAggregatesFilter<"SpendingGoal"> | Date | string
   }
 
   export type AccountCreateInput = {
@@ -6932,6 +9257,7 @@ export namespace Prisma {
     category?: string
     source?: string
     coveredByCard?: boolean
+    estimated?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     transaction?: TransactionCreateNestedOneWithoutCommitmentInput
@@ -6948,6 +9274,7 @@ export namespace Prisma {
     category?: string
     source?: string
     coveredByCard?: boolean
+    estimated?: boolean
     transactionId?: string | null
     ruleId?: string | null
     createdAt?: Date | string
@@ -6964,6 +9291,7 @@ export namespace Prisma {
     category?: StringFieldUpdateOperationsInput | string
     source?: StringFieldUpdateOperationsInput | string
     coveredByCard?: BoolFieldUpdateOperationsInput | boolean
+    estimated?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     transaction?: TransactionUpdateOneWithoutCommitmentNestedInput
@@ -6980,6 +9308,7 @@ export namespace Prisma {
     category?: StringFieldUpdateOperationsInput | string
     source?: StringFieldUpdateOperationsInput | string
     coveredByCard?: BoolFieldUpdateOperationsInput | boolean
+    estimated?: BoolFieldUpdateOperationsInput | boolean
     transactionId?: NullableStringFieldUpdateOperationsInput | string | null
     ruleId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -6996,6 +9325,7 @@ export namespace Prisma {
     category?: string
     source?: string
     coveredByCard?: boolean
+    estimated?: boolean
     transactionId?: string | null
     ruleId?: string | null
     createdAt?: Date | string
@@ -7012,6 +9342,7 @@ export namespace Prisma {
     category?: StringFieldUpdateOperationsInput | string
     source?: StringFieldUpdateOperationsInput | string
     coveredByCard?: BoolFieldUpdateOperationsInput | boolean
+    estimated?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -7026,9 +9357,108 @@ export namespace Prisma {
     category?: StringFieldUpdateOperationsInput | string
     source?: StringFieldUpdateOperationsInput | string
     coveredByCard?: BoolFieldUpdateOperationsInput | boolean
+    estimated?: BoolFieldUpdateOperationsInput | boolean
     transactionId?: NullableStringFieldUpdateOperationsInput | string | null
     ruleId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type CategoryCreateInput = {
+    value: string
+    label: string
+    nameKey: string
+    color?: string
+    archived?: boolean
+  }
+
+  export type CategoryUncheckedCreateInput = {
+    value: string
+    label: string
+    nameKey: string
+    color?: string
+    archived?: boolean
+  }
+
+  export type CategoryUpdateInput = {
+    value?: StringFieldUpdateOperationsInput | string
+    label?: StringFieldUpdateOperationsInput | string
+    nameKey?: StringFieldUpdateOperationsInput | string
+    color?: StringFieldUpdateOperationsInput | string
+    archived?: BoolFieldUpdateOperationsInput | boolean
+  }
+
+  export type CategoryUncheckedUpdateInput = {
+    value?: StringFieldUpdateOperationsInput | string
+    label?: StringFieldUpdateOperationsInput | string
+    nameKey?: StringFieldUpdateOperationsInput | string
+    color?: StringFieldUpdateOperationsInput | string
+    archived?: BoolFieldUpdateOperationsInput | boolean
+  }
+
+  export type CategoryCreateManyInput = {
+    value: string
+    label: string
+    nameKey: string
+    color?: string
+    archived?: boolean
+  }
+
+  export type CategoryUpdateManyMutationInput = {
+    value?: StringFieldUpdateOperationsInput | string
+    label?: StringFieldUpdateOperationsInput | string
+    nameKey?: StringFieldUpdateOperationsInput | string
+    color?: StringFieldUpdateOperationsInput | string
+    archived?: BoolFieldUpdateOperationsInput | boolean
+  }
+
+  export type CategoryUncheckedUpdateManyInput = {
+    value?: StringFieldUpdateOperationsInput | string
+    label?: StringFieldUpdateOperationsInput | string
+    nameKey?: StringFieldUpdateOperationsInput | string
+    color?: StringFieldUpdateOperationsInput | string
+    archived?: BoolFieldUpdateOperationsInput | boolean
+  }
+
+  export type SpendingGoalCreateInput = {
+    month: string
+    amount: number
+    updatedAt?: Date | string
+  }
+
+  export type SpendingGoalUncheckedCreateInput = {
+    month: string
+    amount: number
+    updatedAt?: Date | string
+  }
+
+  export type SpendingGoalUpdateInput = {
+    month?: StringFieldUpdateOperationsInput | string
+    amount?: IntFieldUpdateOperationsInput | number
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SpendingGoalUncheckedUpdateInput = {
+    month?: StringFieldUpdateOperationsInput | string
+    amount?: IntFieldUpdateOperationsInput | number
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SpendingGoalCreateManyInput = {
+    month: string
+    amount: number
+    updatedAt?: Date | string
+  }
+
+  export type SpendingGoalUpdateManyMutationInput = {
+    month?: StringFieldUpdateOperationsInput | string
+    amount?: IntFieldUpdateOperationsInput | number
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SpendingGoalUncheckedUpdateManyInput = {
+    month?: StringFieldUpdateOperationsInput | string
+    amount?: IntFieldUpdateOperationsInput | number
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -7397,6 +9827,7 @@ export namespace Prisma {
     category?: SortOrder
     source?: SortOrder
     coveredByCard?: SortOrder
+    estimated?: SortOrder
     transactionId?: SortOrder
     ruleId?: SortOrder
     createdAt?: SortOrder
@@ -7417,6 +9848,7 @@ export namespace Prisma {
     category?: SortOrder
     source?: SortOrder
     coveredByCard?: SortOrder
+    estimated?: SortOrder
     transactionId?: SortOrder
     ruleId?: SortOrder
     createdAt?: SortOrder
@@ -7433,6 +9865,7 @@ export namespace Prisma {
     category?: SortOrder
     source?: SortOrder
     coveredByCard?: SortOrder
+    estimated?: SortOrder
     transactionId?: SortOrder
     ruleId?: SortOrder
     createdAt?: SortOrder
@@ -7440,6 +9873,56 @@ export namespace Prisma {
   }
 
   export type CommitmentSumOrderByAggregateInput = {
+    amount?: SortOrder
+  }
+
+  export type CategoryCountOrderByAggregateInput = {
+    value?: SortOrder
+    label?: SortOrder
+    nameKey?: SortOrder
+    color?: SortOrder
+    archived?: SortOrder
+  }
+
+  export type CategoryMaxOrderByAggregateInput = {
+    value?: SortOrder
+    label?: SortOrder
+    nameKey?: SortOrder
+    color?: SortOrder
+    archived?: SortOrder
+  }
+
+  export type CategoryMinOrderByAggregateInput = {
+    value?: SortOrder
+    label?: SortOrder
+    nameKey?: SortOrder
+    color?: SortOrder
+    archived?: SortOrder
+  }
+
+  export type SpendingGoalCountOrderByAggregateInput = {
+    month?: SortOrder
+    amount?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type SpendingGoalAvgOrderByAggregateInput = {
+    amount?: SortOrder
+  }
+
+  export type SpendingGoalMaxOrderByAggregateInput = {
+    month?: SortOrder
+    amount?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type SpendingGoalMinOrderByAggregateInput = {
+    month?: SortOrder
+    amount?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type SpendingGoalSumOrderByAggregateInput = {
     amount?: SortOrder
   }
 
@@ -7925,6 +10408,7 @@ export namespace Prisma {
     category?: string
     source?: string
     coveredByCard?: boolean
+    estimated?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     rule?: RecurringRuleCreateNestedOneWithoutCommitmentsInput
@@ -7940,6 +10424,7 @@ export namespace Prisma {
     category?: string
     source?: string
     coveredByCard?: boolean
+    estimated?: boolean
     ruleId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -8006,6 +10491,7 @@ export namespace Prisma {
     category?: StringFieldUpdateOperationsInput | string
     source?: StringFieldUpdateOperationsInput | string
     coveredByCard?: BoolFieldUpdateOperationsInput | boolean
+    estimated?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     rule?: RecurringRuleUpdateOneWithoutCommitmentsNestedInput
@@ -8021,6 +10507,7 @@ export namespace Prisma {
     category?: StringFieldUpdateOperationsInput | string
     source?: StringFieldUpdateOperationsInput | string
     coveredByCard?: BoolFieldUpdateOperationsInput | boolean
+    estimated?: BoolFieldUpdateOperationsInput | boolean
     ruleId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -8036,6 +10523,7 @@ export namespace Prisma {
     category?: string
     source?: string
     coveredByCard?: boolean
+    estimated?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     transaction?: TransactionCreateNestedOneWithoutCommitmentInput
@@ -8051,6 +10539,7 @@ export namespace Prisma {
     category?: string
     source?: string
     coveredByCard?: boolean
+    estimated?: boolean
     transactionId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -8095,6 +10584,7 @@ export namespace Prisma {
     category?: StringFilter<"Commitment"> | string
     source?: StringFilter<"Commitment"> | string
     coveredByCard?: BoolFilter<"Commitment"> | boolean
+    estimated?: BoolFilter<"Commitment"> | boolean
     transactionId?: StringNullableFilter<"Commitment"> | string | null
     ruleId?: StringNullableFilter<"Commitment"> | string | null
     createdAt?: DateTimeFilter<"Commitment"> | Date | string
@@ -8325,6 +10815,7 @@ export namespace Prisma {
     category?: string
     source?: string
     coveredByCard?: boolean
+    estimated?: boolean
     transactionId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -8340,6 +10831,7 @@ export namespace Prisma {
     category?: StringFieldUpdateOperationsInput | string
     source?: StringFieldUpdateOperationsInput | string
     coveredByCard?: BoolFieldUpdateOperationsInput | boolean
+    estimated?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     transaction?: TransactionUpdateOneWithoutCommitmentNestedInput
@@ -8355,6 +10847,7 @@ export namespace Prisma {
     category?: StringFieldUpdateOperationsInput | string
     source?: StringFieldUpdateOperationsInput | string
     coveredByCard?: BoolFieldUpdateOperationsInput | boolean
+    estimated?: BoolFieldUpdateOperationsInput | boolean
     transactionId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -8370,6 +10863,7 @@ export namespace Prisma {
     category?: StringFieldUpdateOperationsInput | string
     source?: StringFieldUpdateOperationsInput | string
     coveredByCard?: BoolFieldUpdateOperationsInput | boolean
+    estimated?: BoolFieldUpdateOperationsInput | boolean
     transactionId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string

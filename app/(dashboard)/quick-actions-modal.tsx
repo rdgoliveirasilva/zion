@@ -1,6 +1,6 @@
 "use client";
 
-import { CATEGORIES } from "@/lib/categories";
+import { useCategories } from "@/components/ui/categories-provider";
 import { useState, useEffect } from "react";
 import { 
   X, ArrowDownLeft, CreditCard, Landmark, ArrowRightLeft, 
@@ -17,6 +17,7 @@ type ActionType = "menu" | "pagamento" | "cartao" | "conta" | "recebimento" | "r
 
 
 export function QuickActionsModal({ isOpen, onClose }: QuickActionsModalProps) {
+  const { categories } = useCategories();
   const [currentAction, setCurrentAction] = useState<ActionType>("menu");
   
   const [description, setDescription] = useState("");
@@ -107,7 +108,7 @@ export function QuickActionsModal({ isOpen, onClose }: QuickActionsModalProps) {
         onChange={(e) => setCategory(e.target.value)}
         className="w-full rounded-xl bg-background border border-border p-3 text-foreground focus:outline-none focus:border-primary appearance-none"
       >
-        {CATEGORIES.map(cat => (
+        {categories.filter(c => !c.archived || c.value === category).map(cat => (
           <option key={cat.value} value={cat.value}>{cat.label}</option>
         ))}
       </select>

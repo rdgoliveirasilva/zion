@@ -172,9 +172,24 @@ exports.Prisma.CommitmentScalarFieldEnum = {
   category: 'category',
   source: 'source',
   coveredByCard: 'coveredByCard',
+  estimated: 'estimated',
   transactionId: 'transactionId',
   ruleId: 'ruleId',
   createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.CategoryScalarFieldEnum = {
+  value: 'value',
+  label: 'label',
+  nameKey: 'nameKey',
+  color: 'color',
+  archived: 'archived'
+};
+
+exports.Prisma.SpendingGoalScalarFieldEnum = {
+  month: 'month',
+  amount: 'amount',
   updatedAt: 'updatedAt'
 };
 
@@ -198,7 +213,9 @@ exports.Prisma.ModelName = {
   Account: 'Account',
   Transaction: 'Transaction',
   RecurringRule: 'RecurringRule',
-  Commitment: 'Commitment'
+  Commitment: 'Commitment',
+  Category: 'Category',
+  SpendingGoal: 'SpendingGoal'
 };
 
 /**
