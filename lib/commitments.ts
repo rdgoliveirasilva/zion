@@ -1,3 +1,4 @@
+import { unstable_cache } from "next/cache";
 import { currentCardBill, cardBillArchive } from "./pluggy-bills";
 import { invoicePaymentMatches, lastTwelveMonths, institutionLabel } from "./financial-history";
 import { prisma } from "@/lib/prisma";
@@ -72,11 +73,11 @@ export async function reconcileCommitments(db: Prisma.TransactionClient, now = n
   }
 }
 
-export async function loadCommitments() {
+// Função original, que realmente vai no banco e monta os dados
+async function fetchCommitments() {
   const allAccounts = await prisma.account.findMany();
   const accounts = allAccounts.filter(account => account.type === "credit");
   
-  // OTIMIZAÇÃO: Se não houver contas de crédito, evita o processamento pesado
   if (accounts.length === 0) {
     return prisma.commitment.findMany({ orderBy: { dueDate: "asc" } });
   }
@@ -89,7 +90,6 @@ export async function loadCommitments() {
     return [...byMonth.values()].map(bill => ({ account, bill }));
   }))).flat();
 
-  // OTIMIZAÇÃO: Removeu a transação pesada, agora faz update/insert direto
   for (const { account, bill } of bills) {
     if (!bill) continue;
     const key = `card:${account.id}:${bill.dueDate.slice(0, 7)}`;
@@ -112,3 +112,6 @@ export async function loadCommitments() {
   
   return commitments.map(c => ({ ...c, color: categories.find(category => category.value === c.category)?.color }));
 }
+
+// Exportamos a versão com cache de 30 segundos
+export const loadCommitments = unstable_cache(fetchCommitments, ['zion-commitments-cache'], { revalidate: 30 });

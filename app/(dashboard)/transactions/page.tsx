@@ -1,15 +1,12 @@
 "use client";
 
-import { formatFinancialDate, statementIncludes } from "@/lib/statement";
-import { TransactionAccountTags } from "@/components/ui/transaction-account-tags";
-import { useCategories } from "@/components/ui/categories-provider";
-import { TransactionDetails } from "@/components/ui/transaction-details";
 import { useState, useEffect } from "react";
 import { 
   Search, Trash2, Filter, ArrowDownLeft, ArrowUpRight,
   Utensils, Car, Home, HeartPulse, GraduationCap, Gamepad2, ShoppingBag, MoreHorizontal, Loader2,
-  Landmark, CreditCard
+  Landmark, CreditCard, Calendar
 } from "lucide-react";
+import { formatFinancialDate } from "@/lib/statement";
 
 const CATEGORY_MAP: Record<string, { label: string, icon: any, color: string }> = {
   alimentacao: { label: "Alimentação", icon: Utensils, color: "text-orange-500 bg-orange-500/10" },
@@ -37,21 +34,22 @@ interface Transaction {
 }
 
 export default function TransactionsPage() {
-  const { categories } = useCategories();
-  const [selected, setSelected] = useState<Transaction | null>(null);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   
+  // Estados dos Filtros
   const [searchTerm, setSearchTerm] = useState("");
   const [filterCategory, setFilterCategory] = useState("all");
   const [filterType, setFilterType] = useState("all");
+  
+  // 👇 NOVO: Estado da Paginação
+  const [page, setPage] = useState(1);
 
   const fetchTransactions = async () => {
     setIsLoading(true);
     try {
       const res = await fetch("/api/transactions/all");
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error);
       setTransactions(data);
     } catch (error) {
       console.error("Erro ao buscar transações", error);
@@ -80,25 +78,30 @@ export default function TransactionsPage() {
     }
   };
 
+  // Lógica de Filtragem
   const filteredTransactions = transactions.filter(tx => {
     const matchesSearch = tx.description.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory = filterCategory === "all" || tx.category === filterCategory;
     const matchesType = filterType === "all" || tx.type === filterType;
     
-    // 👇 Filtro: Só mostra o que já aconteceu (data de hoje ou passada)
-    const isPastOrToday = statementIncludes(tx.date, "all");
-
-    // 👇 Filtro: Ignora contas a pagar pendentes (faturas futuras)
+    const txDate = new Date(tx.date);
+    const today = new Date();
+    today.setHours(23, 59, 59, 999);
+    const isPastOrToday = txDate <= today;
     const isNotPendingBill = !(tx.type === "bill" && tx.status === "pending");
 
     return matchesSearch && matchesCategory && matchesType && isPastOrToday && isNotPendingBill;
   });
 
+  // 👇 NOVO: Cálculos de Paginação
+  const pageCount = Math.max(1, Math.ceil(filteredTransactions.length / 15));
+  const currentPage = Math.min(page, pageCount);
+  const visibleTransactions = filteredTransactions.slice((currentPage - 1) * 15, currentPage * 15);
+  const pageNumbers = Array.from(new Set([1, ...Array.from({ length: 3 }, (_, i) => currentPage - 1 + i), pageCount])).filter(n => n >= 1 && n <= pageCount).sort((a, b) => a - b);
+
   const formatMoney = (value: number) => {
     return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(value / 100);
   };
-
-  const formatDate = formatFinancialDate;
 
   return (
     <div className="mx-auto w-full max-w-5xl p-4 md:p-8 animate-slide-up pb-24 md:pb-8">
@@ -118,14 +121,14 @@ export default function TransactionsPage() {
             type="text" 
             placeholder="Buscar transação..." 
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={(e) => { setSearchTerm(e.target.value); setPage(1); }} // 👈 Resetar página ao buscar
             className="w-full rounded-xl bg-card border border-border p-3 pl-10 text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary"
           />
         </div>
 
         <select 
           value={filterType}
-          onChange={(e) => setFilterType(e.target.value)}
+          onChange={(e) => { setFilterType(e.target.value); setPage(1); }} // 👈 Resetar página ao filtrar
           className="rounded-xl bg-card border border-border p-3 text-foreground focus:outline-none focus:border-primary appearance-none min-w-[150px]"
         >
           <option value="all">Todos os tipos</option>
@@ -135,12 +138,12 @@ export default function TransactionsPage() {
 
         <select 
           value={filterCategory}
-          onChange={(e) => setFilterCategory(e.target.value)}
+          onChange={(e) => { setFilterCategory(e.target.value); setPage(1); }} // 👈 Resetar página ao filtrar
           className="rounded-xl bg-card border border-border p-3 text-foreground focus:outline-none focus:border-primary appearance-none min-w-[150px]"
         >
           <option value="all">Todas as categorias</option>
-          {categories.map(value => (
-            <option key={value.value} value={value.value}>{value.label}</option>
+          {Object.entries(CATEGORY_MAP).map(([key, value]) => (
+            <option key={key} value={key}>{value.label}</option>
           ))}
         </select>
       </div>
@@ -159,26 +162,34 @@ export default function TransactionsPage() {
           </div>
         ) : (
           <div className="divide-y divide-border">
-            {filteredTransactions.map((tx) => {
-              const customCategory = categories.find(c => c.value === tx.category);
-                  const categoryData = { ...(CATEGORY_MAP[tx.category || "outros"] || CATEGORY_MAP.outros), label: customCategory?.label || "Outros" };
+            {/* 👇 Usando visibleTransactions em vez de filteredTransactions */}
+            {visibleTransactions.map((tx) => {
+              const categoryData = CATEGORY_MAP[tx.category || "outros"] || CATEGORY_MAP.outros;
               const Icon = categoryData.icon;
               const isIncome = tx.type === "income";
 
               return (
                 <div key={tx.id} className="flex items-center justify-between p-4 hover:bg-accent/50 transition-colors group">
                   <div className="flex items-center gap-4">
-                    <div style={customCategory?.color ? { color: customCategory.color, background: customCategory.color + "18" } : undefined} className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-xl ${categoryData.color}`}>
+                    <div className={`flex h-12 w-12 items-center justify-center rounded-xl ${categoryData.color}`}>
                       <Icon className="h-6 w-6" />
                     </div>
                     <div>
-                      <button onClick={() => setSelected(tx)} className="text-left font-medium text-foreground text-base hover:underline">{tx.description}</button>
+                      <p className="font-medium text-foreground text-base">{tx.description}</p>
                       <div className="flex items-center gap-2 mt-1 flex-wrap">
                         <span className="text-xs text-muted-foreground">{categoryData.label}</span>
                         <span className="text-xs text-muted-foreground">•</span>
-                        <span className="text-xs text-muted-foreground">{formatDate(tx.date)}</span>
+                        <span className="text-xs text-muted-foreground">{formatFinancialDate(tx.date)}</span>
                         
-                        <TransactionAccountTags account={tx.account} />
+                        {tx.account && (
+                          <>
+                            <span className="text-xs text-muted-foreground">•</span>
+                            <span className="inline-flex items-center gap-1 rounded-md bg-secondary px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground border border-border">
+                              {tx.account.type === "credit" ? <CreditCard className="h-3 w-3" /> : <Landmark className="h-3 w-3" />}
+                              {tx.account.name}
+                            </span>
+                          </>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -204,7 +215,23 @@ export default function TransactionsPage() {
           </div>
         )}
       </div>
-      {selected && <TransactionDetails key={selected.id} transaction={selected} onClose={() => setSelected(null)} onSaved={fetchTransactions} />}
+
+      {/* 👇 NOVO: Componente de Paginação */}
+      {!isLoading && filteredTransactions.length > 0 && (
+        <nav aria-label="Paginação do extrato" className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-border pt-4">
+          <p aria-live="polite" className="text-xs text-muted-foreground">
+            {(currentPage - 1) * 15 + 1}–{Math.min(currentPage * 15, filteredTransactions.length)} de {filteredTransactions.length}
+          </p>
+          <div className="flex flex-wrap items-center gap-1">
+            <button aria-label="Página anterior" disabled={currentPage === 1} onClick={() => setPage(currentPage - 1)} className="h-9 rounded-lg border border-border px-3 text-sm hover:bg-accent disabled:opacity-40">‹</button>
+            {pageNumbers.map((number, index) => <span key={number} className="inline-flex items-center gap-1">
+              {index > 0 && number > pageNumbers[index - 1] + 1 && <span className="px-1 text-muted-foreground">…</span>}
+              <button aria-label={`Página ${number}`} aria-current={currentPage === number ? "page" : undefined} onClick={() => setPage(number)} className={`h-9 min-w-9 rounded-lg px-2 text-sm font-medium ${currentPage === number ? "bg-primary text-primary-foreground" : "border border-border hover:bg-accent"}`}>{number}</button>
+            </span>)}
+            <button aria-label="Próxima página" disabled={currentPage === pageCount} onClick={() => setPage(currentPage + 1)} className="h-9 rounded-lg border border-border px-3 text-sm hover:bg-accent disabled:opacity-40">›</button>
+          </div>
+        </nav>
+      )}
     </div>
   );
 }
