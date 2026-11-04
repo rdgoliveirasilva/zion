@@ -5,7 +5,8 @@ import { OverviewClient } from "./overview-client";
 export const dynamic = 'force-dynamic';
 
 export default async function OverviewPage() {
-  const commitments = await loadCommitments();
+  //const commitments = await loadCommitments();
+  const commitments: any[] = [];
   // Busca as transações mais recentes
   const dbTransactions = await prisma.transaction.findMany({
     orderBy: { date: 'desc' },
