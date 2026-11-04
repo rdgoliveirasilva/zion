@@ -1,10 +1,15 @@
 "use client";
 
-import Link from "next/link";
+import Link, { useLinkStatus } from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation"; // Importando useRouter
-import { Home, Receipt, PieChart, Wallet, Plus, LogOut, Settings } from "lucide-react"; // Importando LogOut
+import { Home, Receipt, PieChart, Wallet, Plus, LogOut, Settings, Loader2 } from "lucide-react"; // Importando LogOut
 import { ThemeToggle } from "@/components/ui/theme-toggle";
+
+function NavigationPending() {
+  const { pending } = useLinkStatus();
+  return pending ? <Loader2 aria-label="Abrindo página" className="h-3 w-3 animate-spin" /> : null;
+}
 
 export function DashboardNav({ onOpenModal }: { onOpenModal: () => void }) {
   const pathname = usePathname();
@@ -19,9 +24,8 @@ export function DashboardNav({ onOpenModal }: { onOpenModal: () => void }) {
 
   const handleLogout = async () => {
     try {
-      await fetch("/api/logout", { method: "POST" });
-      router.push("/login");
-      router.refresh(); // Limpa o cache de navegação do Next.js
+      await fetch("/api/logout", { method: "POST", signal: AbortSignal.timeout(10000) });
+      window.location.replace("/login");
     } catch (error) {
       console.error("Erro ao sair:", error);
     }
@@ -36,7 +40,8 @@ export function DashboardNav({ onOpenModal }: { onOpenModal: () => void }) {
             <Image 
               src="/images/zion-logo.png" 
               alt="Zion" 
-              fill 
+              fill
+              sizes="176px"
               className="object-contain object-left" 
               priority
             />
@@ -58,7 +63,7 @@ export function DashboardNav({ onOpenModal }: { onOpenModal: () => void }) {
                 }`}
               >
                 <item.icon className="h-5 w-5" />
-                {item.name}
+                {item.name}<NavigationPending />
               </Link>
             );
           })}
@@ -95,7 +100,7 @@ export function DashboardNav({ onOpenModal }: { onOpenModal: () => void }) {
               className={`flex flex-col items-center justify-center w-16 h-full gap-1 ${isActive ? "text-primary" : "text-muted-foreground"}`}
             >
               <item.icon className="h-6 w-6" />
-              <span className="text-[10px] font-medium">{item.name}</span>
+              <span className="text-[10px] font-medium">{item.name}</span><NavigationPending />
             </Link>
           );
         })}
@@ -118,7 +123,7 @@ export function DashboardNav({ onOpenModal }: { onOpenModal: () => void }) {
               className={`flex flex-col items-center justify-center w-16 h-full gap-1 ${isActive ? "text-primary" : "text-muted-foreground"}`}
             >
               <item.icon className="h-6 w-6" />
-              <span className="text-[10px] font-medium">{item.name}</span>
+              <span className="text-[10px] font-medium">{item.name}</span><NavigationPending />
             </Link>
           );
         })}

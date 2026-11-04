@@ -1,4 +1,5 @@
-import { reconcileCommitments } from "@/lib/commitments";
+import { refreshCommitments } from "@/lib/commitment-refresh";
+import { revalidateTag } from "next/cache";
 import { isCardBillPayment } from "@/lib/commitment-rules";
 import { PluggyClient } from "pluggy-sdk";
 import { prisma } from "@/lib/prisma";
@@ -23,7 +24,7 @@ export async function syncPluggyItem(itemId: string) {
       }),
     })));
 
-    return prisma.$transaction(async db => {
+    const result = await prisma.$transaction(async db => {
     await db.$queryRaw`SELECT pg_advisory_xact_lock(hashtext(${itemId}))::text`;
     let totalSaved = 0;
 
@@ -109,7 +110,9 @@ export async function syncPluggyItem(itemId: string) {
       }
     }
 
-    await reconcileCommitments(db);
     return { success: true, totalSaved };
     }, { maxWait: 10000, timeout: 90000 });
+    revalidateTag("pluggy-bills", { expire: 0 });
+    await refreshCommitments(true);
+    return result;
 }

@@ -1,7 +1,8 @@
 "use client";
 
 import type { CurrentCardBill } from "@/lib/card-bill";
-import { useState, useEffect } from "react";
+import { useJsonResource, notifyDataChanged } from "@/lib/client-data";
+import { useState } from "react";
 import { 
   Plus, Landmark, Trash2, Loader2, Wallet, 
   CreditCard, PiggyBank
@@ -17,8 +18,8 @@ interface Account {
 }
 
 export default function AccountsManager({ embedded = false }: { embedded?: boolean }) {
-  const [accounts, setAccounts] = useState<Account[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const { data, loading: isLoading, error: loadError, reload: fetchAccounts } = useJsonResource<Account[]>("/api/accounts");
+  const accounts = data || [];
   
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [name, setName] = useState("");
@@ -26,24 +27,6 @@ export default function AccountsManager({ embedded = false }: { embedded?: boole
   const [type, setType] = useState("checking");
   const [isSaving, setIsSaving] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
-
-  const fetchAccounts = async () => {
-    setIsLoading(true);
-    try {
-      const res = await fetch("/api/accounts", { signal: AbortSignal.timeout(15000), cache: "no-store" });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error);
-      setAccounts(data);
-    } catch (error) {
-      console.error("Erro ao buscar contas", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchAccounts();
-  }, []);
 
   const handleCreateAccount = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -62,7 +45,7 @@ export default function AccountsManager({ embedded = false }: { embedded?: boole
       setName("");
       setBalance("");
       setIsModalOpen(false);
-      fetchAccounts();
+      notifyDataChanged();
     } catch (error: any) {
       setErrorMsg(error.message);
     } finally {
@@ -76,7 +59,7 @@ export default function AccountsManager({ embedded = false }: { embedded?: boole
     try {
       const res = await fetch(`/api/accounts?id=${id}`, { method: "DELETE" });
       if (res.ok) {
-        setAccounts(accounts.filter(a => a.id !== id));
+        notifyDataChanged();
       }
     } catch (error) {
       alert("Erro ao deletar conta.");
@@ -152,8 +135,9 @@ export default function AccountsManager({ embedded = false }: { embedded?: boole
         </div>
       </div>
 
+      {loadError && <div role="alert" className="mb-4 rounded-xl border border-border p-4 text-sm">{loadError} <button onClick={fetchAccounts} className="ml-2 text-primary underline">Tentar novamente</button></div>}
       {/* Lista de Contas */}
-      {isLoading ? (
+      {isLoading && !data ? (
         <div className="flex justify-center py-20">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </div>

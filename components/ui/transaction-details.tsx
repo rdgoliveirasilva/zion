@@ -1,5 +1,6 @@
 "use client";
 
+import { notifyDataChanged } from "@/lib/client-data";
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useCategories } from "@/components/ui/categories-provider";
@@ -32,7 +33,7 @@ export function TransactionDetails({ transaction: tx, onClose, onSaved }: {
       const response = await fetch("/api/transactions", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: tx.id, category, recurring, dueDay, intervalMonths }) });
       const result = await response.json();
       if (!response.ok) throw new Error(result.error || "Não foi possível salvar.");
-      onSaved(); onClose();
+      notifyDataChanged(); onSaved(); onClose();
     } catch (e) { setError(e instanceof Error ? e.message : "Tente novamente."); }
     finally { setSaving(false); }
   }

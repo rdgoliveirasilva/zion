@@ -1,4 +1,5 @@
 "use client";
+import { notifyDataChanged } from "@/lib/client-data";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Database, Tags, Plus, Pencil, Archive, RotateCcw } from "lucide-react";
@@ -22,7 +23,7 @@ export default function SettingsClient() {
       const response = await fetch("/api/categories", { method: value.value ? "PATCH" : "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(value) });
       const result = await response.json();
       if (!response.ok) throw new Error(result.error);
-      await refresh(); router.refresh(); edit(null); setMessage("Categoria salva.");
+      notifyDataChanged(); router.refresh(); edit(null); setMessage("Categoria salva.");
     } catch (error) { setMessage(error instanceof Error ? error.message : "Não foi possível salvar."); }
     finally { setBusy(false); }
   }

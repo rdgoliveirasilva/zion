@@ -3,28 +3,29 @@
 import { financialDay } from "@/lib/statement";
 import Link from "next/link";
 import { CommitmentSummary, CommitmentList, type CommitmentView } from "@/components/ui/commitment-summary";
-import { spendingSummary } from "@/lib/commitment-rules";
-import { useState } from "react";
+import type { StatementPage } from "./statement-list";
+import { useCallback, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { 
-  Eye, EyeOff, CheckCircle2, ChevronDown, ChevronUp, 
-  ArrowDownLeft, Wallet, Landmark, Clock,
-  CreditCard, LogOut, Loader2
+import {
+  Eye, EyeOff, ChevronDown, ChevronUp,
+  ArrowDownLeft, Landmark,
+  LogOut
 } from "lucide-react";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
-import { toast } from "sonner";
-import { TransactionDetails } from "@/components/ui/transaction-details";
+import { money } from "@/lib/financial-history";
+import dynamic from "next/dynamic";
+const TransactionDetails = dynamic(() => import("@/components/ui/transaction-details").then(m => m.TransactionDetails), { ssr: false });
 import { StatementList } from "./statement-list";
 
 interface Transaction {
   id: string;
   description: string;
   amount: number;
-  date: Date;
+  date: Date | string;
   type: string;
   status: string;
   isBillPayment?: boolean;
-  category: string | null; 
+  category: string | null;
   accountId?: string | null;
   account?: { name: string; type: string } | null;
 }
@@ -37,12 +38,14 @@ interface Account {
   dueDate?: Date | null;
 }
 
-export function OverviewClient({ 
-  transactions, 
-  accounts, 
+export function OverviewClient({
+  statement, spending, totalExpenses,
+  accounts,
   commitments
-}: { 
-  transactions: Transaction[];
+}: {
+  statement: StatementPage;
+  spending: { current: number; previous: number; variation: number | null };
+  totalExpenses: number;
   accounts: Account[];
   commitments: CommitmentView[];
 }) {
@@ -50,53 +53,24 @@ export function OverviewClient({
   const [selected, setSelected] = useState<Transaction | null>(null);
   const [showValues, setShowValues] = useState(true);
   const [expandExplain, setExpandExplain] = useState(false);
-  const [isRefreshing, setIsRefreshing] = useState(false);
 
   const handleLogout = async () => {
-    await fetch("/api/logout", { method: "POST" });
-    router.push("/login");
-    router.refresh();
+    await fetch("/api/logout", { method: "POST", signal: AbortSignal.timeout(10000) });
+    window.location.replace("/login");
   };
 
-  const handleRefresh = async () => {
-    setIsRefreshing(true);
-    try {
-      const res = await fetch("/api/pluggy/sync", { method: "POST" });
-      const data = await res.json();
-
-      if (res.ok) {
-        toast.success(data.message || "Dados atualizados com sucesso!");
-        router.refresh(); 
-      } else {
-        throw new Error(data.error || "Falha na sincronização");
-      }
-    } catch (error: any) {
-      toast.error(error.message || "Erro ao atualizar. Tente novamente.");
-    } finally {
-      setIsRefreshing(false);
-    }
-  };
-
-  const formatMoney = (value: number) => {
-    if (!showValues) return "••••••";
-    return new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(value / 100);
-  };
+  const formatMoney = useCallback((value: number) => showValues ? money(value) : "••••••", [showValues]);
 
   const today = financialDay();
-  const spending = spendingSummary(transactions, today);
-  const upcoming = commitments.filter(c => financialDay(c.dueDate).slice(0,7) === today.slice(0,7) || c.status !== "paid").slice(0,5);
+  const upcoming = useMemo(() => commitments.filter(c => financialDay(c.dueDate).slice(0,7) === today.slice(0,7) || c.status !== "paid").slice(0,5), [commitments, today]);
 
   const baseBalance = accounts
     .filter(acc => acc.type !== "credit")
     .reduce((acc, account) => acc + account.balance, 0);
 
-  const totalExpenses = transactions
-    .filter(t => (t.type === "expense" || t.type === "bill") && t.status !== "pending")
-    .reduce((acc, t) => acc + t.amount, 0);
-
   return (
     <div className="mx-auto w-full max-w-6xl p-4 md:p-8 animate-slide-up pb-24 md:pb-8">
-      
+
       <header className="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="flex items-start justify-between w-full md:w-auto">
           <div>
@@ -110,44 +84,32 @@ export function OverviewClient({
             </button>
           </div>
         </div>
-        
+
         <div className="flex items-center gap-3">
           <button onClick={() => setShowValues(!showValues)} className="flex items-center gap-2 rounded-xl bg-card px-3 py-2 text-sm font-medium text-foreground border border-border transition-colors hover:bg-accent">
             {showValues ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
             {showValues ? "Ocultar" : "Mostrar"}
           </button>
-          
-          <button 
-            onClick={handleRefresh} 
-            disabled={isRefreshing}
-            className="flex items-center gap-2 rounded-xl bg-green-500/10 px-3 py-2 text-sm font-medium text-green-600 dark:text-green-400 border border-green-500/20 transition-colors hover:bg-green-500/20 disabled:opacity-70"
-          >
-            {isRefreshing ? (
-              <Loader2 className="h-4 w-4 animate-spin" />
-            ) : (
-              <CheckCircle2 className="h-4 w-4" />
-            )}
-            <span className="hidden sm:inline">{isRefreshing ? "Atualizando..." : "Atualizar"}</span>
-            <span className="sm:hidden">{isRefreshing ? "..." : "Atualizar"}</span>
-          </button>
+
+
         </div>
       </header>
 
       <div className="grid gap-6 md:grid-cols-3">
         <div className="md:col-span-2 min-w-0 space-y-6">
-          
+
           {/* CARD PRINCIPAL */}
           <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-primary to-primary/80 p-6 text-primary-foreground shadow-xl">
             <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-white/10 blur-2xl" />
-            
+
             <div className="flex items-center justify-between">
               <p className="text-sm font-medium text-primary-foreground/80">Saldo Consolidado</p>
               <span className="text-xs text-primary-foreground/80 bg-white/10 px-2 py-1 rounded-md">Open Finance</span>
             </div>
-            
+
             <h2 className="mt-2 text-4xl font-bold tracking-tight">{formatMoney(baseBalance)}</h2>
-            
-            <button 
+
+            <button
               onClick={() => setExpandExplain(!expandExplain)}
               className="mt-3 flex items-center gap-1 text-sm font-medium text-primary-foreground/80 hover:text-primary-foreground transition-colors"
             >
@@ -179,10 +141,10 @@ export function OverviewClient({
           </div>
 
           {/* 👇 AQUI ENTRA O NOVO COMPONENTE DE EXTRATO 👇 */}
-          <StatementList 
-            transactions={transactions} 
-            onSelect={(tx) => setSelected(tx)} 
-            formatMoney={formatMoney} 
+          <StatementList
+            initialPage={statement}
+            onSelect={setSelected}
+            formatMoney={formatMoney}
           />
 
         </div>

@@ -7,12 +7,14 @@ export default async function ReportsPage() {
   const today = financialDay();
   const months = lastTwelveMonths(today);
   const [transactions, categories, goals] = await Promise.all([
-    prisma.transaction.findMany({ where: { date: { gte: new Date(months[11] + "-01T03:00:00Z"), lte: new Date() } } }),
+    prisma.transaction.findMany({ select: { amount: true, date: true, type: true, status: true, description: true, isBillPayment: true, category: true }, where: { date: { gte: new Date(months[11] + "-01T03:00:00Z"), lte: new Date() } } }),
     prisma.category.findMany(),
     prisma.spendingGoal.findMany({ where: { month: { in: months } } }),
   ]);
+  const byMonth = new Map(months.map(month => [month, [] as typeof transactions]));
+  for (const tx of transactions) byMonth.get(financialDay(tx.date).slice(0,7))?.push(tx);
   const history = months.map(month => {
-    const expenses = monthlyExpenses(transactions, month, today);
+    const expenses = monthlyExpenses(byMonth.get(month) || [], month, today);
     const totals = new Map<string, number>();
     for (const tx of expenses) totals.set(tx.category || "outros", (totals.get(tx.category || "outros") || 0) + tx.amount);
     return { month, total: expenses.reduce((sum, t) => sum + t.amount, 0), count: expenses.length,

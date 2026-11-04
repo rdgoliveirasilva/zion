@@ -1,7 +1,9 @@
 export const FINANCIAL_TIME_ZONE = "America/Sao_Paulo";
+// Creating Intl formatters per row blocks the main thread on long statements.
+const dayFormatter = new Intl.DateTimeFormat("en-CA", { timeZone: FINANCIAL_TIME_ZONE, year: "numeric", month: "2-digit", day: "2-digit" });
 export function financialDay(value: Date | string = new Date()): string {
   if (typeof value === "string" && /^\d{4}-\d{2}-\d{2}$/.test(value)) return value;
-  const parts = new Intl.DateTimeFormat("en-CA", { timeZone: FINANCIAL_TIME_ZONE, year: "numeric", month: "2-digit", day: "2-digit" }).formatToParts(new Date(value));
+  const parts = dayFormatter.formatToParts(new Date(value));
   return ["year", "month", "day"].map(key => parts.find(p => p.type === key)!.value).join("-");
 }
 export function statementIncludes(date: Date | string, period: "today" | "7d" | "custom" | "all", start = "", end = "", now = new Date()): boolean {

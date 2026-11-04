@@ -1,17 +1,13 @@
 "use client";
-import { createContext, useCallback, useContext, useEffect, useState } from "react";
+import { createContext, useContext } from "react";
+import { useJsonResource } from "@/lib/client-data";
 import { CATEGORIES } from "@/lib/categories";
 
 export type CategoryOption = { value: string; label: string; color?: string; archived?: boolean };
 const Context = createContext<{ categories: CategoryOption[]; refresh: () => Promise<void> }>({ categories: CATEGORIES, refresh: async () => {} });
 export function CategoriesProvider({ children }: { children: React.ReactNode }) {
-  const [categories, setCategories] = useState<CategoryOption[]>(CATEGORIES);
-  const refresh = useCallback(async () => {
-    const response = await fetch("/api/categories", { cache: "no-store" });
-    if (!response.ok) throw new Error("Não foi possível carregar as categorias.");
-    setCategories(await response.json());
-  }, []);
-  useEffect(() => { refresh().catch(() => {}); }, [refresh]);
+  const { data, reload: refresh } = useJsonResource<CategoryOption[]>("/api/categories");
+  const categories = data || CATEGORIES;
   return <Context.Provider value={{ categories, refresh }}>{children}</Context.Provider>;
 }
 export const useCategories = () => useContext(Context);

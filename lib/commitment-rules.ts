@@ -1,4 +1,5 @@
 export const PAID_STATUSES = new Set(["paid", "cleared", "reconciled"]);
+const spendingDayFormatter = new Intl.DateTimeFormat("en-CA", { timeZone:"America/Sao_Paulo",year:"numeric",month:"2-digit",day:"2-digit" });
 export function normalizeMerchant(value: string) { return value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/\s+/g, " ").trim(); }
 export function monthOffset(month: string, offset: number) { const [y,m] = month.split("-").map(Number); return new Date(Date.UTC(y,m-1+offset,1)).toISOString().slice(0,7); }
 export function monthsBetween(start: string, end: string) { const [a,b]=start.split("-").map(Number), [c,d]=end.split("-").map(Number); return (c-a)*12+d-b; }
@@ -16,7 +17,7 @@ export function spendingSummary(transactions: {amount:number;date:Date|string;ty
   const month=today.slice(0,7), previous=monthOffset(month,-1);
   let current=0, prior=0;
   for(const tx of transactions) {
-    const day=new Intl.DateTimeFormat("en-CA",{timeZone:"America/Sao_Paulo",year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date(tx.date));
+    const day=typeof tx.date === "string" && /^\d{4}-\d{2}-\d{2}$/.test(tx.date) ? tx.date : spendingDayFormatter.format(new Date(tx.date));
     if(day>today || tx.isBillPayment || isCardBillPayment(tx.description) || !(tx.type==="expense" || (tx.type==="bill" && PAID_STATUSES.has(tx.status)))) continue;
     if(day.slice(0,7)===month) current+=tx.amount;
     if(day.slice(0,7)===previous) prior+=tx.amount;

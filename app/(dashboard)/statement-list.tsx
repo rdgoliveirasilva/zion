@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
-import { Calendar, Utensils, Car, Home, HeartPulse, GraduationCap, Gamepad2, ShoppingBag, MoreHorizontal } from "lucide-react";
-import { financialDay, formatFinancialDate, statementIncludes } from "@/lib/statement";
+import { memo, useEffect, useState } from "react";
+import { useJsonResource, notifyDataChanged } from "@/lib/client-data";
+import { Calendar, Trash2, Utensils, Car, Home, HeartPulse, GraduationCap, Gamepad2, ShoppingBag, MoreHorizontal } from "lucide-react";
+import { financialDay, formatFinancialDate } from "@/lib/statement";
 import { useCategories } from "@/components/ui/categories-provider";
 import { TransactionAccountTags } from "@/components/ui/transaction-account-tags";
 
@@ -18,11 +19,11 @@ const CATEGORY_MAP: Record<string, { label: string, icon: any, color: string }> 
   outros: { label: "Outros", icon: MoreHorizontal, color: "text-gray-500 bg-gray-500/10" },
 };
 
-interface Transaction {
+export interface StatementTransaction {
   id: string;
   description: string;
   amount: number;
-  date: Date;
+  date: Date | string;
   type: string;
   status: string;
   isBillPayment?: boolean;
@@ -32,12 +33,15 @@ interface Transaction {
 }
 
 interface StatementListProps {
-  transactions: Transaction[];
-  onSelect: (tx: Transaction) => void;
+  initialPage?: StatementPage;
+  allowDelete?: boolean;
+  onSelect: (tx: StatementTransaction) => void;
   formatMoney: (value: number) => string;
 }
 
-export function StatementList({ transactions, onSelect, formatMoney }: StatementListProps) {
+export type StatementPage = { transactions: StatementTransaction[]; total: number; page: number; pageCount: number };
+
+export const StatementList = memo(function StatementList({ initialPage, allowDelete = false, onSelect, formatMoney }: StatementListProps) {
   const { categories } = useCategories();
   
   // Estados locais do extrato
@@ -49,18 +53,29 @@ export function StatementList({ transactions, onSelect, formatMoney }: Statement
   
   const today = financialDay();
 
-  // Lógica de filtro
-  const filteredTransactions = transactions.filter(tx =>
-    !(tx.type === "bill" && tx.status === "pending") &&
-    statementIncludes(tx.date, filterType, startDate, endDate) &&
-    tx.description.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().includes(search.normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim().toLowerCase())
-  );
-
-  // Lógica de paginação
-  const pageCount = Math.max(1, Math.ceil(filteredTransactions.length / 15));
+  const [query, setQuery] = useState("");
+  const [category, setCategory] = useState("all");
+  const [type, setType] = useState("all");
+  const [actionError, setActionError] = useState("");
+  useEffect(() => { const timer = setTimeout(() => setQuery(search), 250); return () => clearTimeout(timer); }, [search]);
+  const params = new URLSearchParams({ page: String(page), search: query, period: filterType, start: startDate, end: endDate, category, type });
+  const defaultPage = page === 1 && !query && filterType === "all" && category === "all" && type === "all";
+  const { data, loading, error, reload } = useJsonResource<StatementPage>("/api/statement?" + params.toString(), defaultPage ? initialPage : undefined);
+  const pageCount = data?.pageCount || 1;
   const currentPage = Math.min(page, pageCount);
-  const visibleTransactions = filteredTransactions.slice((currentPage - 1) * 15, currentPage * 15);
-  const pageNumbers = Array.from(new Set([1, ...Array.from({ length: 3 }, (_, i) => currentPage - 1 + i), pageCount])).filter(n => n >= 1 && n <= pageCount).sort((a, b) => a - b);
+  const visibleTransactions = data?.transactions || [];
+  const total = data?.total || 0;
+  useEffect(() => { if (data && page > data.pageCount) setPage(data.pageCount); }, [data, page]);
+  const pageNumbers = Array.from(new Set([1, currentPage - 1, currentPage, currentPage + 1, pageCount])).filter(n => n >= 1 && n <= pageCount).sort((a,b) => a-b);
+  async function remove(id: string) {
+    if (!confirm("Tem certeza que deseja apagar esta transação?")) return;
+    setActionError("");
+    try {
+      const response = await fetch(`/api/transactions/all?id=${encodeURIComponent(id)}`, { method: "DELETE" });
+      if (!response.ok) throw new Error("Não foi possível apagar a transação.");
+      notifyDataChanged();
+    } catch (e) { setActionError(e instanceof Error ? e.message : "Tente novamente."); }
+  }
 
   return (
     <div className="min-w-0 rounded-2xl bg-card p-6 shadow-sm border border-border">
@@ -86,9 +101,12 @@ export function StatementList({ transactions, onSelect, formatMoney }: Statement
         </div>
       )}
       
+      {allowDelete && <div className="mb-4 grid grid-cols-2 gap-2"><label className="text-xs">Categoria<select value={category} onChange={e => { setCategory(e.target.value); setPage(1); }} className="mt-1 w-full rounded-xl border border-border bg-background p-2 text-sm"><option value="all">Todas</option>{categories.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}</select></label><label className="text-xs">Tipo<select value={type} onChange={e => { setType(e.target.value); setPage(1); }} className="mt-1 w-full rounded-xl border border-border bg-background p-2 text-sm"><option value="all">Todos</option><option value="expense">Despesas</option><option value="income">Recebimentos</option></select></label></div>}
+      {(error || actionError) && <p role="alert" className="mb-4 text-sm text-red-500">{error || actionError} <button onClick={reload} className="underline">Tentar novamente</button></p>}
+      {loading && <p role="status" className="mb-3 text-xs text-muted-foreground">Carregando movimentações…</p>}
       {/* Lista de Transações */}
       <div className="space-y-4">
-        {filteredTransactions.length === 0 ? (
+        {total === 0 && !loading ? (
           <div className="py-8 text-center flex flex-col items-center">
             <Calendar className="h-8 w-8 text-muted-foreground/50 mb-2" />
             <p className="text-sm text-muted-foreground">Nenhuma transação encontrada neste período.</p>
@@ -101,7 +119,7 @@ export function StatementList({ transactions, onSelect, formatMoney }: Statement
             const isIncome = tx.type === "income";
 
             return (
-              <button type="button" key={tx.id} onClick={() => onSelect(tx)} className="flex w-full items-center justify-between gap-3 rounded-xl text-left hover:bg-accent focus-visible:ring-2 focus-visible:ring-primary">
+              <div key={tx.id} className="flex items-center gap-2"><button type="button" onClick={() => onSelect(tx)} className="flex w-full items-center justify-between gap-3 rounded-xl text-left hover:bg-accent focus-visible:ring-2 focus-visible:ring-primary">
                 <div className="flex min-w-0 items-center gap-3">
                   <div style={customCategory?.color ? { color: customCategory.color, backgroundColor: customCategory.color + "18" } : undefined} className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${categoryData.color}`}>
                     <Icon className="h-5 w-5" />
@@ -117,16 +135,16 @@ export function StatementList({ transactions, onSelect, formatMoney }: Statement
                 <span className={`shrink-0 text-sm font-semibold ${isIncome ? 'text-green-500' : 'text-foreground'}`}>
                   {isIncome ? "+" : "-"} {formatMoney(tx.amount)}
                 </span>
-              </button>
+              </button>{allowDelete && <button onClick={() => remove(tx.id)} aria-label={`Apagar ${tx.description}`} className="shrink-0 rounded-lg p-2 text-muted-foreground hover:text-red-500"><Trash2 className="h-4 w-4" /></button>}</div>
             );
           })
         )}
       </div>
 
       {/* Paginação */}
-      {filteredTransactions.length > 0 && (
+      {total > 0 && (
         <nav aria-label="Paginação do extrato" className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-border pt-4">
-          <p aria-live="polite" className="text-xs text-muted-foreground">{(currentPage - 1) * 15 + 1}–{Math.min(currentPage * 15, filteredTransactions.length)} de {filteredTransactions.length}</p>
+          <p aria-live="polite" className="text-xs text-muted-foreground">{(currentPage - 1) * 15 + 1}–{Math.min(currentPage * 15, total)} de {total}</p>
           <div className="flex flex-wrap items-center gap-1">
             <button aria-label="Página anterior" disabled={currentPage === 1} onClick={() => setPage(currentPage - 1)} className="h-9 rounded-lg border border-border px-3 text-sm hover:bg-accent disabled:opacity-40">‹</button>
             {pageNumbers.map((number, index) => <span key={number} className="inline-flex items-center gap-1">
@@ -139,4 +157,4 @@ export function StatementList({ transactions, onSelect, formatMoney }: Statement
       )}
     </div>
   );
-}
+});

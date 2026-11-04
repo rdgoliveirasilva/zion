@@ -43,6 +43,7 @@ const LoginForm = ({
         <Mail className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
         <Input
           id={isDesktop ? "email-desktop" : "email"}
+          autoComplete="username"
           type="email"
           placeholder="seu@email.com"
           value={email}
@@ -70,6 +71,7 @@ const LoginForm = ({
         <Lock className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
         <Input
           id={isDesktop ? "password-desktop" : "password"}
+          autoComplete="current-password"
           type={showPassword ? "text" : "password"}
           placeholder="••••••••••••"
           value={password}
@@ -153,6 +155,7 @@ export default function LoginPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password, remember: rememberMe }),
+        signal: AbortSignal.timeout(15000),
       });
 
       const data = await res.json();
@@ -161,11 +164,10 @@ export default function LoginPage() {
         throw new Error(data.error || "Erro ao fazer login");
       }
 
-      router.push("/");
-      router.refresh();
+      router.replace("/");
       
     } catch (error: any) {
-      setErrorMsg(error.message);
+      setErrorMsg(error.name === "TimeoutError" ? "A conexão demorou. Tente entrar novamente." : error.message);
       setIsLoading(false); 
     }
   };
@@ -192,6 +194,8 @@ export default function LoginPage() {
             src="/images/zion-hero.png"
             alt="Zion - Seu assistente financeiro"
             fill
+            sizes="(max-width: 767px) 100vw, 1px"
+            quality={65}
             className="object-cover object-top"
             priority
           />
@@ -209,7 +213,7 @@ export default function LoginPage() {
           </div>
         </div>
 
-        <div className="relative flex flex-1 flex-col rounded-t-3xl bg-card -mt-6 px-5 sm:px-6 pt-10 pb-8 overflow-hidden z-20 shadow-[0_-10px_40px_rgba(0,0,0,0.15)]">
+        <div className="relative flex flex-1 flex-col rounded-t-3xl bg-card -mt-6 px-5 sm:px-6 pt-6 pb-8 overflow-y-auto z-20 shadow-[0_-10px_40px_rgba(0,0,0,0.15)]">
           <div className="mx-auto flex w-full max-w-sm flex-col h-full">
             
             <div className="mb-8">
@@ -249,7 +253,7 @@ export default function LoginPage() {
                 width={250}
                 height={120}
                 className="object-cover object-center h-full w-auto scale-[1.7] origin-left"
-                priority
+                loading="lazy"
               />
             </div>
 

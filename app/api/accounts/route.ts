@@ -1,15 +1,24 @@
-import { currentCardBill } from "@/lib/pluggy-bills";
+import { financialDay } from "@/lib/statement";
+import { scheduleCommitmentRefresh } from "@/lib/commitment-refresh";
+import { hasSession } from "@/lib/session";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
+export const maxDuration = 120;
 export async function GET() {
   try {
-    const accounts = await prisma.account.findMany({
-      orderBy: { createdAt: 'asc' }
-    });
-    return NextResponse.json(await Promise.all(accounts.map(async account => ({
-      ...account, currentBill: await currentCardBill(account),
-    }))));
+    if (!await hasSession()) return NextResponse.json({ error: "Não autorizado." }, { status: 401 });
+    scheduleCommitmentRefresh();
+    const [accounts, bills] = await Promise.all([
+      prisma.account.findMany({ orderBy: { createdAt: 'asc' } }),
+      prisma.commitment.findMany({ where: { source: "card" } }),
+    ]);
+    const month = financialDay().slice(0,7);
+    const byKey = new Map(bills.map(b => [b.key, b]));
+    return NextResponse.json(accounts.map(account => {
+      const bill = byKey.get(`card:${account.id}:${month}`);
+      return { ...account, currentBill: bill ? { amount: bill.amount, dueDate: financialDay(bill.dueDate), estimated: bill.estimated } : null };
+    }));
   } catch (error) {
     return NextResponse.json({ error: "Erro ao buscar contas." }, { status: 500 });
   }

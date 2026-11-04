@@ -1,7 +1,8 @@
 import { financialDay } from "./statement";
 import { isCardBillPayment, monthOffset, PAID_STATUSES } from "./commitment-rules";
 
-export const money = (cents: number) => new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(cents / 100);
+const currencyFormatter = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
+export const money = (cents: number) => currencyFormatter.format(cents / 100);
 export function lastTwelveMonths(today = financialDay()) {
   return Array.from({ length: 12 }, (_, i) => monthOffset(today.slice(0,7), -i));
 }

@@ -11,7 +11,7 @@ const loadBills = unstable_cache(async (accountId: string) => {
     bills.push(...(await client.fetchCreditCardBills(accountId, { page, pageSize: 100 })).results);
   }
   return bills;
-}, ["credit-card-bill-history-v1"], { revalidate: 60 });
+}, ["credit-card-bill-history-v1"], { revalidate: 60, tags: ["pluggy-bills"] });
 
 const loadBill = unstable_cache(async (accountId: string, month: string) => {
   const client = new PluggyClient({ clientId: process.env.PLUGGY_CLIENT_ID!, clientSecret: process.env.PLUGGY_CLIENT_SECRET! });
@@ -22,7 +22,7 @@ const loadBill = unstable_cache(async (accountId: string, month: string) => {
   const estimated = estimateCurrentBill(transactions, bills, month);
   const account = await client.fetchAccount(accountId);
   return reconcileEstimatedBill(estimated, transactions, month, account.balance);
-}, ["current-credit-card-bill-v3"], { revalidate: 60 });
+}, ["current-credit-card-bill-v3"], { revalidate: 60, tags: ["pluggy-bills"] });
 
 export async function currentCardBill(account: { type: string; pluggyAccountId: string | null }) {
   if (account.type !== "credit" || !account.pluggyAccountId) return null;

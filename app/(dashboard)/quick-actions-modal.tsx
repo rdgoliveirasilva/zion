@@ -1,9 +1,11 @@
 "use client";
 
+import { useRouter } from "next/navigation";
+import { notifyDataChanged } from "@/lib/client-data";
 import { useCategories } from "@/components/ui/categories-provider";
 import { useState, useEffect } from "react";
-import { 
-  X, ArrowDownLeft, CreditCard, Landmark, ArrowRightLeft, 
+import {
+  X, ArrowDownLeft, CreditCard, Landmark, ArrowRightLeft,
   CalendarPlus, ArrowUpRight, ChevronLeft, Check, Loader2,
   Utensils, Car, Home, HeartPulse, GraduationCap, Gamepad2, ShoppingBag, MoreHorizontal
 } from "lucide-react";
@@ -17,9 +19,10 @@ type ActionType = "menu" | "pagamento" | "cartao" | "conta" | "recebimento" | "r
 
 
 export function QuickActionsModal({ isOpen, onClose }: QuickActionsModalProps) {
+  const router = useRouter();
   const { categories } = useCategories();
   const [currentAction, setCurrentAction] = useState<ActionType>("menu");
-  
+
   const [description, setDescription] = useState("");
   const [amount, setAmount] = useState("");
   const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
@@ -33,7 +36,7 @@ export function QuickActionsModal({ isOpen, onClose }: QuickActionsModalProps) {
 
   useEffect(() => {
     if (isOpen && currentAction === "pagamento") {
-      fetch("/api/transactions?type=bill&status=pending")
+      fetch("/api/transactions?type=bill&status=pending", { signal: AbortSignal.timeout(15000) })
         .then(res => res.json())
         .then(data => setPendingBills(data))
         .catch(err => console.error("Erro ao buscar contas:", err));
@@ -82,8 +85,9 @@ export function QuickActionsModal({ isOpen, onClose }: QuickActionsModalProps) {
       if (!res.ok) throw new Error(data.error || "Erro ao salvar");
 
       handleClose();
-      window.location.reload(); 
-      
+      notifyDataChanged();
+      router.refresh();
+
     } catch (error: any) {
       setErrorMsg(error.message);
     } finally {
@@ -103,7 +107,7 @@ export function QuickActionsModal({ isOpen, onClose }: QuickActionsModalProps) {
   const CategorySelect = () => (
     <div className="space-y-1">
       <label className="text-xs font-medium text-muted-foreground">Categoria</label>
-      <select 
+      <select
         value={category}
         onChange={(e) => setCategory(e.target.value)}
         className="w-full rounded-xl bg-background border border-border p-3 text-foreground focus:outline-none focus:border-primary appearance-none"
@@ -127,7 +131,7 @@ export function QuickActionsModal({ isOpen, onClose }: QuickActionsModalProps) {
           {paymentMode === "conta" && (
             <div className="space-y-1">
               <label className="text-xs font-medium text-muted-foreground">Selecione a conta</label>
-              <select 
+              <select
                 value={selectedBillId}
                 onChange={(e) => {
                   setSelectedBillId(e.target.value);
@@ -159,7 +163,7 @@ export function QuickActionsModal({ isOpen, onClose }: QuickActionsModalProps) {
           )}
 
           <CategorySelect />
-          
+
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1">
               <label className="text-xs font-medium text-muted-foreground">Valor (R$)</label>
@@ -191,7 +195,7 @@ export function QuickActionsModal({ isOpen, onClose }: QuickActionsModalProps) {
           </div>
 
           <CategorySelect />
-          
+
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1">
               <label className="text-xs font-medium text-muted-foreground">Valor (R$)</label>
@@ -224,7 +228,7 @@ export function QuickActionsModal({ isOpen, onClose }: QuickActionsModalProps) {
       <div className="absolute inset-0" onClick={handleClose} />
 
       <div className="relative z-10 w-full max-w-md rounded-t-3xl bg-card p-6 text-foreground animate-slide-up md:rounded-3xl border border-border shadow-2xl max-h-[90vh] overflow-y-auto">
-        
+
         <div className="mb-6 flex items-center justify-between">
           <div className="flex items-center gap-3">
             {currentAction !== "menu" && (

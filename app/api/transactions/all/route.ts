@@ -1,12 +1,15 @@
+import { hasSession } from "@/lib/session";
+import { transactionViewSelect } from "@/lib/transaction-view";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
 export async function GET() {
   try {
+    if (!await hasSession()) return NextResponse.json({ error: "Não autorizado." }, { status: 401 });
     const transactions = await prisma.transaction.findMany({
       where: { date: { lte: new Date() } },
       orderBy: { date: 'desc' }, // Ordena do mais recente para o mais antigo
-      include: { account: true } // Puxa os dados da conta (para pegar o nome do banco)
+      select: transactionViewSelect
     });
     return NextResponse.json(transactions);
   } catch (error) {
