@@ -1,5 +1,6 @@
 "use client";
 
+import type { CurrentCardBill } from "@/lib/card-bill";
 import { useState, useEffect } from "react";
 import { 
   Plus, Landmark, Trash2, Loader2, Wallet, 
@@ -12,6 +13,7 @@ interface Account {
   name: string;
   balance: number;
   type: string;
+  currentBill?: CurrentCardBill | null;
 }
 
 export default function AccountsPage() {
@@ -92,7 +94,8 @@ export default function AccountsPage() {
 
   const creditBalance = accounts
     .filter(acc => acc.type === "credit")
-    .reduce((acc, account) => acc + account.balance, 0);
+    .reduce((acc, account) => acc + (account.currentBill?.amount ?? 0), 0);
+  const hasBills = accounts.some(a => a.currentBill);
 
   const getIcon = (type: string) => {
     switch (type) {
@@ -140,8 +143,8 @@ export default function AccountsPage() {
         {/* Card de Cartão de Crédito */}
         <div className="rounded-2xl bg-amber-500/10 border border-amber-500/20 p-6 shadow-sm flex items-center justify-between">
           <div>
-            <p className="text-sm font-medium text-amber-700 dark:text-amber-400">Faturas e Parcelas (Cartão)</p>
-            <h2 className="mt-1 text-3xl font-bold text-amber-700 dark:text-amber-400">{formatMoney(creditBalance)}</h2>
+            <p className="text-sm font-medium text-amber-700 dark:text-amber-400">Faturas do mês disponíveis</p>
+            <h2 className="mt-1 text-3xl font-bold text-amber-700 dark:text-amber-400">{hasBills ? formatMoney(creditBalance) : "Não disponível"}</h2>
           </div>
           <div className="hidden sm:flex h-12 w-12 items-center justify-center rounded-full bg-amber-500/20 text-amber-600 dark:text-amber-400">
             <CreditCard className="h-6 w-6" />
@@ -179,9 +182,9 @@ export default function AccountsPage() {
                 {account.type === "checking" ? "Conta Corrente" : account.type === "credit" ? "Cartão de Crédito" : "Poupança"}
               </p>
               <div className="mt-4 pt-4 border-t border-border flex items-center justify-between">
-                <span className="text-xs text-muted-foreground">{account.type === "credit" ? "Fatura atual" : "Saldo atual"}</span>
+                <span className="text-xs text-muted-foreground">{account.type === "credit" ? "Fatura do mês" : "Saldo atual"}</span>
                 <span className={`font-bold ${account.type === "credit" ? "text-amber-600 dark:text-amber-400" : "text-foreground"}`}>
-                  {formatMoney(account.balance)}
+                  {account.type === "credit" ? (account.currentBill ? formatMoney(account.currentBill.amount) : "Não disponível") : formatMoney(account.balance)}
                 </span>
               </div>
             </div>

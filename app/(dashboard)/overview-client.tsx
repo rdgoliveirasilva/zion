@@ -2,6 +2,7 @@
 
 import { financialDay, formatFinancialDate, statementIncludes } from "@/lib/statement";
 import { TransactionAccountTags } from "@/components/ui/transaction-account-tags";
+import type { CurrentCardBill } from "@/lib/card-bill";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { 
@@ -42,6 +43,7 @@ interface Account {
   balance: number;
   type: string;
   dueDate?: Date | null;
+  currentBill: CurrentCardBill | null;
 }
 
 export function OverviewClient({ 
@@ -54,9 +56,11 @@ export function OverviewClient({
   const router = useRouter();
   const [showValues, setShowValues] = useState(true);
   const [expandExplain, setExpandExplain] = useState(false);
-  const [filterType, setFilterType] = useState<"today" | "7d" | "custom">("today");
+  const [filterType, setFilterType] = useState<"all" | "custom">("all");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
+  const [search, setSearch] = useState("");
+  const [page, setPage] = useState(1);
 
   // 👇 Novos estados para o botão de atualizar
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -101,7 +105,8 @@ export function OverviewClient({
     .reduce((acc, account) => acc + account.balance, 0);
 
   const creditCards = accounts.filter(acc => acc.type === "credit");
-  const totalCredit = creditCards.reduce((acc, account) => acc + account.balance, 0);
+  const availableBills = creditCards.filter(card => card.currentBill !== null);
+  const totalCredit = availableBills.reduce((sum, card) => sum + card.currentBill!.amount, 0);
 
   const totalExpenses = transactions
     .filter(t => (t.type === "expense" || t.type === "bill") && t.status !== "pending" && statementIncludes(t.date, "all"))
@@ -113,8 +118,14 @@ export function OverviewClient({
 
   const filteredTransactions = transactions.filter(tx =>
     !(tx.type === "bill" && tx.status === "pending") &&
-    statementIncludes(tx.date, filterType, startDate, endDate)
+    statementIncludes(tx.date, filterType, startDate, endDate) &&
+    tx.description.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().includes(search.normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim().toLowerCase())
   );
+
+  const pageCount = Math.max(1, Math.ceil(filteredTransactions.length / 15));
+  const currentPage = Math.min(page, pageCount);
+  const visibleTransactions = filteredTransactions.slice((currentPage - 1) * 15, currentPage * 15);
+  const pageNumbers = Array.from(new Set([1, ...Array.from({ length: 3 }, (_, i) => currentPage - 1 + i), pageCount])).filter(n => n >= 1 && n <= pageCount).sort((a, b) => a - b);
 
   return (
     <div className="mx-auto w-full max-w-6xl p-4 md:p-8 animate-slide-up pb-24 md:pb-8">
@@ -207,17 +218,21 @@ export function OverviewClient({
               <h3 className="text-lg font-bold text-foreground">Extrato</h3>
               
               <div className="flex bg-secondary p-1 rounded-xl flex-wrap">
-                <button onClick={() => setFilterType("today")} className={`px-3 py-1 text-xs font-medium rounded-lg transition-colors ${filterType === "today" ? "bg-background text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"}`}>Hoje</button>
-                <button onClick={() => setFilterType("7d")} className={`px-3 py-1 text-xs font-medium rounded-lg transition-colors ${filterType === "7d" ? "bg-background text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"}`}>7 dias</button>
-                <button onClick={() => setFilterType("custom")} className={`px-3 py-1 text-xs font-medium rounded-lg transition-colors ${filterType === "custom" ? "bg-background text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"}`}>Período</button>
+                <button onClick={() => { setFilterType("all"); setPage(1); }} className={`px-3 py-1 text-xs font-medium rounded-lg transition-colors ${filterType === "all" ? "bg-background text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"}`}>Histórico</button>
+                <button onClick={() => { setFilterType("custom"); setPage(1); }} className={`px-3 py-1 text-xs font-medium rounded-lg transition-colors ${filterType === "custom" ? "bg-background text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"}`}>Período</button>
               </div>
+            </div>
+
+            <div className="mb-4 space-y-2">
+              <label htmlFor="statement-search" className="text-sm font-medium text-foreground">Pesquisar por nome</label>
+              <input id="statement-search" type="search" value={search} onChange={e => { setSearch(e.target.value); setPage(1); }} placeholder="Buscar movimentação..." className="w-full rounded-xl border border-border bg-background p-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary" />
             </div>
 
             {filterType === "custom" && (
               <div className="mb-4 flex items-center gap-2 animate-slide-up">
-                <input type="date" max={today} value={startDate} onChange={(e) => setStartDate(e.target.value)} className="flex-1 rounded-xl bg-background border border-border p-2 text-sm text-foreground focus:outline-none focus:border-primary" />
+                <input type="date" max={today} value={startDate} onChange={(e) => { setStartDate(e.target.value); setPage(1); }} className="flex-1 rounded-xl bg-background border border-border p-2 text-sm text-foreground focus:outline-none focus:border-primary" />
                 <span className="text-muted-foreground text-sm">até</span>
-                <input type="date" max={today} value={endDate} onChange={(e) => setEndDate(e.target.value)} className="flex-1 rounded-xl bg-background border border-border p-2 text-sm text-foreground focus:outline-none focus:border-primary" />
+                <input type="date" max={today} value={endDate} onChange={(e) => { setEndDate(e.target.value); setPage(1); }} className="flex-1 rounded-xl bg-background border border-border p-2 text-sm text-foreground focus:outline-none focus:border-primary" />
               </div>
             )}
             
@@ -228,7 +243,7 @@ export function OverviewClient({
                   <p className="text-sm text-muted-foreground">Nenhuma transação encontrada neste período.</p>
                 </div>
               ) : (
-                filteredTransactions.map((tx) => {
+                visibleTransactions.map((tx) => {
                   const categoryData = CATEGORY_MAP[tx.category || "outros"] || CATEGORY_MAP.outros;
                   const Icon = categoryData.icon;
                   const isIncome = tx.type === "income";
@@ -254,6 +269,17 @@ export function OverviewClient({
                 )})
               )}
             </div>
+            {filteredTransactions.length > 0 && <nav aria-label="Paginação do extrato" className="mt-6 flex flex-wrap items-center justify-between gap-3 border-t border-border pt-4">
+              <p aria-live="polite" className="text-xs text-muted-foreground">{(currentPage - 1) * 15 + 1}–{Math.min(currentPage * 15, filteredTransactions.length)} de {filteredTransactions.length}</p>
+              <div className="flex flex-wrap items-center gap-1">
+                <button aria-label="Página anterior" disabled={currentPage === 1} onClick={() => setPage(currentPage - 1)} className="h-9 rounded-lg border border-border px-3 text-sm hover:bg-accent disabled:opacity-40">‹</button>
+                {pageNumbers.map((number, index) => <span key={number} className="inline-flex items-center gap-1">
+                  {index > 0 && number > pageNumbers[index - 1] + 1 && <span className="px-1 text-muted-foreground">…</span>}
+                  <button aria-label={`Página ${number}`} aria-current={currentPage === number ? "page" : undefined} onClick={() => setPage(number)} className={`h-9 min-w-9 rounded-lg px-2 text-sm font-medium ${currentPage === number ? "bg-primary text-primary-foreground" : "border border-border hover:bg-accent"}`}>{number}</button>
+                </span>)}
+                <button aria-label="Próxima página" disabled={currentPage === pageCount} onClick={() => setPage(currentPage + 1)} className="h-9 rounded-lg border border-border px-3 text-sm hover:bg-accent disabled:opacity-40">›</button>
+              </div>
+            </nav>}
           </div>
         </div>
 
@@ -292,25 +318,25 @@ export function OverviewClient({
           {creditCards.length > 0 && (
             <div className="rounded-2xl bg-card p-6 shadow-sm border border-border">
               <h3 className="mb-4 text-lg font-bold text-foreground flex items-center gap-2">
-                <CreditCard className="h-5 w-5 text-amber-500" /> Faturas de Cartão
+                <CreditCard className="h-5 w-5 text-amber-500" /> Faturas do mês
               </h3>
               <div className="space-y-3">
                 {creditCards.map(card => (
                   <div key={card.id} className="flex flex-col rounded-xl bg-amber-500/10 p-3 border border-amber-500/20 gap-1">
                     <div className="flex items-center justify-between">
                       <span className="font-medium text-amber-700 dark:text-amber-400">{card.name}</span>
-                      <span className="font-bold text-amber-700 dark:text-amber-400">{formatMoney(card.balance)}</span>
+                      <span className="font-bold text-amber-700 dark:text-amber-400">{card.currentBill ? formatMoney(card.currentBill.amount) : "Não disponível"}</span>
                     </div>
-                    {card.dueDate && (
+                    {card.currentBill && (
                       <span className="text-xs text-amber-600/80 dark:text-amber-500">
-                        Vencimento: {formatDate(card.dueDate)}
+                        Vencimento: {formatDate(card.currentBill.dueDate)}
                       </span>
                     )}
                   </div>
                 ))}
                 <div className="pt-2 border-t border-border flex justify-between">
-                  <span className="text-sm font-medium text-muted-foreground">Total</span>
-                  <span className="font-bold text-amber-600">{formatMoney(totalCredit)}</span>
+                  <span className="text-sm font-medium text-muted-foreground">{availableBills.length < creditCards.length ? "Total disponível" : "Total do mês"}</span>
+                  <span className="font-bold text-amber-600">{availableBills.length ? formatMoney(totalCredit) : "Não disponível"}</span>
                 </div>
               </div>
             </div>

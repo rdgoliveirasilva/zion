@@ -1,3 +1,4 @@
+import { currentCardBill } from "@/lib/pluggy-bills";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
@@ -6,7 +7,9 @@ export async function GET() {
     const accounts = await prisma.account.findMany({
       orderBy: { createdAt: 'asc' }
     });
-    return NextResponse.json(accounts);
+    return NextResponse.json(await Promise.all(accounts.map(async account => ({
+      ...account, currentBill: await currentCardBill(account),
+    }))));
   } catch (error) {
     return NextResponse.json({ error: "Erro ao buscar contas." }, { status: 500 });
   }
