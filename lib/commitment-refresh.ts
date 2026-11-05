@@ -36,6 +36,7 @@ async function updateSnapshots() {
       const data = { description: `Fatura ${name}`, amount: bill.amount, dueDate: dueDateFor(bill.dueDate.slice(0,7), Number(bill.dueDate.slice(8,10))), source: "card", estimated: bill.estimated ?? false };
       const old = existing.get(key);
       if (!old) await db.commitment.create({ data: { ...data, key } });
+      else if (old.manualOverride) continue;
       else if (old.status !== "paid" && (old.amount !== data.amount || old.description !== data.description || old.estimated !== data.estimated || old.dueDate.getTime() !== data.dueDate.getTime())) await db.commitment.update({ where: { key }, data });
       else if (old.description !== data.description) await db.commitment.update({ where: { key }, data: { description: data.description } });
     }

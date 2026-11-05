@@ -45,7 +45,7 @@ export async function reconcileCommitments(db: Prisma.TransactionClient, now = n
     const inherited = matches.filter(tx => tx.categorySource !== "manual").map(tx => tx.id);
     if (inherited.length) await db.transaction.updateMany({ where: { id: { in: inherited } }, data: { category: rule.category, categorySource: "rule" } });
 
-    for (let offset = 0; offset <= monthsBetween(rule.startMonth, monthOffset(currentMonth, 12)); offset += rule.intervalMonths) {
+    for (let offset = 0; offset <= monthsBetween(rule.startMonth, monthOffset(currentMonth, 13)); offset += rule.intervalMonths) {
       const month = monthOffset(rule.startMonth, offset);
       const candidates = matches.filter(tx => financialDay(tx.date).slice(0, 7) === month);
       const key = rule.id + ":" + month;
@@ -67,7 +67,15 @@ export async function reconcileCommitments(db: Prisma.TransactionClient, now = n
       const data = { description: rule.description, amount: rule.amount, dueDate: dueDateFor(month, rule.dueDay), category: rule.category, coveredByCard: account?.type === "credit", ruleId: rule.id };
 
       if (!existing) await db.commitment.create({ data: { ...data, key, status: paid ? "paid" : "pending", transactionId: candidate?.id } });
-      else if (existing.status !== "paid") await db.commitment.update({ where: { id: existing.id }, data: { ...data, status: paid ? "paid" : "pending", transactionId: candidate?.id ?? existing.transactionId } });
+      else if (existing.status !== "paid" && existing.manualOverride) {
+        const adjusted = allTransactions.filter(tx => tx.accountId === rule.accountId && tx.amount === existing.amount &&
+          normalizeMerchant(tx.description) === rule.description && financialDay(tx.date).slice(0, 7) === month &&
+          (!tx.commitment || tx.commitment.id === existing.id));
+        if (adjusted.length === 1 && PAID_STATUSES.has(adjusted[0].status) && financialDay(adjusted[0].date) <= financialDay(now)) {
+          await db.commitment.update({ where: { id: existing.id }, data: { status: "paid", transactionId: adjusted[0].id } });
+        }
+      }
+      else if (existing.status !== "paid" && !existing.manualOverride) await db.commitment.update({ where: { id: existing.id }, data: { ...data, status: paid ? "paid" : "pending", transactionId: candidate?.id ?? existing.transactionId } });
     }
   }
 }

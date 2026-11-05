@@ -173,6 +173,7 @@ exports.Prisma.CommitmentScalarFieldEnum = {
   source: 'source',
   coveredByCard: 'coveredByCard',
   estimated: 'estimated',
+  manualOverride: 'manualOverride',
   transactionId: 'transactionId',
   ruleId: 'ruleId',
   createdAt: 'createdAt',

@@ -6,7 +6,7 @@ import { monthLabel } from "@/lib/financial-history";
 import { dueStatus } from "@/lib/commitment-rules";
 import { financialDay, formatFinancialDate } from "@/lib/statement";
 
-export type CommitmentView = { id: string; description: string; amount: number; dueDate: Date | string; status: string; coveredByCard: boolean; color?: string; source?: string; estimated?: boolean; ruleId?: string | null; category?: string };
+export type CommitmentView = { id: string; description: string; amount: number; dueDate: Date | string; status: string; coveredByCard: boolean; color?: string; source?: string; estimated?: boolean; ruleId?: string | null; category?: string; manualOverride?: boolean };
 const statuses = {
   paid: ["Pago", "text-green-600 bg-green-500/10"],
   soon: ["Vence em até 7 dias", "text-yellow-600 bg-yellow-500/10"],
@@ -19,7 +19,7 @@ export function CommitmentList({ commitments, today, formatMoney, renderActions 
     const [label, color] = statuses[dueStatus(c.status, financialDay(c.dueDate), today)];
     const accent = commitmentColor(c.description, c.color);
     const Icon = c.source === "card" ? CreditCard : Repeat2;
-    return <div key={c.id} style={{ borderLeftColor: accent, backgroundImage: `linear-gradient(120deg, ${accent}14, transparent 80%)` }} className="rounded-2xl border border-l-4 border-border p-4"><div className="mb-3 flex items-center gap-2"><span className="rounded-xl p-2" style={{ color: accent, background: accent + "20" }}><Icon className="h-5 w-5" /></span><span className="text-xs font-medium text-muted-foreground">{c.source === "card" ? "Cartão de crédito" : "Conta a pagar"}{c.estimated && " · Estimativa"}</span></div><div className="flex justify-between gap-3"><p className="min-w-0 break-words font-medium">{c.description}</p><span className="shrink-0 font-semibold">{formatMoney(c.amount)}</span></div><p className="mt-1 text-xs text-muted-foreground">{formatFinancialDate(c.dueDate)}{c.coveredByCard && " · Incluída na fatura"}</p><span className={`mt-2 inline-block rounded-lg px-2 py-1 text-xs ${color}`}>{label}</span>{renderActions?.(c)}</div>;
+    return <div key={c.id} style={{ borderLeftColor: accent, backgroundImage: `linear-gradient(120deg, ${accent}14, transparent 80%)` }} className="rounded-2xl border border-l-4 border-border p-4"><div className="mb-3 flex items-center gap-2"><span className="rounded-xl p-2" style={{ color: accent, background: accent + "20" }}><Icon className="h-5 w-5" /></span><span className="text-xs font-medium text-muted-foreground">{c.source === "card" ? "Cartão de crédito" : "Conta a pagar"}{c.estimated && " · Estimativa"}{c.manualOverride && " · Ajuste manual"}</span></div><div className="flex justify-between gap-3"><p className="min-w-0 break-words font-medium">{c.description}</p><span className="shrink-0 font-semibold">{formatMoney(c.amount)}</span></div><p className="mt-1 text-xs text-muted-foreground">{formatFinancialDate(c.dueDate)}{c.coveredByCard && " · Incluída na fatura"}</p><span className={`mt-2 inline-block rounded-lg px-2 py-1 text-xs ${color}`}>{label}</span>{renderActions?.(c)}</div>;
   }) : <p className="py-4 text-sm text-muted-foreground">Nenhum compromisso neste período.</p>}</div>;
 }
 export function CommitmentSummary({ commitments, today, month = today.slice(0,7), formatMoney, showLink = true, showMonth = false }: { commitments: CommitmentView[]; today: string; month?: string; formatMoney: (amount: number) => string; showLink?: boolean; showMonth?: boolean }) {

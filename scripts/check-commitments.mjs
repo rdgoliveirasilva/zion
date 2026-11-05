@@ -89,11 +89,11 @@ try {
     await reconcileCommitments(db, new Date('2026-12-04T15:00:00Z'));
     const ambiguous = await db.commitment.findUnique({ where: { key: `${rule.id}:2026-12` } });
     assert.equal(ambiguous.status, 'pending'); assert.equal(ambiguous.transactionId, null);
-    const manual = await db.commitment.create({ data: { key: `manual:${account.id}`, source: 'manual', description: tx.description, amount: 1234, dueDate: new Date('2028-01-31T15:00:00Z') } });
+    const manual = await db.commitment.create({ data: { key: `manual:${account.id}`, source: 'manual', description: tx.description, amount: 1234, dueDate: new Date('2028-02-29T15:00:00Z') } });
     await reconcileCommitments(db, new Date('2027-01-04T15:00:00Z'));
     const reused = await db.commitment.findUnique({ where: { id: manual.id } });
     assert.equal(reused.ruleId, rule.id);
-    assert.equal(await db.commitment.count({ where: { ruleId: rule.id, dueDate: new Date('2028-01-31T15:00:00Z') } }), 1);
+    assert.equal(await db.commitment.count({ where: { ruleId: rule.id, dueDate: new Date('2028-02-29T15:00:00Z') } }), 1);
     console.log('Validados: categorias criadas/renomeadas/arquivadas, metas mensais, baixa de fatura, idempotência e histórico imutável. Fixtures revertidas.');
     throw rollback;
   }, { timeout: 60000 });

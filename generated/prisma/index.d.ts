@@ -5040,6 +5040,7 @@ export namespace Prisma {
     source: string | null
     coveredByCard: boolean | null
     estimated: boolean | null
+    manualOverride: boolean | null
     transactionId: string | null
     ruleId: string | null
     createdAt: Date | null
@@ -5057,6 +5058,7 @@ export namespace Prisma {
     source: string | null
     coveredByCard: boolean | null
     estimated: boolean | null
+    manualOverride: boolean | null
     transactionId: string | null
     ruleId: string | null
     createdAt: Date | null
@@ -5074,6 +5076,7 @@ export namespace Prisma {
     source: number
     coveredByCard: number
     estimated: number
+    manualOverride: number
     transactionId: number
     ruleId: number
     createdAt: number
@@ -5101,6 +5104,7 @@ export namespace Prisma {
     source?: true
     coveredByCard?: true
     estimated?: true
+    manualOverride?: true
     transactionId?: true
     ruleId?: true
     createdAt?: true
@@ -5118,6 +5122,7 @@ export namespace Prisma {
     source?: true
     coveredByCard?: true
     estimated?: true
+    manualOverride?: true
     transactionId?: true
     ruleId?: true
     createdAt?: true
@@ -5135,6 +5140,7 @@ export namespace Prisma {
     source?: true
     coveredByCard?: true
     estimated?: true
+    manualOverride?: true
     transactionId?: true
     ruleId?: true
     createdAt?: true
@@ -5239,6 +5245,7 @@ export namespace Prisma {
     source: string
     coveredByCard: boolean
     estimated: boolean
+    manualOverride: boolean
     transactionId: string | null
     ruleId: string | null
     createdAt: Date
@@ -5275,6 +5282,7 @@ export namespace Prisma {
     source?: boolean
     coveredByCard?: boolean
     estimated?: boolean
+    manualOverride?: boolean
     transactionId?: boolean
     ruleId?: boolean
     createdAt?: boolean
@@ -5294,6 +5302,7 @@ export namespace Prisma {
     source?: boolean
     coveredByCard?: boolean
     estimated?: boolean
+    manualOverride?: boolean
     transactionId?: boolean
     ruleId?: boolean
     createdAt?: boolean
@@ -5313,6 +5322,7 @@ export namespace Prisma {
     source?: boolean
     coveredByCard?: boolean
     estimated?: boolean
+    manualOverride?: boolean
     transactionId?: boolean
     ruleId?: boolean
     createdAt?: boolean
@@ -5332,13 +5342,14 @@ export namespace Prisma {
     source?: boolean
     coveredByCard?: boolean
     estimated?: boolean
+    manualOverride?: boolean
     transactionId?: boolean
     ruleId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type CommitmentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "key" | "description" | "amount" | "dueDate" | "status" | "category" | "source" | "coveredByCard" | "estimated" | "transactionId" | "ruleId" | "createdAt" | "updatedAt", ExtArgs["result"]["commitment"]>
+  export type CommitmentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "key" | "description" | "amount" | "dueDate" | "status" | "category" | "source" | "coveredByCard" | "estimated" | "manualOverride" | "transactionId" | "ruleId" | "createdAt" | "updatedAt", ExtArgs["result"]["commitment"]>
   export type CommitmentInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     transaction?: boolean | Commitment$transactionArgs<ExtArgs>
     rule?: boolean | Commitment$ruleArgs<ExtArgs>
@@ -5369,6 +5380,7 @@ export namespace Prisma {
       source: string
       coveredByCard: boolean
       estimated: boolean
+      manualOverride: boolean
       transactionId: string | null
       ruleId: string | null
       createdAt: Date
@@ -5808,6 +5820,7 @@ export namespace Prisma {
     readonly source: FieldRef<"Commitment", 'String'>
     readonly coveredByCard: FieldRef<"Commitment", 'Boolean'>
     readonly estimated: FieldRef<"Commitment", 'Boolean'>
+    readonly manualOverride: FieldRef<"Commitment", 'Boolean'>
     readonly transactionId: FieldRef<"Commitment", 'String'>
     readonly ruleId: FieldRef<"Commitment", 'String'>
     readonly createdAt: FieldRef<"Commitment", 'DateTime'>
@@ -8353,6 +8366,7 @@ export namespace Prisma {
     source: 'source',
     coveredByCard: 'coveredByCard',
     estimated: 'estimated',
+    manualOverride: 'manualOverride',
     transactionId: 'transactionId',
     ruleId: 'ruleId',
     createdAt: 'createdAt',
@@ -8755,6 +8769,7 @@ export namespace Prisma {
     source?: StringFilter<"Commitment"> | string
     coveredByCard?: BoolFilter<"Commitment"> | boolean
     estimated?: BoolFilter<"Commitment"> | boolean
+    manualOverride?: BoolFilter<"Commitment"> | boolean
     transactionId?: StringNullableFilter<"Commitment"> | string | null
     ruleId?: StringNullableFilter<"Commitment"> | string | null
     createdAt?: DateTimeFilter<"Commitment"> | Date | string
@@ -8774,6 +8789,7 @@ export namespace Prisma {
     source?: SortOrder
     coveredByCard?: SortOrder
     estimated?: SortOrder
+    manualOverride?: SortOrder
     transactionId?: SortOrderInput | SortOrder
     ruleId?: SortOrderInput | SortOrder
     createdAt?: SortOrder
@@ -8797,6 +8813,7 @@ export namespace Prisma {
     source?: StringFilter<"Commitment"> | string
     coveredByCard?: BoolFilter<"Commitment"> | boolean
     estimated?: BoolFilter<"Commitment"> | boolean
+    manualOverride?: BoolFilter<"Commitment"> | boolean
     ruleId?: StringNullableFilter<"Commitment"> | string | null
     createdAt?: DateTimeFilter<"Commitment"> | Date | string
     updatedAt?: DateTimeFilter<"Commitment"> | Date | string
@@ -8815,6 +8832,7 @@ export namespace Prisma {
     source?: SortOrder
     coveredByCard?: SortOrder
     estimated?: SortOrder
+    manualOverride?: SortOrder
     transactionId?: SortOrderInput | SortOrder
     ruleId?: SortOrderInput | SortOrder
     createdAt?: SortOrder
@@ -8840,6 +8858,7 @@ export namespace Prisma {
     source?: StringWithAggregatesFilter<"Commitment"> | string
     coveredByCard?: BoolWithAggregatesFilter<"Commitment"> | boolean
     estimated?: BoolWithAggregatesFilter<"Commitment"> | boolean
+    manualOverride?: BoolWithAggregatesFilter<"Commitment"> | boolean
     transactionId?: StringNullableWithAggregatesFilter<"Commitment"> | string | null
     ruleId?: StringNullableWithAggregatesFilter<"Commitment"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"Commitment"> | Date | string
@@ -9258,6 +9277,7 @@ export namespace Prisma {
     source?: string
     coveredByCard?: boolean
     estimated?: boolean
+    manualOverride?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     transaction?: TransactionCreateNestedOneWithoutCommitmentInput
@@ -9275,6 +9295,7 @@ export namespace Prisma {
     source?: string
     coveredByCard?: boolean
     estimated?: boolean
+    manualOverride?: boolean
     transactionId?: string | null
     ruleId?: string | null
     createdAt?: Date | string
@@ -9292,6 +9313,7 @@ export namespace Prisma {
     source?: StringFieldUpdateOperationsInput | string
     coveredByCard?: BoolFieldUpdateOperationsInput | boolean
     estimated?: BoolFieldUpdateOperationsInput | boolean
+    manualOverride?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     transaction?: TransactionUpdateOneWithoutCommitmentNestedInput
@@ -9309,6 +9331,7 @@ export namespace Prisma {
     source?: StringFieldUpdateOperationsInput | string
     coveredByCard?: BoolFieldUpdateOperationsInput | boolean
     estimated?: BoolFieldUpdateOperationsInput | boolean
+    manualOverride?: BoolFieldUpdateOperationsInput | boolean
     transactionId?: NullableStringFieldUpdateOperationsInput | string | null
     ruleId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -9326,6 +9349,7 @@ export namespace Prisma {
     source?: string
     coveredByCard?: boolean
     estimated?: boolean
+    manualOverride?: boolean
     transactionId?: string | null
     ruleId?: string | null
     createdAt?: Date | string
@@ -9343,6 +9367,7 @@ export namespace Prisma {
     source?: StringFieldUpdateOperationsInput | string
     coveredByCard?: BoolFieldUpdateOperationsInput | boolean
     estimated?: BoolFieldUpdateOperationsInput | boolean
+    manualOverride?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -9358,6 +9383,7 @@ export namespace Prisma {
     source?: StringFieldUpdateOperationsInput | string
     coveredByCard?: BoolFieldUpdateOperationsInput | boolean
     estimated?: BoolFieldUpdateOperationsInput | boolean
+    manualOverride?: BoolFieldUpdateOperationsInput | boolean
     transactionId?: NullableStringFieldUpdateOperationsInput | string | null
     ruleId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -9828,6 +9854,7 @@ export namespace Prisma {
     source?: SortOrder
     coveredByCard?: SortOrder
     estimated?: SortOrder
+    manualOverride?: SortOrder
     transactionId?: SortOrder
     ruleId?: SortOrder
     createdAt?: SortOrder
@@ -9849,6 +9876,7 @@ export namespace Prisma {
     source?: SortOrder
     coveredByCard?: SortOrder
     estimated?: SortOrder
+    manualOverride?: SortOrder
     transactionId?: SortOrder
     ruleId?: SortOrder
     createdAt?: SortOrder
@@ -9866,6 +9894,7 @@ export namespace Prisma {
     source?: SortOrder
     coveredByCard?: SortOrder
     estimated?: SortOrder
+    manualOverride?: SortOrder
     transactionId?: SortOrder
     ruleId?: SortOrder
     createdAt?: SortOrder
@@ -10409,6 +10438,7 @@ export namespace Prisma {
     source?: string
     coveredByCard?: boolean
     estimated?: boolean
+    manualOverride?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     rule?: RecurringRuleCreateNestedOneWithoutCommitmentsInput
@@ -10425,6 +10455,7 @@ export namespace Prisma {
     source?: string
     coveredByCard?: boolean
     estimated?: boolean
+    manualOverride?: boolean
     ruleId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -10492,6 +10523,7 @@ export namespace Prisma {
     source?: StringFieldUpdateOperationsInput | string
     coveredByCard?: BoolFieldUpdateOperationsInput | boolean
     estimated?: BoolFieldUpdateOperationsInput | boolean
+    manualOverride?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     rule?: RecurringRuleUpdateOneWithoutCommitmentsNestedInput
@@ -10508,6 +10540,7 @@ export namespace Prisma {
     source?: StringFieldUpdateOperationsInput | string
     coveredByCard?: BoolFieldUpdateOperationsInput | boolean
     estimated?: BoolFieldUpdateOperationsInput | boolean
+    manualOverride?: BoolFieldUpdateOperationsInput | boolean
     ruleId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -10524,6 +10557,7 @@ export namespace Prisma {
     source?: string
     coveredByCard?: boolean
     estimated?: boolean
+    manualOverride?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     transaction?: TransactionCreateNestedOneWithoutCommitmentInput
@@ -10540,6 +10574,7 @@ export namespace Prisma {
     source?: string
     coveredByCard?: boolean
     estimated?: boolean
+    manualOverride?: boolean
     transactionId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -10585,6 +10620,7 @@ export namespace Prisma {
     source?: StringFilter<"Commitment"> | string
     coveredByCard?: BoolFilter<"Commitment"> | boolean
     estimated?: BoolFilter<"Commitment"> | boolean
+    manualOverride?: BoolFilter<"Commitment"> | boolean
     transactionId?: StringNullableFilter<"Commitment"> | string | null
     ruleId?: StringNullableFilter<"Commitment"> | string | null
     createdAt?: DateTimeFilter<"Commitment"> | Date | string
@@ -10816,6 +10852,7 @@ export namespace Prisma {
     source?: string
     coveredByCard?: boolean
     estimated?: boolean
+    manualOverride?: boolean
     transactionId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -10832,6 +10869,7 @@ export namespace Prisma {
     source?: StringFieldUpdateOperationsInput | string
     coveredByCard?: BoolFieldUpdateOperationsInput | boolean
     estimated?: BoolFieldUpdateOperationsInput | boolean
+    manualOverride?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     transaction?: TransactionUpdateOneWithoutCommitmentNestedInput
@@ -10848,6 +10886,7 @@ export namespace Prisma {
     source?: StringFieldUpdateOperationsInput | string
     coveredByCard?: BoolFieldUpdateOperationsInput | boolean
     estimated?: BoolFieldUpdateOperationsInput | boolean
+    manualOverride?: BoolFieldUpdateOperationsInput | boolean
     transactionId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -10864,6 +10903,7 @@ export namespace Prisma {
     source?: StringFieldUpdateOperationsInput | string
     coveredByCard?: BoolFieldUpdateOperationsInput | boolean
     estimated?: BoolFieldUpdateOperationsInput | boolean
+    manualOverride?: BoolFieldUpdateOperationsInput | boolean
     transactionId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string

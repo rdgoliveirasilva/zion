@@ -57,22 +57,23 @@ model RecurringRule {
 }
 
 model Commitment {
-  id            String         @id @default(cuid())
-  key           String         @unique
-  description   String
-  amount        Int
-  dueDate       DateTime
-  status        String         @default("pending")
-  category      String         @default("outros")
-  source        String         @default("recurring")
-  coveredByCard Boolean        @default(false)
-  estimated     Boolean        @default(false)
-  transactionId String?        @unique
-  transaction   Transaction?   @relation(fields: [transactionId], references: [id], onDelete: SetNull)
-  ruleId        String?
-  rule          RecurringRule? @relation(fields: [ruleId], references: [id], onDelete: Restrict)
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
+  id             String         @id @default(cuid())
+  key            String         @unique
+  description    String
+  amount         Int
+  dueDate        DateTime
+  status         String         @default("pending")
+  category       String         @default("outros")
+  source         String         @default("recurring")
+  coveredByCard  Boolean        @default(false)
+  estimated      Boolean        @default(false)
+  manualOverride Boolean        @default(false)
+  transactionId  String?        @unique
+  transaction    Transaction?   @relation(fields: [transactionId], references: [id], onDelete: SetNull)
+  ruleId         String?
+  rule           RecurringRule? @relation(fields: [ruleId], references: [id], onDelete: Restrict)
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
 
   @@index([dueDate, status])
 }
