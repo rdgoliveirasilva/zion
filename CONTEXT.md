@@ -218,3 +218,10 @@ Limitações: Eventos de exclusão não são processados; conciliação usa cont
 - Botão Atualizar página disponível também no PWA: recarrega a aplicação sem solicitar importação bancária. Não foi criado cache offline de dados financeiros.
 - Validação: build de produção/TypeScript e 29 testes aprovados; integração do extrato conferiu 1703 registros elegíveis, páginas sem duplicação, busca e filtros; conciliação validada com transação revertida. Páginas principais HTTP 200 e API sem sessão HTTP 401.
 - Medições locais (não representam latência em celular): Home de aproximadamente 599 KB para 101 KB, extrato paginado 4 KB em vez de baixar 439 KB de histórico. Benchmark sintético com 1712 registros manteve resultados: filtro 486→25 ms, resumo 156→5 ms. Sem migração de banco; sem validação visual em dispositivo físico.
+
+
+## Contas a pagar em meses expansíveis — 05/11/2026
+
+- A página `/commitments` começa pelo resumo do mês atual (total, pago e restante), seguido de menus de meses expansíveis, 12 por página. O mês atual abre por padrão; filtros Todas/Pagas/Não pagas se aplicam aos meses e Não pagas informa o total atrasado. Cada mês exporta seu próprio CSV.
+- Ocorrências vinculadas a RecurringRule permitem marcar paga manualmente sem criar movimentação bancária, mudar categoria da regra e de suas ocorrências, ou encerrar a recorrência. A exclusão desativa a regra, elimina somente pendências dessa regra e preserva ocorrências pagas e transações históricas. Faturas de cartão não são tratadas como regra recorrente editável.
+- A API `PATCH/DELETE /api/commitments/[id]` exige sessão e serializa alterações com o bloqueio de conciliação. Nenhuma migração foi necessária. Build, TypeScript e testes de ações/financeiros devem ser verificados antes do envio.
