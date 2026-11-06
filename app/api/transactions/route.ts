@@ -105,12 +105,18 @@ export async function PATCH(request: Request) {
       await db.$queryRaw`SELECT pg_advisory_xact_lock(hashtext('zion-commitments'))::text`;
       const original=await db.transaction.findUniqueOrThrow({where:{id:body.id}});
       if(body.recurring && (original.type!=="expense" || original.isBillPayment || isCardBillPayment(original.description))) throw new Error("Selecione uma despesa, não um pagamento de fatura.");
-      const updated=await db.transaction.update({where:{id:original.id},data:{category:body.category,categorySource:"manual"}});
+      const edits = body.description !== undefined || body.amount !== undefined;
+      if (edits && (original.pluggyTransactionId || original.categorySource !== "manual")) throw new Error("Somente lançamentos manuais podem ser editados.");
+      if (edits && (typeof body.description !== "string" || !body.description.trim() || body.description.trim().length > 200 || !Number.isSafeInteger(body.amount) || body.amount <= 0 || body.amount > 2147483647)) throw new Error("Nome ou valor inválido.");
+      if (edits && body.amount !== original.amount) {
+        await db.commitment.updateMany({where:{transactionId:original.id},data:{transactionId:null,status:"pending"}});
+      }
+      const updated=await db.transaction.update({where:{id:original.id},data:{category:body.category,categorySource:"manual", ...(edits ? {description:body.description.trim(),amount:body.amount} : {})}});
       if(body.recurring) {
-        const description=normalizeMerchant(original.description);
+        const description=normalizeMerchant(updated.description);
         const matchKey=JSON.stringify([original.accountId,description]);
-        const candidates=(await db.transaction.findMany({where:{accountId:original.accountId,amount:original.amount,type:"expense"},orderBy:{date:"asc"}})).filter(t=>normalizeMerchant(t.description)===description);
-        const data={description,accountId:original.accountId,amount:original.amount,category:body.category,dueDay:body.dueDay,intervalMonths:body.intervalMonths,startMonth:financialDay(candidates[0]?.date ?? original.date).slice(0,7)};
+        const candidates=(await db.transaction.findMany({where:{accountId:original.accountId,amount:updated.amount,type:"expense"},orderBy:{date:"asc"}})).filter(t=>normalizeMerchant(t.description)===description);
+        const data={description,accountId:original.accountId,amount:updated.amount,category:body.category,dueDay:body.dueDay,intervalMonths:body.intervalMonths,startMonth:financialDay(candidates[0]?.date ?? original.date).slice(0,7)};
         const rule = await db.recurringRule.upsert({where:{matchKey},create:{...data,matchKey},update:{category:body.category}});
         const linked = await db.commitment.findUnique({where:{transactionId:original.id}});
         if (linked && !linked.ruleId && linked.source !== "card") {
@@ -120,7 +126,7 @@ export async function PATCH(request: Request) {
         // The user's selected movement is an explicit identity, even if other
         // same-value movements made automatic matching ambiguous this month.
         const occurrence = await db.commitment.findUnique({ where: { key: rule.id + ":" + financialDay(original.date).slice(0,7) } });
-        if (occurrence && occurrence.amount === original.amount && !occurrence.transactionId && !linked) {
+        if (occurrence && occurrence.amount === updated.amount && !occurrence.transactionId && !linked) {
           await db.commitment.update({ where: { id: occurrence.id }, data: { transactionId: original.id, status: PAID_STATUSES.has(original.status) && financialDay(original.date) <= financialDay() ? "paid" : "pending" } });
         }
       }
@@ -128,4 +134,20 @@ export async function PATCH(request: Request) {
     },{timeout:60000});
     return NextResponse.json(result);
   } catch { return NextResponse.json({error:"Não foi possível salvar. Verifique a movimentação e tente novamente."},{status:400}); }
+}
+
+export async function DELETE(request: Request) {
+  if (!await hasSession()) return NextResponse.json({ error: "Não autorizado." }, { status: 401 });
+  try {
+    const { id } = await request.json();
+    if (typeof id !== "string" || !id) return NextResponse.json({ error: "Lançamento inválido." }, { status: 400 });
+    await prisma.$transaction(async db => {
+      await db.$queryRaw`SELECT pg_advisory_xact_lock(hashtext('zion-commitments'))::text`;
+      const original = await db.transaction.findUniqueOrThrow({ where: { id } });
+      if (original.pluggyTransactionId || original.categorySource !== "manual") throw new Error("Somente lançamentos manuais podem ser apagados aqui.");
+      await db.commitment.updateMany({ where: { transactionId: id }, data: { transactionId: null, status: "pending" } });
+      await db.transaction.delete({ where: { id } });
+    });
+    return NextResponse.json({ success: true });
+  } catch { return NextResponse.json({ error: "Não foi possível apagar o lançamento manual." }, { status: 400 }); }
 }

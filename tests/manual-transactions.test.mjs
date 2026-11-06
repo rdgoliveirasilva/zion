@@ -6,8 +6,8 @@ const statement = stripTypeScriptTypes(readFileSync(new URL('../lib/statement.ts
 const source = stripTypeScriptTypes(readFileSync(new URL('../app/api/transactions/route.ts', import.meta.url), 'utf8').replace(/^import .*;\r?\n/gm, ''));
 const mock = { commitment: { create: async ({data}) => ({id:"bill", status:"pending", ...data}) }, account: { findUnique: async ({where}) => where.id === 'card' ? {id:'card', type:'credit'} : null }, category: { findFirst: async () => ({value:'outros'}) }, transaction: { create: async ({data}) => ({id:'saved', ...data}) } };
 globalThis.__manualTransactions = mock;
-const prefix = `const prisma = globalThis.__manualTransactions; const hasSession = async () => true; const NextResponse = {json: (data, options) => Response.json(data, options)};`;
-const { POST } = await import('data:text/javascript;base64,' + Buffer.from(statement + prefix + source).toString('base64'));
+const prefix = `const prisma = globalThis.__manualTransactions; const hasSession = async () => globalThis.__transactionSession !== false; const NextResponse = {json: (data, options) => Response.json(data, options)};`;
+const { POST, PATCH, DELETE } = await import('data:text/javascript;base64,' + Buffer.from(statement + prefix + source).toString('base64'));
 const submit = body => POST(new Request('http://localhost/api/transactions', {method:'POST', body:JSON.stringify({description:'Synthetic purchase', amount:'19,90', date:'2026-01-01', category:'outros', type:'expense', ...body})}));
 test('manual payment keeps cents, cleared status and Brazilian date', async () => {
   const response = await submit({}); const data = await response.json();
@@ -26,4 +26,61 @@ test('future payable is a pending commitment rather than a bank movement', async
   const response = await submit({type:'bill', date:'2099-01-01'});
   const data = await response.json();
   assert.equal(response.status, 201); assert.equal(data.status, 'pending'); assert.equal(data.source, 'manual'); assert.equal(data.amount, 1990);
+});
+
+const mutation = (method, body) => new Request('http://localhost/api/transactions', {method, body:JSON.stringify(body)});
+function mutationMock(original) {
+  const calls = [];
+  mock.$transaction = async action => action({
+    $queryRaw: async () => [],
+    transaction: {
+      findUniqueOrThrow: async () => original,
+      update: async ({data}) => { calls.push(['edit',data]); return {...original,...data}; },
+      delete: async () => { calls.push(['delete']); return original; },
+    },
+    commitment: { updateMany: async args => { calls.push(['unlink', args]); } },
+  });
+  return calls;
+}
+const manual = {id:'synthetic', description:'Original', amount:1000, categorySource:'manual', pluggyTransactionId:null};
+test('manual edit changes name and cents, reopening a linked payable when amount changes', async () => {
+  const calls = mutationMock(manual);
+  const res = await PATCH(mutation('PATCH', {id:manual.id,category:'outros',description:'Corrected',amount:1990}));
+  assert.equal(res.status,200); const data=await res.json();
+  assert.equal(data.description,'Corrected'); assert.equal(data.amount,1990);
+  assert.equal(calls[0][0],'unlink'); assert.deepEqual(calls[0][1].data,{transactionId:null,status:'pending'});
+});
+test('imported movements reject financial edits and deletion even after manual categorization', async () => {
+  const calls = mutationMock({...manual,pluggyTransactionId:'imported'});
+  assert.equal((await PATCH(mutation('PATCH',{id:manual.id, category:'outros',description:'Changed',amount:1}))).status,400);
+  assert.equal((await DELETE(mutation('DELETE',{id:manual.id}))).status,400);
+  assert.deepEqual(calls,[]);
+});
+test('invalid manual edits do not write; deletion unlinks before deleting', async () => {
+  const calls = mutationMock(manual);
+  for (const body of [{description:'',amount:100}, {description:'Name',amount:-1},{description:'Name',amount:1.5}]) assert.equal((await PATCH(mutation('PATCH',{id:manual.id,category:'outros',...body}))).status,400);
+  assert.deepEqual(calls,[]);
+  assert.equal((await DELETE(mutation('DELETE',{id:manual.id}))).status,200);
+  assert.deepEqual(calls.map(c=>c[0]),['unlink','delete']);
+});
+
+test('editing and deleting require an authenticated session', async () => {
+  globalThis.__transactionSession = false;
+  try {
+    assert.equal((await PATCH(mutation('PATCH',{id:'synthetic'}))).status,401);
+    assert.equal((await DELETE(mutation('DELETE',{id:'synthetic'}))).status,401);
+  } finally { globalThis.__transactionSession = true; }
+});
+test('formatted thousands are persisted as cents', async () => {
+  const res = await submit({amount:'1.234,56'});
+  assert.equal(res.status,201); assert.equal((await res.json()).amount,123456);
+});
+
+test('renaming preserves the paid link, and imported category edits remain available', async () => {
+  let calls = mutationMock(manual);
+  assert.equal((await PATCH(mutation('PATCH',{id:manual.id, category:'outros',description:'Renamed',amount:manual.amount}))).status,200);
+  assert.deepEqual(calls.map(c=>c[0]),['edit']);
+  calls = mutationMock({...manual,pluggyTransactionId:'imported'});
+  assert.equal((await PATCH(mutation('PATCH',{id:manual.id,category:'outros'}))).status,200);
+  assert.deepEqual(calls[0],['edit',{category:'outros',categorySource:'manual'}]);
 });

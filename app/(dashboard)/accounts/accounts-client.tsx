@@ -1,5 +1,6 @@
 "use client";
 
+import { formatCurrencyInput } from "@/lib/currency-input";
 import type { CurrentCardBill } from "@/lib/card-bill";
 import { useJsonResource, notifyDataChanged } from "@/lib/client-data";
 import { useState } from "react";
@@ -206,7 +207,7 @@ export default function AccountsManager({ embedded = false }: { embedded?: boole
 
               <div className="space-y-1">
                 <label className="text-xs font-medium text-muted-foreground">Saldo Atual (R$)</label>
-                <input type="text" placeholder="0,00" value={balance} onChange={(e) => setBalance(e.target.value)} required className="w-full rounded-xl bg-background border border-border p-3 text-foreground focus:outline-none focus:border-primary" />
+                <input type="text" inputMode="numeric" placeholder="0,00" value={balance} onChange={(e) => setBalance(formatCurrencyInput(e.target.value))} required className="w-full rounded-xl bg-background border border-border p-3 text-foreground focus:outline-none focus:border-primary" />
               </div>
 
               {errorMsg && <p className="text-sm text-red-500">{errorMsg}</p>}

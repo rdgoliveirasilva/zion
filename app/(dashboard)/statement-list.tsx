@@ -27,6 +27,8 @@ export interface StatementTransaction {
   type: string;
   status: string;
   isBillPayment?: boolean;
+  categorySource?: string;
+  pluggyTransactionId?: string | null;
   category: string | null;
   accountId?: string | null;
   account?: { name: string; type: string } | null;
@@ -71,7 +73,7 @@ export const StatementList = memo(function StatementList({ initialPage, allowDel
     if (!confirm("Tem certeza que deseja apagar esta transação?")) return;
     setActionError("");
     try {
-      const response = await fetch(`/api/transactions/all?id=${encodeURIComponent(id)}`, { method: "DELETE" });
+      const response = await fetch("/api/transactions", { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id }) });
       if (!response.ok) throw new Error("Não foi possível apagar a transação.");
       notifyDataChanged();
     } catch (e) { setActionError(e instanceof Error ? e.message : "Tente novamente."); }
@@ -135,7 +137,7 @@ export const StatementList = memo(function StatementList({ initialPage, allowDel
                 <span className={`shrink-0 text-sm font-semibold ${isIncome ? 'text-green-500' : 'text-foreground'}`}>
                   {isIncome ? "+" : "-"} {formatMoney(tx.amount)}
                 </span>
-              </button>{allowDelete && <button onClick={() => remove(tx.id)} aria-label={`Apagar ${tx.description}`} className="shrink-0 rounded-lg p-2 text-muted-foreground hover:text-red-500"><Trash2 className="h-4 w-4" /></button>}</div>
+              </button>{allowDelete && tx.categorySource === "manual" && !tx.pluggyTransactionId && <button onClick={() => remove(tx.id)} aria-label={`Apagar ${tx.description}`} className="shrink-0 rounded-lg p-2 text-muted-foreground hover:text-red-500"><Trash2 className="h-4 w-4" /></button>}</div>
             );
           })
         )}

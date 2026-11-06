@@ -1,3 +1,4 @@
+import { DELETE as deleteManualTransaction } from "../route";
 import { financialDayEnd } from "@/lib/statement";
 import { hasSession } from "@/lib/session";
 import { transactionViewSelect } from "@/lib/transaction-view";
@@ -18,22 +19,8 @@ export async function GET() {
   }
 }
 
-// Deleta uma transação
+// Keep the old URL compatible with the same authenticated manual-only deletion.
 export async function DELETE(request: Request) {
-  try {
-    const { searchParams } = new URL(request.url);
-    const id = searchParams.get("id");
-
-    if (!id) {
-      return NextResponse.json({ error: "ID não fornecido." }, { status: 400 });
-    }
-
-    await prisma.transaction.delete({
-      where: { id },
-    });
-
-    return NextResponse.json({ success: true });
-  } catch (error) {
-    return NextResponse.json({ error: "Erro ao deletar transação." }, { status: 500 });
-  }
+  const id = new URL(request.url).searchParams.get("id");
+  return deleteManualTransaction(new Request(request.url, { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id }) }));
 }

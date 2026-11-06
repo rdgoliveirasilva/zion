@@ -1,5 +1,6 @@
 "use client";
 
+import { currencyFromCents, formatCurrencyInput } from "@/lib/currency-input";
 import { useRouter } from "next/navigation";
 import { notifyDataChanged } from "@/lib/client-data";
 import { useCategories } from "@/components/ui/categories-provider";
@@ -168,7 +169,7 @@ export function QuickActionsModal({ isOpen, onClose }: QuickActionsModalProps) {
                   const bill = pendingBills.find(b => b.id === e.target.value);
                   if (bill) {
                     setDescription(bill.description);
-                    setAmount((bill.amount / 100).toString());
+                    setAmount(currencyFromCents(bill.amount));
                     setCategory(bill.category || "outros");
                   }
                 }}
@@ -198,7 +199,7 @@ export function QuickActionsModal({ isOpen, onClose }: QuickActionsModalProps) {
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1">
               <label className="text-xs font-medium text-muted-foreground">Valor (R$)</label>
-              <input type="text" placeholder="0,00" value={amount} onChange={(e) => setAmount(e.target.value)} required readOnly={paymentMode === "conta"} className={`w-full rounded-xl bg-background border border-border p-3 text-foreground focus:outline-none focus:border-primary ${paymentMode === "conta" ? "opacity-70" : ""}`} />
+              <input type="text" inputMode="numeric" placeholder="0,00" value={amount} onChange={(e) => setAmount(formatCurrencyInput(e.target.value))} required readOnly={paymentMode === "conta"} className={`w-full rounded-xl bg-background border border-border p-3 text-foreground focus:outline-none focus:border-primary ${paymentMode === "conta" ? "opacity-70" : ""}`} />
             </div>
             <div className="space-y-1">
               <label className="text-xs font-medium text-muted-foreground">Data</label>
@@ -231,7 +232,7 @@ export function QuickActionsModal({ isOpen, onClose }: QuickActionsModalProps) {
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1">
               <label className="text-xs font-medium text-muted-foreground">Valor (R$)</label>
-              <input type="text" placeholder="0,00" value={amount} onChange={(e) => setAmount(e.target.value)} required className="w-full rounded-xl bg-background border border-border p-3 text-foreground focus:outline-none focus:border-primary" />
+              <input type="text" inputMode="numeric" placeholder="0,00" value={amount} onChange={(e) => setAmount(formatCurrencyInput(e.target.value))} required className="w-full rounded-xl bg-background border border-border p-3 text-foreground focus:outline-none focus:border-primary" />
             </div>
             <div className="space-y-1">
               <label className="text-xs font-medium text-muted-foreground">{currentAction === "conta" ? "Vencimento" : "Data"}</label>

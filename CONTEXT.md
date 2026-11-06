@@ -239,3 +239,9 @@ Limitações: Eventos de exclusão não são processados; conciliação usa cont
 - Datas do formulário e limites do extrato usam o calendário de São Paulo, incluindo o dia inteiro, para não ocultar lançamentos ancorados ao meio-dia nem selecionar amanhã à noite.
 - Compra manual exige vínculo com uma conta de cartão existente. Pagamentos e recebimentos permitem vínculo opcional com conta bancária. O vínculo identifica a origem sem alterar Account.balance, que continua informado pelo banco.
 - Valores positivos em reais são validados em centavos; datas inválidas e movimentações futuras são rejeitadas. Contas a pagar aceitam vencimento futuro. O cadastro confirma sucesso e invalida as consultas locais.
+
+
+### Correção de lançamentos e entrada de valores (06/11/2026)
+- Detalhes do extrato e da Home permitem editar nome/valor e apagar lançamentos com categoria de origem manual e sem ID Pluggy. Movimentações importadas continuam com edição de categoria, preservando nome, valor e data bancários. A API verifica essa distinção e exige sessão.
+- Exclusão desvincula a movimentação e reabre o compromisso associado como pendente. Alterar o valor também retira a baixa anterior; renomear conserva o vínculo. Operações são atômicas sob o lock de compromissos. O saldo bancário não é modificado.
+- Campos monetários de lançamentos, edição, contas a pagar, metas e saldo usam formatação brasileira enquanto se digita: 1990 vira 19,90 e 123456 vira 1.234,56. A conversão para centavos preserva separadores de milhar; campo vazio continua vazio.

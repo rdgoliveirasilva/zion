@@ -1,4 +1,5 @@
 "use client";
+import { currencyFromCents, currencyInputCents, formatCurrencyInput } from "@/lib/currency-input";
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { CalendarDays, ChevronDown, ChevronUp, Check, Trash2, Pencil } from "lucide-react";
@@ -36,12 +37,12 @@ export default function CommitmentsClient({ commitments, today }: { commitments:
     [items, currentMonth, view]);
   const pageCount = Math.max(1, Math.ceil(months.length / PAGE_SIZE));
   function startEdit(c: CommitmentView) {
-    setEditing(c); setAmount((c.amount / 100).toFixed(2)); setDueDate(financialDay(c.dueDate));
+    setEditing(c); setAmount(currencyFromCents(c.amount)); setDueDate(financialDay(c.dueDate));
     setEditCategory(c.category || "outros"); setRecurring(!!c.ruleId || c.source === "card"); setError("");
   }
   async function saveEdit() {
     if (!editing) return;
-    const cents = Math.round(Number(amount) * 100);
+    const cents = currencyInputCents(amount);
     if (!Number.isSafeInteger(cents) || cents <= 0 || !dueDate) { setError("Informe valor e vencimento válidos."); return; }
     setBusy(editing.id); setError("");
     try {
@@ -113,7 +114,7 @@ export default function CommitmentsClient({ commitments, today }: { commitments:
       {pageCount > 1 && <nav aria-label="Páginas dos meses" className="flex items-center justify-center gap-3 pt-3"><button type="button" disabled={page === 1} onClick={() => setPage(page - 1)} className="rounded-lg border border-border px-3 py-2 text-sm disabled:opacity-40">Anterior</button><span className="text-sm text-muted-foreground">{page} de {pageCount}</span><button type="button" disabled={page === pageCount} onClick={() => setPage(page + 1)} className="rounded-lg border border-border px-3 py-2 text-sm disabled:opacity-40">Próxima</button></nav>}
     </section>
     {editing && <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/60 p-3 sm:items-center" role="presentation" onClick={() => setEditing(null)}><section role="dialog" aria-modal="true" aria-label="Editar conta a pagar" onClick={event => event.stopPropagation()} className="w-full max-w-md space-y-4 rounded-2xl bg-card p-5 shadow-xl"><h2 className="text-lg font-semibold">Editar conta a pagar</h2><p className="text-sm text-muted-foreground">{editing.description}{editing.ruleId && " · Alterações desta ocorrência"}</p>
-      <label className="block text-sm">Valor (R$)<input type="number" min="0.01" step="0.01" value={amount} onChange={event => setAmount(event.target.value)} className="mt-1 w-full rounded-lg border border-border bg-background p-2" /></label>
+      <label className="block text-sm">Valor (R$)<input type="text" inputMode="numeric" value={amount} onChange={event => setAmount(formatCurrencyInput(event.target.value))} className="mt-1 w-full rounded-lg border border-border bg-background p-2" /></label>
       <label className="block text-sm">Vencimento<input type="date" value={dueDate} onChange={event => setDueDate(event.target.value)} className="mt-1 w-full rounded-lg border border-border bg-background p-2" /></label>
       <label className="block text-sm">Categoria<select value={editCategory} onChange={event => setEditCategory(event.target.value)} className="mt-1 w-full rounded-lg border border-border bg-background p-2">{categories.filter(x => !x.archived || x.value === editCategory).map(x => <option key={x.value} value={x.value}>{x.label}</option>)}</select></label>
       <label className="flex items-center gap-2 text-sm"><input type="checkbox" checked={recurring} disabled={editing.source === "card"} onChange={event => setRecurring(event.target.checked)} />Recorrente{editing.source === "card" && <span className="text-xs text-muted-foreground">(fatura automática do banco)</span>}</label>
