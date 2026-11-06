@@ -106,17 +106,24 @@ export async function PATCH(request: Request) {
       const original=await db.transaction.findUniqueOrThrow({where:{id:body.id}});
       if(body.recurring && (original.type!=="expense" || original.isBillPayment || isCardBillPayment(original.description))) throw new Error("Selecione uma despesa, não um pagamento de fatura.");
       const edits = body.description !== undefined || body.amount !== undefined;
-      if (edits && (original.pluggyTransactionId || original.categorySource !== "manual")) throw new Error("Somente lançamentos manuais podem ser editados.");
+      const relink = body.accountId !== undefined;
+      if ((edits || relink) && (original.pluggyTransactionId || original.categorySource !== "manual")) throw new Error("Somente lançamentos manuais podem ser editados.");
       if (edits && (typeof body.description !== "string" || !body.description.trim() || body.description.trim().length > 200 || !Number.isSafeInteger(body.amount) || body.amount <= 0 || body.amount > 2147483647)) throw new Error("Nome ou valor inválido.");
-      if (edits && body.amount !== original.amount) {
+      if (relink) {
+        if (body.accountId !== null && (typeof body.accountId !== "string" || !body.accountId)) throw new Error("Vínculo inválido.");
+        const account = body.accountId ? await db.account.findUnique({where:{id:body.accountId}}) : null;
+        if ((body.accountId && !account) || (original.type === "income" && account?.type === "credit")) throw new Error("Conta incompatível.");
+      }
+      const accountChanged = relink && body.accountId !== (original.accountId ?? null);
+      if ((edits && body.amount !== original.amount) || accountChanged) {
         await db.commitment.updateMany({where:{transactionId:original.id},data:{transactionId:null,status:"pending"}});
       }
-      const updated=await db.transaction.update({where:{id:original.id},data:{category:body.category,categorySource:"manual", ...(edits ? {description:body.description.trim(),amount:body.amount} : {})}});
+      const updated=await db.transaction.update({where:{id:original.id},data:{category:body.category,categorySource:"manual", ...(edits ? {description:body.description.trim(),amount:body.amount} : {}), ...(relink ? {accountId:body.accountId} : {})}});
       if(body.recurring) {
         const description=normalizeMerchant(updated.description);
-        const matchKey=JSON.stringify([original.accountId,description]);
-        const candidates=(await db.transaction.findMany({where:{accountId:original.accountId,amount:updated.amount,type:"expense"},orderBy:{date:"asc"}})).filter(t=>normalizeMerchant(t.description)===description);
-        const data={description,accountId:original.accountId,amount:updated.amount,category:body.category,dueDay:body.dueDay,intervalMonths:body.intervalMonths,startMonth:financialDay(candidates[0]?.date ?? original.date).slice(0,7)};
+        const matchKey=JSON.stringify([updated.accountId,description]);
+        const candidates=(await db.transaction.findMany({where:{accountId:updated.accountId,amount:updated.amount,type:"expense"},orderBy:{date:"asc"}})).filter(t=>normalizeMerchant(t.description)===description);
+        const data={description,accountId:updated.accountId,amount:updated.amount,category:body.category,dueDay:body.dueDay,intervalMonths:body.intervalMonths,startMonth:financialDay(candidates[0]?.date ?? original.date).slice(0,7)};
         const rule = await db.recurringRule.upsert({where:{matchKey},create:{...data,matchKey},update:{category:body.category}});
         const linked = await db.commitment.findUnique({where:{transactionId:original.id}});
         if (linked && !linked.ruleId && linked.source !== "card") {

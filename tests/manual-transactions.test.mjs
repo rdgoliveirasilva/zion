@@ -33,6 +33,7 @@ function mutationMock(original) {
   const calls = [];
   mock.$transaction = async action => action({
     $queryRaw: async () => [],
+    account: mock.account,
     transaction: {
       findUniqueOrThrow: async () => original,
       update: async ({data}) => { calls.push(['edit',data]); return {...original,...data}; },
@@ -83,4 +84,25 @@ test('renaming preserves the paid link, and imported category edits remain avail
   calls = mutationMock({...manual,pluggyTransactionId:'imported'});
   assert.equal((await PATCH(mutation('PATCH',{id:manual.id,category:'outros'}))).status,200);
   assert.deepEqual(calls[0],['edit',{category:'outros',categorySource:'manual'}]);
+});
+
+test('manual account link can be changed or removed and reopens its payable', async () => {
+  for (const accountId of ['card',null]) {
+    const calls = mutationMock({...manual,accountId:'bank'});
+    const res = await PATCH(mutation('PATCH',{id:manual.id,category:'outros',accountId}));
+    assert.equal(res.status,200); assert.equal((await res.json()).accountId,accountId);
+    assert.deepEqual(calls.map(c=>c[0]),['unlink','edit']);
+  }
+});
+test('relink rejects missing accounts, imported transactions and income on credit cards', async () => {
+  for (const [original,accountId] of [[manual,'missing'],[{...manual,pluggyTransactionId:'imported'},'card'],[{...manual,type:'income'},'card']]) {
+    const calls = mutationMock(original);
+    assert.equal((await PATCH(mutation('PATCH',{id:manual.id,category:'outros',accountId}))).status,400);
+    assert.deepEqual(calls,[]);
+  }
+});
+test('saving the same account preserves the paid link', async () => {
+  const calls = mutationMock({...manual,accountId:'card'});
+  assert.equal((await PATCH(mutation('PATCH',{id:manual.id,category:'outros',accountId:'card'}))).status,200);
+  assert.deepEqual(calls.map(c=>c[0]),['edit']);
 });

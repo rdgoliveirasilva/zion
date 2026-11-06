@@ -11,6 +11,7 @@ import { TransactionAccountTags } from "./transaction-account-tags";
 
 export type EditableTransaction = {
   id: string; description: string; amount: number; date: Date | string;
+  accountId?: string | null;
   categorySource?: string; pluggyTransactionId?: string | null;
   type: string; category?: string | null; isBillPayment?: boolean;
   account?: { name: string; type: string } | null;
@@ -22,6 +23,20 @@ export function TransactionDetails({ transaction: tx, onClose, onSaved }: {
   const { categories } = useCategories();
   const dialog = useRef<HTMLDialogElement>(null);
   const manual = tx.categorySource === "manual" && !tx.pluggyTransactionId;
+  const [accountId, setAccountId] = useState(tx.accountId || "");
+  const [accounts, setAccounts] = useState<{ id: string; name: string; type: string }[]>([]);
+  const [accountsLoading, setAccountsLoading] = useState(manual);
+  const [accountsError, setAccountsError] = useState("");
+  useEffect(() => {
+    if (!manual) return;
+    const controller = new AbortController();
+    fetch("/api/accounts", { cache: "no-store", signal: controller.signal })
+      .then(async response => { if (!response.ok) throw new Error("Não foi possível carregar as contas. Reabra os detalhes para tentar novamente."); return response.json(); })
+      .then(data => { if (!controller.signal.aborted) setAccounts(data); })
+      .catch(e => { if (!controller.signal.aborted) setAccountsError(e.message); })
+      .finally(() => { if (!controller.signal.aborted) setAccountsLoading(false); });
+    return () => controller.abort();
+  }, [manual]);
   const [description, setDescription] = useState(tx.description);
   const [amount, setAmount] = useState(currencyFromCents(tx.amount));
   const [category, setCategory] = useState(tx.category || "outros");
@@ -37,7 +52,7 @@ export function TransactionDetails({ transaction: tx, onClose, onSaved }: {
     if (manual && (!description.trim() || !Number.isSafeInteger(currencyInputCents(amount)) || currencyInputCents(amount) <= 0)) { setError("Informe nome e valor válidos."); return; }
     setSaving(true); setError("");
     try {
-      const response = await fetch("/api/transactions", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: tx.id, category, recurring, dueDay, intervalMonths, ...(manual ? { description: description.trim(), amount: currencyInputCents(amount) } : {}) }) });
+      const response = await fetch("/api/transactions", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: tx.id, category, recurring, dueDay, intervalMonths, ...(manual ? { description: description.trim(), amount: currencyInputCents(amount), accountId: accountId || null } : {}) }) });
       const result = await response.json();
       if (!response.ok) throw new Error(result.error || "Não foi possível salvar.");
       notifyDataChanged(); onSaved(); onClose();
@@ -64,6 +79,14 @@ export function TransactionDetails({ transaction: tx, onClose, onSaved }: {
     {manual && <div className="mt-5 space-y-4">
       <label className="block space-y-2 text-sm">Nome<input disabled={saving} maxLength={200} value={description} onChange={e => setDescription(e.target.value)} className={input} /></label>
       <label className="block space-y-2 text-sm">Valor (R$)<input disabled={saving} type="text" inputMode="numeric" value={amount} onChange={e => setAmount(formatCurrencyInput(e.target.value))} className={input} /></label>
+      <label className="block space-y-2 text-sm">Vínculo com conta ou cartão<select disabled={saving || accountsLoading || !!accountsError} value={accountId} onChange={e => setAccountId(e.target.value)} className={input}>
+        <option value="">Sem vínculo</option>
+        {!accounts.some(a => a.id === accountId) && accountId && <option value={accountId}>{tx.account?.name || "Vínculo atual"}</option>}
+        {accounts.filter(a => tx.type !== "income" || a.type !== "credit").map(a => <option key={a.id} value={a.id}>{a.name} — {a.type === "credit" ? "Cartão" : "Conta"}</option>)}
+      </select></label>
+      {accountsLoading && <p className="text-xs text-muted-foreground">Carregando contas…</p>}
+      {accountsError && <p role="alert" className="text-sm text-red-500">{accountsError}</p>}
+      <p className="text-xs text-muted-foreground">Você pode trocar ou remover o vínculo. O saldo bancário não é alterado. Se houver uma conta a pagar vinculada, ela voltará a ficar pendente ao trocar o vínculo.</p>
     </div>}
     <label className="mt-5 block space-y-2 text-sm">Categoria<select disabled={saving} value={category} onChange={e => { setCategory(e.target.value); setStep(canRecur ? "question" : "category"); }} className={input}>{categories.filter(c => !c.archived || c.value === category).map(c => <option key={c.value} value={c.value}>{c.label}</option>)}</select></label>
     {step === "question" && <div className="mt-5 space-y-3"><p className="font-medium">Deseja transformar esta despesa em uma conta a pagar recorrente?</p><div className="flex gap-3"><button disabled={saving} onClick={() => save(false)} className="flex-1 rounded-xl border border-border p-3">{manual ? "Não, salvar alterações" : "Não, salvar categoria"}</button><button onClick={() => setStep("rule")} className="flex-1 rounded-xl bg-primary p-3 text-primary-foreground">Sim</button></div></div>}

@@ -245,3 +245,5 @@ Limitações: Eventos de exclusão não são processados; conciliação usa cont
 - Detalhes do extrato e da Home permitem editar nome/valor e apagar lançamentos com categoria de origem manual e sem ID Pluggy. Movimentações importadas continuam com edição de categoria, preservando nome, valor e data bancários. A API verifica essa distinção e exige sessão.
 - Exclusão desvincula a movimentação e reabre o compromisso associado como pendente. Alterar o valor também retira a baixa anterior; renomear conserva o vínculo. Operações são atômicas sob o lock de compromissos. O saldo bancário não é modificado.
 - Campos monetários de lançamentos, edição, contas a pagar, metas e saldo usam formatação brasileira enquanto se digita: 1990 vira 19,90 e 123456 vira 1.234,56. A conversão para centavos preserva separadores de milhar; campo vazio continua vazio.
+
+- Detalhes de lançamentos manuais permitem trocar ou remover o vínculo com conta/cartão. Recebimentos aceitam somente conta bancária. Trocar o vínculo reabre o compromisso associado, preserva saldo bancário e não modifica movimentações importadas.
