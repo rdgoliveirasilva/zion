@@ -234,22 +234,33 @@ Limitações: Eventos de exclusão não são processados; conciliação usa cont
 - `manualOverride` em Commitment (`20261105010000_commitment_manual_override`) preserva alterações financeiras individuais nas próximas sincronizações sem alterar transações bancárias. Mudança isolada de categoria não interrompe a atualização automática do valor. A conciliação continua buscando pagamento único por valor ajustado, conta, descrição e mês. A migração aditiva foi aplicada ao PostgreSQL configurado antes do push.
 
 
-### Lançamentos manuais — contrato (06/11/2026)
+## Lançamentos manuais — 06/11/2026
+
 - Menu: registrar pagamento, registrar compra no cartão, adicionar conta a pagar e registrar recebimento. Recebimento persiste como income; compras e pagamentos como expense; contas futuras como Commitment pendente.
 - Datas do formulário e limites do extrato usam o calendário de São Paulo, incluindo o dia inteiro, para não ocultar lançamentos ancorados ao meio-dia nem selecionar amanhã à noite.
 - Compra manual exige vínculo com uma conta de cartão existente. Pagamentos e recebimentos permitem vínculo opcional com conta bancária. O vínculo identifica a origem sem alterar Account.balance, que continua informado pelo banco.
 - Valores positivos em reais são validados em centavos; datas inválidas e movimentações futuras são rejeitadas. Contas a pagar aceitam vencimento futuro. O cadastro confirma sucesso e invalida as consultas locais.
 
 
-### Correção de lançamentos e entrada de valores (06/11/2026)
+### Edição, vínculos e entrada de valores
+
 - Detalhes do extrato e da Home permitem editar nome/valor e apagar lançamentos com categoria de origem manual e sem ID Pluggy. Movimentações importadas continuam com edição de categoria, preservando nome, valor e data bancários. A API verifica essa distinção e exige sessão.
 - Exclusão desvincula a movimentação e reabre o compromisso associado como pendente. Alterar o valor também retira a baixa anterior; renomear conserva o vínculo. Operações são atômicas sob o lock de compromissos. O saldo bancário não é modificado.
 - Campos monetários de lançamentos, edição, contas a pagar, metas e saldo usam formatação brasileira enquanto se digita: 1990 vira 19,90 e 123456 vira 1.234,56. A conversão para centavos preserva separadores de milhar; campo vazio continua vazio.
-
 - Detalhes de lançamentos manuais permitem trocar ou remover o vínculo com conta/cartão. Recebimentos aceitam somente conta bancária. Trocar o vínculo reabre o compromisso associado, preserva saldo bancário e não modifica movimentações importadas.
 
 
-### Exclusão confiável e resposta dos lançamentos (06/11/2026)
+### Exclusão e desempenho
+
 - DELETE manual é idempotente: registro já removido retorna sucesso. Validação de pedido retorna 400; movimentação importada retorna 409; indisponibilidade/timeout retorna 503 com possibilidade de repetir. A transação de exclusão permite aguardar o lock da atualização de compromissos, mantendo reabertura do compromisso e exclusão atômicas.
 - Conciliação lê os compromissos em lote e evita regravar ocorrências pendentes sem alterações. Formulários consultam somente opções de contas, sem buscar faturas ou agendar sincronização. Opções frescas são compartilhadas e preservadas nas inclusões/exclusões; contas a pagar só são consultadas quando essa modalidade é selecionada.
 - Após confirmação do servidor, o extrato insere/remove o lançamento localmente e atualiza os dados em segundo plano. Falhas conservam a movimentação visível e exibem o motivo retornado pela API. Botão de exclusão na lista fica desabilitado durante a operação.
+
+### Validação e pendências
+
+- Última implementação enviada para `main`: `e254f52`, após `8655b8c` (formulários e datas), `7ce9e4a` (edição e formatação) e `6f25113` (edição de vínculo). Não houve alteração de schema nem migração nesta revisão.
+- Validação local concluída: 55 testes aprovados, `npx tsc --noEmit` e `npm run build`. Testes cobrem autenticação, valores formatados, edição e remoção de vínculo, proteção de movimentações importadas, exclusão repetida, falha transitória do banco e invalidação de cache.
+- Teste sintético da conciliação: 14 ocorrências pendentes sem alterações usam uma leitura de compromissos e nenhuma gravação. Isso verifica a redução de trabalho; não representa uma medição de latência em produção ou em celular.
+- O 400 relatado na exclusão não foi reproduzido em produção. O código anterior convertia todas as exceções em 400 e usava o limite padrão da transação ao esperar o bloqueio compartilhado com a atualização de compromissos; contenção/timeout é uma hipótese, não uma causa confirmada. O tratamento atual distingue pedido inválido, origem importada e falha operacional.
+- A tentativa mais recente de `node scripts/check-commitments.mjs`, que usa transação revertida, ficou sem resposta e foi encerrada sem confirmação de sucesso. Não considerar essa execução como integração aprovada, nem substituir por ela as validações históricas registradas acima.
+- Pendente: confirmar criação, edição de vínculo e exclusão no ambiente publicado, verificar a interface em desktop/mobile e medir a latência real. Push concluído não comprova que o deploy terminou ou que a falha relatada desapareceu em produção.
