@@ -69,12 +69,17 @@ export async function DELETE(_request: Request, context: Context) {
     await prisma.$transaction(async db => {
       await db.$queryRaw`SELECT pg_advisory_xact_lock(hashtext('zion-commitments'))::text`;
       const commitment = await db.commitment.findUnique({ where: { id } });
-      if (!commitment?.ruleId) throw new Error("Conta recorrente não encontrada.");
+      if (!commitment) return;
+      if (!commitment.ruleId) {
+        if (commitment.source !== "manual") throw new Error("Faturas automáticas não podem ser excluídas aqui.");
+        await db.commitment.delete({ where: { id } });
+        return;
+      }
       await db.recurringRule.update({ where: { id: commitment.ruleId }, data: { active: false } });
       // Preserva ocorrências pagas e o histórico; retira apenas pendências
       // desta regra, que não serão recriadas pela próxima conciliação.
       await db.commitment.deleteMany({ where: { ruleId: commitment.ruleId, status: "pending" } });
-    });
+    }, { maxWait: 10000, timeout: 65000 });
     return NextResponse.json({ success: true });
   } catch (error) { return NextResponse.json({ error: error instanceof Error ? error.message : "Não foi possível excluir." }, { status: 400 }); }
 }

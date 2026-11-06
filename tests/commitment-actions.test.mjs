@@ -17,6 +17,7 @@ function fixture() {
   const db = {
     $queryRaw: async()=>{},
     commitment: {
+      delete: async({where})=>{const index=records.findIndex(x=>x.id===where.id); return records.splice(index,1)[0];},
       findUnique: async({where})=>records.find(x=>x.id===where.id),
       findUniqueOrThrow: async({where})=>records.find(x=>x.id===where.id),
       update: async({where,data})=>Object.assign(records.find(x=>x.id===where.id),data),
@@ -77,4 +78,14 @@ test('a manual account can become a monthly recurring rule without a new transac
   const result=await PATCH(request({action:'edit',amount:1000,dueDate:'2026-11-10',category:'moradia',recurring:true}),context('manual'));
   assert.equal(result.status,200);
   assert.equal(records.find(x=>x.id==='manual').ruleId,'new-rule');
+});
+
+test('deletes only the selected standalone manual payable and preserves bank movements', async () => {
+  const {records} = fixture();
+  records.push({id:'manual',source:'manual',ruleId:null,status:'pending',transactionId:'bank-movement'});
+  const response = await DELETE({},context('manual'));
+  assert.equal(response.status,200);
+  assert.equal(records.some(x=>x.id==='manual'),false);
+  assert.equal(records.length,4);
+  assert.equal((await DELETE({},context('manual'))).status,200);
 });
