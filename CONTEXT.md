@@ -247,3 +247,9 @@ Limitações: Eventos de exclusão não são processados; conciliação usa cont
 - Campos monetários de lançamentos, edição, contas a pagar, metas e saldo usam formatação brasileira enquanto se digita: 1990 vira 19,90 e 123456 vira 1.234,56. A conversão para centavos preserva separadores de milhar; campo vazio continua vazio.
 
 - Detalhes de lançamentos manuais permitem trocar ou remover o vínculo com conta/cartão. Recebimentos aceitam somente conta bancária. Trocar o vínculo reabre o compromisso associado, preserva saldo bancário e não modifica movimentações importadas.
+
+
+### Exclusão confiável e resposta dos lançamentos (06/11/2026)
+- DELETE manual é idempotente: registro já removido retorna sucesso. Validação de pedido retorna 400; movimentação importada retorna 409; indisponibilidade/timeout retorna 503 com possibilidade de repetir. A transação de exclusão permite aguardar o lock da atualização de compromissos, mantendo reabertura do compromisso e exclusão atômicas.
+- Conciliação lê os compromissos em lote e evita regravar ocorrências pendentes sem alterações. Formulários consultam somente opções de contas, sem buscar faturas ou agendar sincronização. Opções frescas são compartilhadas e preservadas nas inclusões/exclusões; contas a pagar só são consultadas quando essa modalidade é selecionada.
+- Após confirmação do servidor, o extrato insere/remove o lançamento localmente e atualiza os dados em segundo plano. Falhas conservam a movimentação visível e exibem o motivo retornado pela API. Botão de exclusão na lista fica desabilitado durante a operação.

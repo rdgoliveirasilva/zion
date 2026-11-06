@@ -2,7 +2,7 @@
 
 import { currencyFromCents, formatCurrencyInput } from "@/lib/currency-input";
 import { useRouter } from "next/navigation";
-import { notifyDataChanged } from "@/lib/client-data";
+import { loadClientData, notifyDataChanged } from "@/lib/client-data";
 import { useCategories } from "@/components/ui/categories-provider";
 import { financialDay } from "@/lib/statement";
 import { toast } from "sonner";
@@ -39,9 +39,8 @@ export function QuickActionsModal({ isOpen, onClose }: QuickActionsModalProps) {
     if (!isOpen) return;
     const controller = new AbortController();
     setAccountsError("");
-    fetch("/api/accounts", { cache: "no-store", signal: controller.signal })
-      .then(async res => { if (!res.ok) throw new Error("Não foi possível carregar as contas. Reabra o formulário para tentar novamente."); return res.json(); })
-      .then(setAccounts).catch(err => { if (!controller.signal.aborted) setAccountsError(err.message); });
+    loadClientData<{ id: string; name: string; type: string }[]>("/api/accounts?view=options")
+      .then(data => { if (!controller.signal.aborted) setAccounts(data); }).catch(err => { if (!controller.signal.aborted) setAccountsError(err.message); });
     return () => controller.abort();
   }, [isOpen]);
 
@@ -50,13 +49,13 @@ export function QuickActionsModal({ isOpen, onClose }: QuickActionsModalProps) {
   const [selectedBillId, setSelectedBillId] = useState("");
 
   useEffect(() => {
-    if (isOpen && currentAction === "pagamento") {
+    if (isOpen && currentAction === "pagamento" && paymentMode === "conta") {
       fetch("/api/transactions?type=bill&status=pending", { signal: AbortSignal.timeout(15000) })
         .then(async res => { if (!res.ok) throw new Error("Não foi possível carregar as contas a pagar."); return res.json(); })
         .then(data => setPendingBills(data))
         .catch(err => setErrorMsg(err.message));
     }
-  }, [isOpen, currentAction]);
+  }, [isOpen, currentAction, paymentMode]);
 
   if (!isOpen) return null;
 
@@ -106,7 +105,7 @@ export function QuickActionsModal({ isOpen, onClose }: QuickActionsModalProps) {
 
       toast.success("Lançamento salvo com sucesso.");
       handleClose();
-      notifyDataChanged();
+      notifyDataChanged(data.type === "expense" || data.type === "income" ? { createdTransaction: data } : undefined);
       router.refresh();
 
     } catch (error: any) {

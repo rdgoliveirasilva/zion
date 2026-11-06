@@ -3,6 +3,8 @@ import { normalizeMerchant, isCardBillPayment, PAID_STATUSES } from "@/lib/commi
 import { financialDay } from "@/lib/statement";
 import { reconcileCommitments } from "@/lib/commitments";
 import { NextResponse } from "next/server";
+export const maxDuration = 90;
+
 import { prisma } from "@/lib/prisma";
 
 export async function GET(request: Request) {
@@ -33,7 +35,11 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { description, amount, date, type, linkedBillId, category, accountId, cardPurchase } = body;
 
-    if (category && (typeof category !== "string" || !await prisma.category.findFirst({where:{value:category,archived:false}}))) return NextResponse.json({error:"Categoria indisponível."},{status:400});
+    const [validCategory, account] = await Promise.all([
+      typeof category === "string" ? prisma.category.findFirst({where:{value:category,archived:false}}) : null,
+      typeof accountId === "string" && accountId ? prisma.account.findUnique({where:{id:accountId}}) : null,
+    ]);
+    if (category && (typeof category !== "string" || !validCategory)) return NextResponse.json({error:"Categoria indisponível."},{status:400});
     if (!["expense", "income", "bill"].includes(type) || (linkedBillId && type !== "expense") || (cardPurchase && (type !== "expense" || linkedBillId))) return NextResponse.json({ error: "Tipo de lançamento inválido." }, { status: 400 });
     if (typeof description !== "string" || !description.trim()) return NextResponse.json({ error: "Informe a descrição." }, { status: 400 });
     const rawAmount = String(amount).trim();
@@ -44,7 +50,6 @@ export async function POST(request: Request) {
     const safeDate = new Date(`${date}T12:00:00-03:00`);
     if (typeof date !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(date) || !Number.isFinite(safeDate.getTime()) || financialDay(safeDate) !== date) return NextResponse.json({ error: "Data inválida." }, { status: 400 });
     if (type !== "bill" && date > financialDay()) return NextResponse.json({ error: "Use uma conta a pagar para datas futuras." }, { status: 400 });
-    const account = accountId ? await prisma.account.findUnique({ where: { id: accountId } }) : null;
     if ((accountId && !account) || (cardPurchase && account?.type !== "credit") || (!cardPurchase && account?.type === "credit")) return NextResponse.json({ error: "Selecione uma conta compatível com o lançamento." }, { status: 400 });
 
     // Se estiver pagando uma conta a pagar existente
@@ -64,7 +69,7 @@ export async function POST(request: Request) {
         const payment = linked?.type === "expense" ? await db.transaction.update({ where: { id: linked.id }, data: { status: "paid" } })
           : matches[0] ?? await db.transaction.create({ data: { description: commitment.description, amount: amountInCents, date: safeDate, type: "expense", status: "paid", category: category || commitment.category, categorySource: "manual", accountId: account?.id, isBillPayment: commitment.source === "card" } });
         return db.commitment.update({ where: { id: commitment.id }, data: { status: "paid", transactionId: payment.id } });
-      });
+      }, { maxWait: 10000, timeout: 65000 });
       return NextResponse.json(paid);
     }
     if (type === "bill") {
@@ -84,6 +89,7 @@ export async function POST(request: Request) {
         category: category || "outros",
         categorySource: "manual",
       },
+      include: { account: { select: { name: true, type: true } } },
     });
 
     return NextResponse.json(transaction, { status: 201 });
@@ -145,16 +151,25 @@ export async function PATCH(request: Request) {
 
 export async function DELETE(request: Request) {
   if (!await hasSession()) return NextResponse.json({ error: "Não autorizado." }, { status: 401 });
+  let id: unknown;
+  try { ({ id } = await request.json()); }
+  catch { return NextResponse.json({ error: "Pedido de exclusão inválido." }, { status: 400 }); }
+  if (typeof id !== "string" || !id.trim()) return NextResponse.json({ error: "Lançamento inválido." }, { status: 400 });
+  const transactionId = id;
   try {
-    const { id } = await request.json();
-    if (typeof id !== "string" || !id) return NextResponse.json({ error: "Lançamento inválido." }, { status: 400 });
-    await prisma.$transaction(async db => {
+    const allowed = await prisma.$transaction(async db => {
       await db.$queryRaw`SELECT pg_advisory_xact_lock(hashtext('zion-commitments'))::text`;
-      const original = await db.transaction.findUniqueOrThrow({ where: { id } });
-      if (original.pluggyTransactionId || original.categorySource !== "manual") throw new Error("Somente lançamentos manuais podem ser apagados aqui.");
-      await db.commitment.updateMany({ where: { transactionId: id }, data: { transactionId: null, status: "pending" } });
-      await db.transaction.delete({ where: { id } });
-    });
-    return NextResponse.json({ success: true });
-  } catch { return NextResponse.json({ error: "Não foi possível apagar o lançamento manual." }, { status: 400 }); }
+      const original = await db.transaction.findUnique({ where: { id: transactionId }, select: { id: true, pluggyTransactionId: true, categorySource: true } });
+      // Retrying a completed deletion is a success, including another open tab.
+      if (!original) return true;
+      if (original.pluggyTransactionId || original.categorySource !== "manual") return false;
+      await db.commitment.updateMany({ where: { transactionId }, data: { transactionId: null, status: "pending" } });
+      await db.transaction.delete({ where: { id: transactionId } });
+      return true;
+    }, { maxWait: 10000, timeout: 65000 });
+    if (!allowed) return NextResponse.json({ error: "Este lançamento veio do banco e não pode ser apagado como manual. Atualize o extrato." }, { status: 409 });
+    return NextResponse.json({ success: true, id: transactionId });
+  } catch {
+    return NextResponse.json({ error: "O banco está ocupado ou indisponível. A exclusão não foi confirmada; tente novamente.", retryable: true }, { status: 503 });
+  }
 }

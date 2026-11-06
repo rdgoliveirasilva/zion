@@ -36,6 +36,7 @@ function mutationMock(original) {
     account: mock.account,
     transaction: {
       findUniqueOrThrow: async () => original,
+      findUnique: async () => original,
       update: async ({data}) => { calls.push(['edit',data]); return {...original,...data}; },
       delete: async () => { calls.push(['delete']); return original; },
     },
@@ -54,7 +55,7 @@ test('manual edit changes name and cents, reopening a linked payable when amount
 test('imported movements reject financial edits and deletion even after manual categorization', async () => {
   const calls = mutationMock({...manual,pluggyTransactionId:'imported'});
   assert.equal((await PATCH(mutation('PATCH',{id:manual.id, category:'outros',description:'Changed',amount:1}))).status,400);
-  assert.equal((await DELETE(mutation('DELETE',{id:manual.id}))).status,400);
+  assert.equal((await DELETE(mutation('DELETE',{id:manual.id}))).status,409);
   assert.deepEqual(calls,[]);
 });
 test('invalid manual edits do not write; deletion unlinks before deleting', async () => {
@@ -105,4 +106,15 @@ test('saving the same account preserves the paid link', async () => {
   const calls = mutationMock({...manual,accountId:'card'});
   assert.equal((await PATCH(mutation('PATCH',{id:manual.id,category:'outros',accountId:'card'}))).status,200);
   assert.deepEqual(calls.map(c=>c[0]),['edit']);
+});
+
+test('repeated deletion succeeds when the record is already gone', async () => {
+  const calls = mutationMock(null);
+  assert.equal((await DELETE(mutation('DELETE',{id:'already-deleted'}))).status,200);
+  assert.deepEqual(calls,[]);
+});
+test('database contention is retryable and is not reported as invalid input', async () => {
+  mock.$transaction = async () => { throw Object.assign(new Error('timeout'),{code:'P2028'}); };
+  const response = await DELETE(mutation('DELETE',{id:'synthetic'}));
+  assert.equal(response.status,503); assert.equal((await response.json()).retryable,true);
 });

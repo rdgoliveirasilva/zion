@@ -1,7 +1,7 @@
 "use client";
 
 import { memo, useEffect, useState } from "react";
-import { useJsonResource, notifyDataChanged } from "@/lib/client-data";
+import { DATA_CHANGED, useJsonResource, notifyDataChanged } from "@/lib/client-data";
 import { Calendar, Trash2, Utensils, Car, Home, HeartPulse, GraduationCap, Gamepad2, ShoppingBag, MoreHorizontal } from "lucide-react";
 import { financialDay, formatFinancialDate } from "@/lib/statement";
 import { useCategories } from "@/components/ui/categories-provider";
@@ -65,18 +65,40 @@ export const StatementList = memo(function StatementList({ initialPage, allowDel
   const { data, loading, error, reload } = useJsonResource<StatementPage>("/api/statement?" + params.toString(), defaultPage ? initialPage : undefined);
   const pageCount = data?.pageCount || 1;
   const currentPage = Math.min(page, pageCount);
-  const visibleTransactions = data?.transactions || [];
+  const [created, setCreated] = useState<StatementTransaction[]>([]);
+  const [removedIds, setRemovedIds] = useState<Set<string>>(() => new Set());
+  const [deletingIds, setDeletingIds] = useState<Set<string>>(() => new Set());
+  useEffect(() => {
+    const changed = (event: Event) => {
+      const change = (event as CustomEvent<{ removedTransactionId?: string; createdTransaction?: StatementTransaction }>).detail;
+      const id = change?.removedTransactionId;
+      if (change?.createdTransaction) setCreated(previous => [change.createdTransaction!, ...previous.filter(tx => tx.id !== change.createdTransaction!.id)]);
+      if (id) setRemovedIds(previous => new Set([...previous, id]));
+    };
+    window.addEventListener(DATA_CHANGED, changed);
+    return () => window.removeEventListener(DATA_CHANGED, changed);
+  }, []);
+  useEffect(() => {
+    if (data) setCreated(previous => previous.filter(tx => !data.transactions.some(saved => saved.id === tx.id)));
+  }, [data]);
+  const savedIds = new Set((data?.transactions || []).map(tx => tx.id));
+  const additions = defaultPage ? created.filter(tx => !savedIds.has(tx.id) && !removedIds.has(tx.id)) : [];
+  const visibleTransactions = [...additions, ...(data?.transactions || [])].filter(tx => !removedIds.has(tx.id)).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime() || b.id.localeCompare(a.id)).slice(0, 15);
   const total = data?.total || 0;
   useEffect(() => { if (data && page > data.pageCount) setPage(data.pageCount); }, [data, page]);
   const pageNumbers = Array.from(new Set([1, currentPage - 1, currentPage, currentPage + 1, pageCount])).filter(n => n >= 1 && n <= pageCount).sort((a,b) => a-b);
   async function remove(id: string) {
     if (!confirm("Tem certeza que deseja apagar esta transação?")) return;
+    if (deletingIds.has(id)) return;
+    setDeletingIds(previous => new Set([...previous, id]));
     setActionError("");
     try {
       const response = await fetch("/api/transactions", { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id }) });
-      if (!response.ok) throw new Error("Não foi possível apagar a transação.");
-      notifyDataChanged();
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || "Não foi possível apagar a transação.");
+      notifyDataChanged({ removedTransactionId: id });
     } catch (e) { setActionError(e instanceof Error ? e.message : "Tente novamente."); }
+    finally { setDeletingIds(previous => { const next = new Set(previous); next.delete(id); return next; }); }
   }
 
   return (
@@ -137,7 +159,7 @@ export const StatementList = memo(function StatementList({ initialPage, allowDel
                 <span className={`shrink-0 text-sm font-semibold ${isIncome ? 'text-green-500' : 'text-foreground'}`}>
                   {isIncome ? "+" : "-"} {formatMoney(tx.amount)}
                 </span>
-              </button>{allowDelete && tx.categorySource === "manual" && !tx.pluggyTransactionId && <button onClick={() => remove(tx.id)} aria-label={`Apagar ${tx.description}`} className="shrink-0 rounded-lg p-2 text-muted-foreground hover:text-red-500"><Trash2 className="h-4 w-4" /></button>}</div>
+              </button>{allowDelete && tx.categorySource === "manual" && !tx.pluggyTransactionId && <button aria-busy={deletingIds.has(tx.id)} disabled={deletingIds.has(tx.id)} onClick={() => remove(tx.id)} aria-label={`Apagar ${tx.description}`} className="shrink-0 rounded-lg p-2 text-muted-foreground hover:text-red-500"><Trash2 className={`h-4 w-4 ${deletingIds.has(tx.id) ? "animate-pulse" : ""}`} /></button>}</div>
             );
           })
         )}

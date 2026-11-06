@@ -43,3 +43,18 @@ test('expired authentication clears data and returns to login', async () => {
   await assert.rejects(loadClientData('/data'), /sessão expirou/);
   assert.equal(location, '/login');
 });
+
+test('transaction changes preserve fresh account options while invalidating statements', async () => {
+  let optionsRequests = 0, statementRequests = 0;
+  globalThis.fetch = async url => {
+    if (url.includes('view=options')) { optionsRequests++; return Response.json([{id:'synthetic'}]); }
+    statementRequests++; return Response.json({transactions:[]});
+  };
+  await loadClientData('/api/accounts?view=options'); await loadClientData('/api/statement');
+  let change;
+  window.addEventListener('zion:data-changed', event => { change = event.detail; }, {once:true});
+  notifyDataChanged({removedTransactionId:'synthetic'});
+  await loadClientData('/api/accounts?view=options'); await loadClientData('/api/statement');
+  assert.equal(optionsRequests,1); assert.equal(statementRequests,2);
+  assert.deepEqual(change,{removedTransactionId:'synthetic'});
+});

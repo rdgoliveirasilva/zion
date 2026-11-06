@@ -4,9 +4,11 @@ import { useCallback, useEffect, useRef, useState } from "react";
 // Short-lived memory only: never store banking responses in localStorage or SW.
 const entries = new Map<string, { value?: unknown; expires: number; promise?: Promise<unknown> }>();
 export const DATA_CHANGED = "zion:data-changed";
-export function notifyDataChanged() {
+export function notifyDataChanged(change?: { removedTransactionId?: string; createdTransaction?: unknown }) {
+  const options = change ? entries.get("/api/accounts?view=options") : undefined;
   entries.clear();
-  window.dispatchEvent(new Event(DATA_CHANGED));
+  if (options && options.expires > Date.now()) entries.set("/api/accounts?view=options", options);
+  window.dispatchEvent(change ? new CustomEvent(DATA_CHANGED, { detail: change }) : new Event(DATA_CHANGED));
 }
 
 export async function loadClientData<T>(url: string, force = false): Promise<T> {

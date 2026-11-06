@@ -5,9 +5,10 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
 export const maxDuration = 120;
-export async function GET() {
+export async function GET(request: Request) {
   try {
     if (!await hasSession()) return NextResponse.json({ error: "Não autorizado." }, { status: 401 });
+    if (new URL(request.url).searchParams.get("view") === "options") return NextResponse.json(await prisma.account.findMany({ select: { id: true, name: true, type: true }, orderBy: { createdAt: "asc" } }));
     scheduleCommitmentRefresh();
     const [accounts, bills] = await Promise.all([
       prisma.account.findMany({ orderBy: { createdAt: 'asc' } }),

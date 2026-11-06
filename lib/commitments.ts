@@ -7,7 +7,9 @@ import { PAID_STATUSES, normalizeMerchant, monthOffset, monthsBetween, dueDateFo
 export async function reconcileCommitments(db: Prisma.TransactionClient, now = new Date()) {
   await db.$queryRaw`SELECT pg_advisory_xact_lock(hashtext('zion-commitments'))::text`;
 
-  const invoices = await db.commitment.findMany({ where: { source: "card", status: "pending" } });
+  const stored = await db.commitment.findMany();
+  const byKey = new Map(stored.map(c => [c.key, c]));
+  const invoices = stored.filter(c => c.source === "card" && c.status === "pending");
   const payments = invoices.length
     ? await db.transaction.findMany({
         where: { accountId: { in: invoices.map(b => b.key.split(":")[1]) }, type: "income", status: { in: [...PAID_STATUSES] } },
@@ -50,12 +52,11 @@ export async function reconcileCommitments(db: Prisma.TransactionClient, now = n
       const candidates = matches.filter(tx => financialDay(tx.date).slice(0, 7) === month);
       const key = rule.id + ":" + month;
 
-      let existing = await db.commitment.findUnique({ where: { key } });
+      let existing = byKey.get(key);
 
       if (!existing) {
-        const manual = (await db.commitment.findMany({ where: { source: "manual", ruleId: null, amount: rule.amount } }))
-          .filter(c => financialDay(c.dueDate).slice(0, 7) === month && normalizeMerchant(c.description) === rule.description);
-        if (manual.length === 1) existing = await db.commitment.update({ where: { id: manual[0].id }, data: { key, ruleId: rule.id } });
+        const manual = stored.filter(c => c.source === "manual" && !c.ruleId && c.amount === rule.amount && financialDay(c.dueDate).slice(0, 7) === month && normalizeMerchant(c.description) === rule.description);
+        if (manual.length === 1) { existing = await db.commitment.update({ where: { id: manual[0].id }, data: { key, ruleId: rule.id } }); Object.assign(manual[0], existing); byKey.set(key, existing); }
         else if (manual.length > 1) continue;
       }
 
@@ -75,7 +76,10 @@ export async function reconcileCommitments(db: Prisma.TransactionClient, now = n
           await db.commitment.update({ where: { id: existing.id }, data: { status: "paid", transactionId: adjusted[0].id } });
         }
       }
-      else if (existing.status !== "paid" && !existing.manualOverride) await db.commitment.update({ where: { id: existing.id }, data: { ...data, status: paid ? "paid" : "pending", transactionId: candidate?.id ?? existing.transactionId } });
+      else if (existing.status !== "paid" && !existing.manualOverride) {
+        const next = { ...data, status: paid ? "paid" : "pending", transactionId: candidate?.id ?? existing.transactionId };
+        if (existing.description !== next.description || existing.amount !== next.amount || existing.dueDate.getTime() !== next.dueDate.getTime() || existing.category !== next.category || existing.coveredByCard !== next.coveredByCard || existing.ruleId !== next.ruleId || existing.status !== next.status || existing.transactionId !== next.transactionId) await db.commitment.update({ where: { id: existing.id }, data: next });
+      }
     }
   }
 }
