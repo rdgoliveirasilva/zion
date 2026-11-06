@@ -232,3 +232,10 @@ Limitações: Eventos de exclusão não são processados; conciliação usa cont
 - `/commitments` exibe o resumo, depois Compromissos do mês (mês atual aberto) e Compromissos por mês com Futuro/Passado. Futuro cobre os 13 meses seguintes em ordem crescente, Passado mostra meses com registros em ordem decrescente; os painéis são paginados 12 por página.
 - Todas as ocorrências podem ser editadas: valor, dia de vencimento e categoria. Contas manuais podem ativar recorrência mensal; desativar uma recorrência conserva a ocorrência selecionada e o histórico pago e retira pendências futuras. Faturas de cartão continuam automáticas pelo banco e não permitem desligar essa origem. Vencimento de faturas e ocorrências recorrentes pode mudar de dia dentro do mês; mudar de mês exigiria reidentificar a competência e o vínculo com pagamento.
 - `manualOverride` em Commitment (`20261105010000_commitment_manual_override`) preserva alterações financeiras individuais nas próximas sincronizações sem alterar transações bancárias. Mudança isolada de categoria não interrompe a atualização automática do valor. A conciliação continua buscando pagamento único por valor ajustado, conta, descrição e mês. A migração aditiva foi aplicada ao PostgreSQL configurado antes do push.
+
+
+### Lançamentos manuais — contrato (06/11/2026)
+- Menu: registrar pagamento, registrar compra no cartão, adicionar conta a pagar e registrar recebimento. Recebimento persiste como income; compras e pagamentos como expense; contas futuras como Commitment pendente.
+- Datas do formulário e limites do extrato usam o calendário de São Paulo, incluindo o dia inteiro, para não ocultar lançamentos ancorados ao meio-dia nem selecionar amanhã à noite.
+- Compra manual exige vínculo com uma conta de cartão existente. Pagamentos e recebimentos permitem vínculo opcional com conta bancária. O vínculo identifica a origem sem alterar Account.balance, que continua informado pelo banco.
+- Valores positivos em reais são validados em centavos; datas inválidas e movimentações futuras são rejeitadas. Contas a pagar aceitam vencimento futuro. O cadastro confirma sucesso e invalida as consultas locais.

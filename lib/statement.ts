@@ -26,3 +26,8 @@ export function pluggyTransactionType(type: string | undefined, amount: number, 
   if (type === "CREDIT") return "income";
   return (accountType === "CREDIT" ? amount > 0 : amount < 0) ? "expense" : "income";
 }
+
+// Queries use the full Brazilian calendar day, matching statementIncludes.
+export function financialDayEnd(now = new Date()): Date {
+  return new Date(financialDay(now) + "T23:59:59.999-03:00");
+}

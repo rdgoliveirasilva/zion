@@ -31,22 +31,21 @@ export async function POST(request: Request) {
   if (!await hasSession()) return NextResponse.json({ error: "Não autorizado." }, { status: 401 });
   try {
     const body = await request.json();
-    const { description, amount, date, type, status, linkedBillId, category } = body;
+    const { description, amount, date, type, linkedBillId, category, accountId, cardPurchase } = body;
 
     if (category && (typeof category !== "string" || !await prisma.category.findFirst({where:{value:category,archived:false}}))) return NextResponse.json({error:"Categoria indisponível."},{status:400});
-    const numericAmount = parseFloat(String(amount).replace(",", "."));
-    if (isNaN(numericAmount) || numericAmount <= 0) {
-      return NextResponse.json({ error: "Valor inválido." }, { status: 400 });
-    }
-
+    if (!["expense", "income", "bill"].includes(type) || (linkedBillId && type !== "expense") || (cardPurchase && (type !== "expense" || linkedBillId))) return NextResponse.json({ error: "Tipo de lançamento inválido." }, { status: 400 });
+    if (typeof description !== "string" || !description.trim()) return NextResponse.json({ error: "Informe a descrição." }, { status: 400 });
+    const rawAmount = String(amount).trim();
+    const normalized = rawAmount.includes(",") ? rawAmount.replace(/\./g, "").replace(",", ".") : rawAmount;
+    const numericAmount = /^\d+(\.\d{1,2})?$/.test(normalized) ? Number(normalized) : NaN;
     const amountInCents = Math.round(numericAmount * 100);
-
-    // Ancoragem da data ao meio-dia para evitar problemas de fuso horário
-    let safeDate = new Date();
-    if (date) {
-      const [year, month, day] = date.split("-");
-      safeDate = new Date(Number(year), Number(month) - 1, Number(day), 12, 0, 0);
-    }
+    if (!Number.isSafeInteger(amountInCents) || amountInCents <= 0 || amountInCents > 2147483647) return NextResponse.json({ error: "Valor inválido." }, { status: 400 });
+    const safeDate = new Date(`${date}T12:00:00-03:00`);
+    if (typeof date !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(date) || !Number.isFinite(safeDate.getTime()) || financialDay(safeDate) !== date) return NextResponse.json({ error: "Data inválida." }, { status: 400 });
+    if (type !== "bill" && date > financialDay()) return NextResponse.json({ error: "Use uma conta a pagar para datas futuras." }, { status: 400 });
+    const account = accountId ? await prisma.account.findUnique({ where: { id: accountId } }) : null;
+    if ((accountId && !account) || (cardPurchase && account?.type !== "credit") || (!cardPurchase && account?.type === "credit")) return NextResponse.json({ error: "Selecione uma conta compatível com o lançamento." }, { status: 400 });
 
     // Se estiver pagando uma conta a pagar existente
     if (linkedBillId) {
@@ -57,13 +56,13 @@ export async function POST(request: Request) {
         if (amountInCents !== commitment.amount) throw new Error("O valor deve corresponder ao compromisso.");
         if (financialDay(safeDate) > financialDay()) throw new Error("Um pagamento não pode ter data futura.");
         const linked = commitment.transactionId ? await db.transaction.findUnique({ where: { id: commitment.transactionId } }) : null;
-        const matches = (await db.transaction.findMany({ where: { amount: amountInCents, type: "expense", status: { in: ["paid", "cleared", "reconciled"] }, commitment: null } })).filter(t =>
+        const matches = (await db.transaction.findMany({ where: { ...(account ? { accountId: account.id } : {}), amount: amountInCents, type: "expense", status: { in: ["paid", "cleared", "reconciled"] }, commitment: null } })).filter(t =>
           financialDay(t.date) === financialDay(safeDate) &&
           (commitment.source === "card" ? t.isBillPayment || isCardBillPayment(t.description) : normalizeMerchant(t.description) === normalizeMerchant(commitment.description))
         );
         if (matches.length > 1) throw new Error("Há mais de uma movimentação correspondente. Categorize a movimentação exata pelo extrato.");
         const payment = linked?.type === "expense" ? await db.transaction.update({ where: { id: linked.id }, data: { status: "paid" } })
-          : matches[0] ?? await db.transaction.create({ data: { description: commitment.description, amount: amountInCents, date: safeDate, type: "expense", status: "paid", category: category || commitment.category, categorySource: "manual", isBillPayment: commitment.source === "card" } });
+          : matches[0] ?? await db.transaction.create({ data: { description: commitment.description, amount: amountInCents, date: safeDate, type: "expense", status: "paid", category: category || commitment.category, categorySource: "manual", accountId: account?.id, isBillPayment: commitment.source === "card" } });
         return db.commitment.update({ where: { id: commitment.id }, data: { status: "paid", transactionId: payment.id } });
       });
       return NextResponse.json(paid);
@@ -80,7 +79,8 @@ export async function POST(request: Request) {
         amount: amountInCents,
         date: safeDate,
         type: type || "expense",
-        status: status || "pending", 
+        status: "cleared",
+        accountId: account?.id,
         category: category || "outros",
         categorySource: "manual",
       },
@@ -90,7 +90,7 @@ export async function POST(request: Request) {
   } catch (error: any) {
     console.error("ERRO NA API DE TRANSAÇÃO:", error);
     return NextResponse.json(
-      { error: error.message || "Erro interno no servidor." }, 
+      { error: error.message || "Erro interno no servidor." },
       { status: 500 }
     );
   }

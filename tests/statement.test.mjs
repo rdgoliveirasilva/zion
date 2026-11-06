@@ -4,7 +4,7 @@ import { readFileSync } from 'node:fs';
 import { stripTypeScriptTypes } from 'node:module';
 const source = readFileSync(new URL('../lib/statement.ts', import.meta.url), 'utf8');
 const js = stripTypeScriptTypes(source);
-const { financialDay, formatFinancialDate, statementIncludes, pluggyTransactionType } = await import('data:text/javascript;base64,' + Buffer.from(js).toString('base64'));
+const { financialDayEnd, financialDay, formatFinancialDate, statementIncludes, pluggyTransactionType } = await import('data:text/javascript;base64,' + Buffer.from(js).toString('base64'));
 const now = new Date('2026-11-02T15:00:00Z');
 test('future installments are excluded from every statement period', () => {
   for (const period of ['today', '7d', 'all', 'custom']) {
@@ -29,4 +29,12 @@ test('credit purchases are expenses, bank credits and card refunds are credits',
   assert.equal(pluggyTransactionType('CREDIT', 100, 'BANK'), 'income');
   assert.equal(pluggyTransactionType('DEBIT', -100, 'BANK'), 'expense');
   assert.equal(pluggyTransactionType(undefined, 100, 'CREDIT'), 'expense');
+});
+
+test('morning queries include noon-anchored payments but exclude the next Brazilian day', () => {
+  const morning = new Date('2026-11-06T09:00:00Z');
+  const end = financialDayEnd(morning);
+  assert.equal(end.toISOString(), '2026-11-07T02:59:59.999Z');
+  assert.ok(new Date('2026-11-06T15:00:00Z') <= end);
+  assert.ok(new Date('2026-11-07T03:00:00Z') > end);
 });

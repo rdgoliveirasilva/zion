@@ -1,3 +1,4 @@
+import { financialDayEnd } from "@/lib/statement";
 import { hasSession } from "@/lib/session";
 import { transactionViewSelect } from "@/lib/transaction-view";
 import { NextResponse } from "next/server";
@@ -7,7 +8,7 @@ export async function GET() {
   try {
     if (!await hasSession()) return NextResponse.json({ error: "Não autorizado." }, { status: 401 });
     const transactions = await prisma.transaction.findMany({
-      where: { date: { lte: new Date() } },
+      where: { date: { lte: financialDayEnd() } },
       orderBy: { date: 'desc' }, // Ordena do mais recente para o mais antigo
       select: transactionViewSelect
     });

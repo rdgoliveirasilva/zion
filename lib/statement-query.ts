@@ -1,7 +1,7 @@
 import { prisma } from "./prisma";
 import type { Prisma } from "@/generated/prisma";
 import { transactionViewSelect } from "./transaction-view";
-import { financialDay } from "./statement";
+import { financialDay, financialDayEnd } from "./statement";
 import { normalizeMerchant } from "./commitment-rules";
 
 export async function loadStatementPage(params = new URLSearchParams(), now = new Date()) {
@@ -14,7 +14,7 @@ export async function loadStatementPage(params = new URLSearchParams(), now = ne
   const empty = { transactions: [], total: 0, page, pageCount: 1 };
   if (custom && (!datePattern.test(start) || !datePattern.test(end) || start > end || start > today)) return empty;
   const from = custom ? new Date(start + "T00:00:00-03:00") : undefined;
-  const until = custom ? new Date(Math.min(now.getTime(), new Date(end + "T23:59:59.999-03:00").getTime())) : now;
+  const until = custom ? new Date(Math.min(financialDayEnd(now).getTime(), new Date(end + "T23:59:59.999-03:00").getTime())) : financialDayEnd(now);
   if ((from && !Number.isFinite(from.getTime())) || !Number.isFinite(until.getTime())) return empty;
   const where: Prisma.TransactionWhereInput = {
     date: { ...(from ? { gte: from } : {}), lte: until },
