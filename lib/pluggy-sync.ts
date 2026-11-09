@@ -40,13 +40,19 @@ export async function syncPluggyItem(itemId: string) {
         dueDate = new Date(acc.creditData.balanceDueDate);
       }
 
+      // 👇 CORREÇÃO AQUI: Força o saldo a ser exatamente o que a Pluggy enviou.
+      // Se a Pluggy mandar 0, o banco atualiza para 0.
+      const newBalance = acc.balance !== undefined && acc.balance !== null 
+        ? Math.round(acc.balance * 100) 
+        : 0;
+
       if (existingAccount) {
         await db.account.update({
           where: { id: existingAccount.id },
           data: {
             type: acc.type === "CREDIT" ? "credit" : "checking",
             name: acc.name || "Conta Pluggy",
-            balance: Math.round((acc.balance || 0) * 100),
+            balance: newBalance, // 👈 Forçando a atualização
             dueDate: dueDate,
             pluggyItemId: itemId,
           },
@@ -56,7 +62,7 @@ export async function syncPluggyItem(itemId: string) {
           data: {
             name: acc.name || "Conta Pluggy",
             type: acc.type === "CREDIT" ? "credit" : "checking",
-            balance: Math.round((acc.balance || 0) * 100),
+            balance: newBalance, // 👈 Forçando a atualização
             dueDate: dueDate,
             pluggyItemId: itemId,
             pluggyAccountId: acc.id,
