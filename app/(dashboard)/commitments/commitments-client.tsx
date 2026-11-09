@@ -59,7 +59,7 @@ export default function CommitmentsClient({ commitments, today }: { commitments:
     if (action === "pay" && !window.confirm("Confirmar que esta conta já foi paga? Nenhuma transação será criada.")) return;
     if (busy) return;
     const selected = items.find(c => c.id === id);
-    if (action === "delete" && !window.confirm(selected?.ruleId ? "Encerrar esta conta recorrente e remover as pendências? Pagamentos anteriores serão preservados." : "Excluir esta conta a pagar manual? A movimentação bancária será preservada.")) return;
+    if (action === "delete" && !window.confirm(selected?.ruleId ? "Encerrar esta conta recorrente e remover as pendências? Pagamentos anteriores serão preservados." : "Excluir esta conta a pagar? A movimentação bancária será preservada.")) return;
     setBusy(id); setError("");
     try {
       const response = await fetch(`/api/commitments/${encodeURIComponent(id)}`, {
@@ -87,7 +87,12 @@ export default function CommitmentsClient({ commitments, today }: { commitments:
     return <div className="mt-3 flex flex-wrap items-center gap-2 border-t border-border pt-3">
       <button type="button" disabled={busy === c.id} onClick={() => startEdit(c)} className="inline-flex items-center gap-1 rounded-lg px-2 py-1 text-xs text-primary hover:bg-primary/10"><Pencil className="h-3 w-3" />Editar conta</button>
       {c.status !== "paid" && <button type="button" disabled={busy === c.id} onClick={() => void change(c.id, "pay")} className="inline-flex items-center gap-1 rounded-lg px-2 py-1 text-xs text-green-700 hover:bg-green-500/10 disabled:opacity-50"><Check className="h-3 w-3" />Marcar paga</button>}
-      {(c.ruleId || c.source === "manual") && <button type="button" disabled={busy === c.id} onClick={() => void change(c.id, "delete")} className="inline-flex items-center gap-1 rounded-lg px-2 py-1 text-xs text-red-600 hover:bg-red-500/10 disabled:opacity-50"><Trash2 className="h-3 w-3" />{c.ruleId ? "Excluir recorrência" : "Excluir conta"}</button>}
+      
+      {/* 👇 CORREÇÃO: Botão de excluir liberado para todas as contas */}
+      <button type="button" disabled={busy === c.id} onClick={() => void change(c.id, "delete")} className="inline-flex items-center gap-1 rounded-lg px-2 py-1 text-xs text-red-600 hover:bg-red-500/10 disabled:opacity-50">
+        <Trash2 className="h-3 w-3" />
+        {c.ruleId ? "Excluir recorrência" : "Excluir conta"}
+      </button>
     </div>;
   }
 
